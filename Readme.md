@@ -42,7 +42,7 @@ Connect the OLED display to the Arduino as follows:
 Include the `oled.h` file in your Arduino sketch and create an instance of the `OLED` class with the desired dimensions.
 
 ```cpp
-#include "oled.h"
+#include <oled.h>
 
 OLED display(WIDTH_128, HEIGHT_64);
 
