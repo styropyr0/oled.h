@@ -80,12 +80,29 @@ public:
      */
     OLED(uint8_t width, uint8_t height);
     /**
+     * @brief Set a custom font set for the characters. You could also set a custom language character.
+     * @param fontArray The array of fonts.
+     */
+    void setFont(const uint8_t (*fontArray)[5]);
+    /**
+     * @brief Set the font as the default font.
+     */
+    void clearCustomFont();
+    /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates.
      * @param string The string to be printed.
      * @param x The X coordinate.
      * @param y The Y coordinate.
      */
     void print(char *string, uint8_t x, uint8_t y);
+    /**
+     * @brief Prints the string passed on the display at the specified X, Y coordinates with a typewriter animation.
+     * @param string The string to be printed.
+     * @param x The X coordinate.
+     * @param y The Y coordinate.
+     * @param delay The delay between each character.
+     */
+    void printAnimated(char *string, uint8_t x, uint8_t y, int delay);
     /**
      * @brief Clears the screen and prints the string passed on the display at the specified X, Y coordinates.
      * @param string The string to be printed.
@@ -122,11 +139,15 @@ public:
      * @param mode Set true to turn off the display.
      */
     void turnOffOnClr(bool mode);
-
-    void plot(uint8_t *dataSet_X, uint8_t *dataSet_Y);
+    /**
+     * @brief Sets the brightness of the pixels in percentage.
+     * @param brightness Percentage of brightness.
+     */
+    void setBrightness(uint8_t brightness);
 
 private:
-    uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0;
+    uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0, fontWidth = 5;
+    const uint8_t (*fontSet)[5];
     bool IS_SETUP = false, clear = false;
     void autoSetup();
     void execute(uint8_t instruction);

@@ -269,7 +269,20 @@ void OLED::autoSetup()
     for (int i = 0; i < 25; i++)
         execute(cmdList[i]);
     IS_SETUP = true;
+    setFont(fonts);
     clearScr();
+}
+
+void OLED::setFont(const uint8_t (*fontArray)[5])
+{
+    fontSet = fontArray;
+    fontWidth = 5;
+}
+
+void OLED::clearCustomFont()
+{
+    setFont(fonts);
+    fontWidth = 5;
 }
 
 void OLED::execute(uint8_t instruction)
@@ -286,11 +299,34 @@ void OLED::print(char *string, uint8_t x, uint8_t y)
     charWidth = 0;
     if (IS_SETUP)
     {
-        setPosition(x, y);
         execute(OLED_OFF);
+        setPosition(x, y);
         offset(x);
+        charWidth += x;
         while (*string)
         {
+            getFont(*string++);
+            if (charWidth >= 127)
+                charWidth = 0;
+        }
+        execute(OLED_ON);
+    }
+}
+
+void OLED::printAnimated(char *string, uint8_t x, uint8_t y, int delay)
+{
+    step = 0;
+    charWidth = 0;
+    if (IS_SETUP)
+    {
+        execute(OLED_OFF);
+        clearScr();
+        setPosition(x, y);
+        offset(x);
+        charWidth += x;
+        while (*string)
+        {
+            ::delay(delay);
             getFont(*string++);
             if (charWidth >= 127)
                 charWidth = 0;
@@ -312,10 +348,11 @@ void OLED::print_c(char *string, uint8_t x, uint8_t y)
     charWidth = 0;
     if (IS_SETUP)
     {
+        execute(OLED_OFF);
         clearScr();
         setPosition(x, y);
-        execute(OLED_OFF);
         offset(x);
+        charWidth += x;
         while (*string)
         {
             getFont(*string++);
@@ -353,26 +390,30 @@ void OLED::turnOffOnClr(bool mode)
 
 void OLED::getFont(char c)
 {
-    for (uint8_t i = 0; i < 5; i++)
+    if (c == '\n' || 128 - charWidth < fontWidth)
     {
-        if (c == '\n' || 129 - charWidth < 5)
+        for (uint8_t j = 0; j < 128 - charWidth; j++)
         {
-            for (uint8_t j = 0; j < 128 - charWidth; j++)
-            {
-                sendData(0x00);
-            }
-            charWidth = 0;
+            sendData(0x00);
+        }
+        if (c != '\n')
+        {
+            for (uint8_t i = 0; i < fontWidth; i++)
+                sendData(pgm_read_byte(&fontSet[c - 32][i]));
+            sendData(0x00);
+            charWidth = fontWidth + 1;
             step++;
-            break;
         }
         else
-        {
-            charWidth += 1;
-            sendData(pgm_read_byte(&fonts[c - 32][i]));
-        }
+            charWidth = 0;
     }
-    if (charWidth > 0)
+    else
     {
+        for (uint8_t i = 0; i < fontWidth; i++)
+        {
+            charWidth++;
+            sendData(pgm_read_byte(&fontSet[c - 32][i]));
+        }
         sendData(0x00);
         charWidth++;
     }
@@ -475,7 +516,7 @@ void OLED::setPosition(uint8_t x, uint8_t y)
     execute(0);
     execute(WIDTH - 1);
     execute(SET_PG_ADDR);
-    execute((y / 8) - 1);
+    execute(y < 8 ? y : 7);
     execute((HEIGHT / 8) - 1);
 }
 
@@ -485,4 +526,10 @@ void OLED::sendData(uint8_t data)
     Wire.write(0x40);
     Wire.write(data);
     Wire.endTransmission();
+}
+
+void OLED::setBrightness(uint8_t brightness)
+{
+    execute(CONTRAST);
+    execute((brightness * 255) / 100);
 }
