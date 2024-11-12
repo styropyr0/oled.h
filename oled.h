@@ -144,6 +144,7 @@ public:
      * @param brightness Percentage of brightness.
      */
     void setBrightness(uint8_t brightness);
+    void draw(const uint8_t *dataSet);
 
 private:
     uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0, fontWidth = 5;
@@ -155,6 +156,7 @@ private:
     void sendData(uint8_t data);
     void setPosition(uint8_t x, uint8_t y);
     void offset(uint8_t dist);
+    void drawPixel(uint8_t x, uint8_t y);
 };
 
 #endif
