@@ -1,5 +1,5 @@
-#ifndef oled
-#define oled
+#ifndef SSD1306
+#define SSD1306
 #define ADDR 0x3C
 
 /**
@@ -144,7 +144,7 @@ public:
      * @param brightness Percentage of brightness.
      */
     void setBrightness(uint8_t brightness);
-    void draw(const uint8_t *dataSet, uint8_t width, uint8_t height);
+    void draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height);
 
 private:
     uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0, fontWidth = 5;

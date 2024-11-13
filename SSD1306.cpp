@@ -1,4 +1,4 @@
-#include "oled.h"
+#include "SSD1306.h"
 
 /**
  * @author Saurav Sajeev
@@ -301,7 +301,6 @@ void OLED::print(char *string, uint8_t x, uint8_t y)
     {
         execute(OLED_OFF);
         setPosition(x, y);
-        offset(x);
         charWidth += x;
         while (*string)
         {
@@ -322,7 +321,6 @@ void OLED::printAnimated(char *string, uint8_t x, uint8_t y, int delay)
         execute(OLED_OFF);
         clearScr();
         setPosition(x, y);
-        offset(x);
         charWidth += x;
         while (*string)
         {
@@ -351,7 +349,6 @@ void OLED::print_c(char *string, uint8_t x, uint8_t y)
         execute(OLED_OFF);
         clearScr();
         setPosition(x, y);
-        offset(x);
         charWidth += x;
         while (*string)
         {
@@ -430,7 +427,6 @@ void OLED::offset(uint8_t dist)
 void OLED ::progressBar(uint8_t progress, uint8_t x, uint8_t y, int style)
 {
     setPosition(x, y);
-    offset(x);
     progress /= 6.25;
     if (style > 15)
         style = 4;
@@ -518,6 +514,7 @@ void OLED::setPosition(uint8_t x, uint8_t y)
     execute(SET_PG_ADDR);
     execute(y < 8 ? y : 7);
     execute((HEIGHT / 8) - 1);
+    offset(x);
 }
 
 void OLED::sendData(uint8_t data)
@@ -534,23 +531,29 @@ void OLED::setBrightness(uint8_t brightness)
     execute((brightness * 255) / 100);
 }
 
-void OLED::draw(const uint8_t *dataSet, uint8_t width, uint8_t height)
+void OLED::draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height)
 {
-    uint8_t vPos = 0;
-    setPosition(0, vPos);
+    uint8_t vPos = y;
+    setPosition(x, vPos);
     for (uint8_t multiplier = 0; multiplier < height / 8; multiplier++)
     {
         for (uint8_t row = 0; row < width / 8; row++)
         {
+            charWidth = x;
             for (uint8_t b = 0; b < 8; b++)
             {
                 uint8_t byte = 0;
                 for (uint8_t col = 0; col < 8; col++)
                     byte |= ((pgm_read_byte(&dataSet[((width / 8) * (height / 8) * multiplier) + (col * 11 + row)]) & (0x80 >> b)) >> 7 - b) << col;
                 sendData(byte);
+                charWidth++;
+                if (charWidth > 127 || charWidth == width)
+                    break;
             }
         }
         vPos++;
-        setPosition(0, vPos);
+        if (vPos > 7)
+            break;
+        setPosition(x, vPos);
     }
 }
