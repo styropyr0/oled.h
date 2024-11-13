@@ -534,22 +534,23 @@ void OLED::setBrightness(uint8_t brightness)
     execute((brightness * 255) / 100);
 }
 
-void OLED::draw(const uint8_t *dataSet)
+void OLED::draw(const uint8_t *dataSet, uint8_t width, uint8_t height)
 {
-    Serial.begin(9600);
-    int multiplier = 0;
-    for (uint8_t row = 0; row < 11; row++)
+    uint8_t vPos = 0;
+    setPosition(0, vPos);
+    for (uint8_t multiplier = 0; multiplier < height / 8; multiplier++)
     {
-        for (uint8_t b = 0; b < 8; b++)
+        for (uint8_t row = 0; row < width / 8; row++)
         {
-            uint8_t byte = 0;
-            for (uint8_t col = 0; col < 8; col++)
+            for (uint8_t b = 0; b < 8; b++)
             {
-                Serial.println((col * 11 + row) + multiplier);
-                pgm_read_byte(&dataSet[(col * 11 + row) + multiplier])>>
-                byte | (pow(2, 8-col) & pgm_read_byte(&dataSet[(col * 11 + row) + multiplier]));
+                uint8_t byte = 0;
+                for (uint8_t col = 0; col < 8; col++)
+                    byte |= ((pgm_read_byte(&dataSet[((width / 8) * (height / 8) * multiplier) + (col * 11 + row)]) & (0x80 >> b)) >> 7 - b) << col;
+                sendData(byte);
             }
-            sendData(byte);
         }
+        vPos++;
+        setPosition(0, vPos);
     }
 }
