@@ -1,183 +1,223 @@
-```markdown
 # SSD1306 OLED Display Library
 
-This library provides an interface to control SSD1306 OLED displays using an Arduino. It includes various functions to display text, images, and animations on the OLED screen.
+## Description
 
-## Author
-**Saurav Sajeev**
-
-## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Initialization](#initialization)
-  - [Setting Fonts](#setting-fonts)
-  - [Printing Text](#printing-text)
-  - [Clearing the Screen](#clearing-the-screen)
-  - [Displaying Progress Bars](#displaying-progress-bars)
-  - [Drawing Bitmaps](#drawing-bitmaps)
-- [Custom Setup](#custom-setup)
-- [Examples](#examples)
-
-## Installation
-To use this library, download the repository and include the header file in your Arduino project.
-
-```cpp
-#include "SSD1306.h"
-```
-
-## Usage
-
-### Initialization
-To initialize the OLED display, create an instance of the `OLED` class with the desired width and height.
-
-```cpp
-OLED display(WIDTH_128, HEIGHT_64);
-```
-
-### Setting Fonts
-You can set a custom font set for the characters. The font array should be passed to the `setFont` method.
-
-```cpp
-const uint8_t customFont[96][5] = { /* Custom font data */ };
-display.setFont(customFont);
-```
-
-To clear the custom font and use the default font, call the `clearCustomFont` method.
-
-```cpp
-display.clearCustomFont();
-```
-
-### Printing Text
-To print a string on the display at specified coordinates, use the `print` method.
-
-```cpp
-display.print("Hello, World!", 0, 0);
-```
-
-For a typewriter animation effect, use the `printAnimated` method.
-
-```cpp
-display.printAnimated("Hello, World!", 0, 0, 100);
-```
-
-To clear the screen and print a string, use the `print_c` method.
-
-```cpp
-display.print_c("Hello, World!", 0, 0);
-```
-
-### Clearing the Screen
-To clear the OLED display, use the `clearScr` method.
-
-```cpp
-display.clearScr();
-```
-
-### Displaying Progress Bars
-To display a progress bar, use the `progressBar` method. You can choose from different styles.
-
-```cpp
-display.progressBar(50, 0, 0, 1); // 50% progress, style 1
-```
-
-### Drawing Bitmaps
-To draw a bitmap image on the display, use the `draw` method. Provide the bitmap array and the coordinates.
-
-```cpp
-const uint8_t smileyBitmap[] = {
-    0b00111100, 0b01000010, 0b10100101, 0b10100101,
-    0b10000001, 0b10111101, 0b01000010, 0b00111100
-};
-display.draw(smileyBitmap, 0, 0, 8, 8);
-```
-
-## Custom Setup
-You can manually set up the display with custom preferences using the `manualSetup` method.
-
-```cpp
-uint8_t customSetup[] = { OLED_ON, CONTRAST, 0xFF, OLED_OFF };
-display.manualSetup(customSetup);
-```
-
-## Examples
-
-### Example 1: Basic Usage
-```cpp
-#include <Arduino.h>
-#include "SSD1306.h"
-
-OLED display(WIDTH_128, HEIGHT_64);
-
-void setup() {
-    display.print("Hello, World!", 0, 0);
-}
-
-void loop() {
-    // Nothing to do here
-}
-```
-
-### Example 2: Typewriter Animation
-```cpp
-#include <Arduino.h>
-#include "SSD1306.h"
-
-OLED display(WIDTH_128, HEIGHT_64);
-
-void setup() {
-    display.printAnimated("Hello, World!", 0, 0, 100);
-}
-
-void loop() {
-    // Nothing to do here
-}
-```
-
-### Example 3: Progress Bar
-```cpp
-#include <Arduino.h>
-#include "SSD1306.h"
-
-OLED display(WIDTH_128, HEIGHT_64);
-
-void setup() {
-    for (int i = 0; i <= 100; i++) {
-        display.progressBar(i, 0, 0, 1);
-        delay(100);
-    }
-}
-
-void loop() {
-    // Nothing to do here
-}
-```
-
-### Example 4: Drawing a Bitmap
-```cpp
-#include <Arduino.h>
-#include "SSD1306.h"
-
-OLED display(WIDTH_128, HEIGHT_64);
-
-const uint8_t smileyBitmap[] = {
-    0b00111100, 0b01000010, 0b10100101, 0b10100101,
-    0b10000001, 0b10111101, 0b01000010, 0b00111100
-};
-
-void setup() {
-    display.draw(smileyBitmap, 0, 0, 8, 8);
-}
-
-void loop() {
-    // Nothing to do here
-}
-```
-
-## License
-This project is licensed under the MIT License.
+This project provides an easy-to-use Arduino library for controlling OLED displays with the SSD1306 driver. It supports various features such as custom fonts, animations, progress bars, and more. The library is designed to work with a range of OLED screens, offering flexibility in usage, especially for 128x64 or 128x32 pixel displays. You can display strings, images, progress bars, and even adjust screen brightness, making it ideal for various embedded applications.
 
 ---
 
-Feel free to customize this `README.md` file further to suit your needs. If you have any questions or need more examples, feel free to ask! 😊
+## Features
+
+- Custom font support (can define custom fonts and languages)
+- Animated text with a typewriter effect
+- Multiple progress bar styles (including loader variants)
+- Brightness control (adjust OLED pixel brightness)
+- Image drawing support (for custom bitmaps)
+- Screen clear with options to control the display mode (on/off)
+- Flexible setup for custom configurations
+
+---
+
+## Enums
+
+### `dimensions`
+
+These enums define the width and height for different OLED screen configurations.
+
+```cpp
+enum dimensions
+{
+    WIDTH_128 = 0x80,  // Width 128 pixels
+    WIDTH_64 = 0x40,   // Width 64 pixels
+    HEIGHT_64 = 0x40,  // Height 64 pixels
+    HEIGHT_32 = 0x20   // Height 32 pixels
+};
 ```
+
+### `registryAddress`
+
+These enums define the various register addresses used for controlling the OLED display.
+
+```cpp
+enum registryAddress
+{
+    OLED_OFF = 0xAE,
+    OLED_ON = 0xAF,
+    DISP_CLOCK_DIV_RATIO = 0xD5,
+    MULTIPLEX = 0xA8,
+    CHRG_PUMP = 0x8D,
+    DISP_OFFSET = 0xD3,
+    MEM_ADDRESS_MODE = 0x20,
+    COM_CONFIG = 0xDA,
+    CONTRAST = 0x81,
+    PRE_CHRG = 0xD9,
+    VCOMH_DESEL = 0xDB,
+    TURN_ON_ALL_PIXELS = 0xA4,
+    SET_DISP_NORMAL = 0xA6,
+    SET_COL_ADDR = 0x21,
+    SET_PG_ADDR = 0x22
+};
+```
+
+### `registryCommands`
+
+These enums define specific commands that can be sent to the SSD1306 OLED display to configure various settings.
+
+```cpp
+enum registryCommands
+{
+    CLK_RATIO_RST = 0x80,
+    MULTIPLEX_RATIO_RST = 0x3F,
+    OFFSET_NO = 0x00,
+    HSCROLL_RIGHT = 0x26,
+    HSCROLL_LEFT = 0x27,
+    VHSCROLL_RIGHT = 0x29,
+    VHSCROLL_LEFT = 0x2A,
+    STOP_SCROLL = 0x2E,
+    START_SCROLL = 0x2F,
+    START_LINE = 0x40,
+    CHRG_PUMP_75 = 0x14,
+    CHRG_PUMP_85 = 0x94,
+    CHRG_PUMP_90 = 0x95,
+    CHRG_PUMP_OFF = 0x11,
+    HORIZONTAL = 0x00,
+    VERTICAL = 0x01,
+    PAGE = 0x02,
+    SEG_REMAP_0 = 0xA0,
+    SEG_REMAP_127 = 0xA1,
+    COM_OUT_SCAN_NORMAL = 0xC0,
+    COM_OUT_SCAN_REMAP = 0xC8,
+    COM_ALT = 0x12,
+    CONTRAST_RST = 0x7F,
+    CONTRAST_MAX = 0xFF,
+    PRE_CHRG_RST = 0x22,
+    VCOMH_65 = 0x00,
+    VCOMH_71 = 0x10,
+    VCOMH_77 = 0x20,
+    VCOMH_83 = 0x30,
+    ZERO = 0x00
+};
+```
+
+---
+
+## Class: `OLED`
+
+The `OLED` class provides all the functions needed to control the SSD1306 OLED display.
+
+### Constructor
+
+```cpp
+OLED(uint8_t width, uint8_t height);
+```
+
+- **width**: Width of the display (usually 128).
+- **height**: Height of the display (usually 64 or 32).
+
+### Methods
+
+- **`void setFont(const uint8_t (*fontArray)[5])`**  
+  Sets a custom font for the characters. `fontArray` is a 2D array representing the custom font.
+
+- **`void clearCustomFont()`**  
+  Resets to the default font.
+
+- **`void print(char *string, uint8_t x, uint8_t y)`**  
+  Prints a string at the specified coordinates (x, y).
+
+- **`void printAnimated(char *string, uint8_t x, uint8_t y, int delay)`**  
+  Prints a string with a typewriter animation effect at the specified coordinates. You can set the delay between characters.
+
+- **`void print_c(char *string, uint8_t x, uint8_t y)`**  
+  Clears the screen before printing the string.
+
+- **`void manualSetup(uint8_t *dataSet)`**  
+  Allows custom manual setup for the display.
+
+- **`void clearScr()`**  
+  Clears the screen.
+
+- **`char *convertString(String string)`**  
+  Converts a `String` object to a dynamic `char*` array.
+
+- **`void progressBar(uint8_t progress, uint8_t x, uint8_t y, int style)`**  
+  Displays a progress bar at the specified coordinates.  
+  **Note**: Styles 1-10 are progress bars, and styles 11-15 are loading animations.
+
+- **`void turnOffOnClr(bool mode)`**  
+  Turns the display off when clearing the screen if `mode` is true.
+
+- **`void setBrightness(uint8_t brightness)`**  
+  Sets the display brightness as a percentage (0-100).
+
+- **`void draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height)`**  
+  Draws a bitmap image at the specified coordinates with the given width and height.
+
+---
+
+## Progress Bar Variants
+
+The `progressBar` method supports different variants, including both standard progress bars and loading animations. You can choose from the following styles:
+
+- **Styles 1-10**: Progress bars that display the completion of a task.
+- **Styles 11-15**: Loading animations to show a task is in progress.
+
+Each style has its own unique appearance, and you can customize the `progress` parameter (0-100) to show the completion percentage.
+
+---
+
+## Example Usage
+
+### Basic Example
+
+```cpp
+#include <Wire.h>
+#include <SSD1306.h>
+
+OLED oled(128, 64);  // Create an OLED object with a 128x64 display
+
+void setup() {
+    Wire.begin();
+    oled.manualSetup();  // Initialize the display
+
+    oled.print("Hello, World!", 0, 0);  // Print a string at (0, 0)
+    oled.setBrightness(80);  // Set brightness to 80%
+}
+
+void loop() {
+    // Your loop code here
+}
+```
+
+### Animated Text Example
+
+```cpp
+oled.printAnimated("Loading...", 0, 10, 200);  // Print "Loading..." with typewriter effect
+```
+
+### Progress Bar Example
+
+```cpp
+void loop() {
+    for (int i = 0; i <= 100; i++) {
+        oled.progressBar(i, 10, 30, 1);  // Show progress bar with style 1
+        delay(50);  // Delay to simulate progress
+    }
+}
+```
+
+### Custom Bitmap Example
+
+```cpp
+const uint8_t logo[] = {
+    // Your bitmap data here (1 byte = 8 pixels)
+};
+
+oled.draw(logo, 0, 0, 32, 32);  // Draw the bitmap at position (0, 0) with size 32x32
+```
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
