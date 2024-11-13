@@ -144,6 +144,14 @@ public:
      * @param brightness Percentage of brightness.
      */
     void setBrightness(uint8_t brightness);
+    /**
+     * @brief Draws a bitmap image on the display, respecting the specified coordinates.
+     * @param dataSet Bitmap array.
+     * @param x The X coordinate.
+     * @param y The Y coordinate.
+     * @param width Width of the bitmap
+     * @param height Height of the bitmap.
+     */
     void draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height);
 
 private:

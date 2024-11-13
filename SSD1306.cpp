@@ -537,9 +537,9 @@ void OLED::draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uin
     setPosition(x, vPos);
     for (uint8_t multiplier = 0; multiplier < height / 8; multiplier++)
     {
+        charWidth = x;
         for (uint8_t row = 0; row < width / 8; row++)
         {
-            charWidth = x;
             for (uint8_t b = 0; b < 8; b++)
             {
                 uint8_t byte = 0;
@@ -547,9 +547,11 @@ void OLED::draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uin
                     byte |= ((pgm_read_byte(&dataSet[((width / 8) * (height / 8) * multiplier) + (col * 11 + row)]) & (0x80 >> b)) >> 7 - b) << col;
                 sendData(byte);
                 charWidth++;
-                if (charWidth > 127 || charWidth == width)
+                if (charWidth > 127)
                     break;
             }
+            if (charWidth > 127)
+                break;
         }
         vPos++;
         if (vPos > 7)
