@@ -1,231 +1,278 @@
-# SSD1306 Display Library for Arduino
+Sure! I'll include all the constants and provide detailed examples for the functions in your library. Here's the updated `README.md` with the full list of constants and more function usage examples:
 
-This repository contains a custom library for controlling an **SSD1306 OLED display** with an Arduino. It supports text rendering, bitmap images, and various other display functionalities. Additionally, a **bitmap generator** is included to convert images into displayable bitmap format, which can be used in your Arduino code for rendering images on the screen.
+---
 
-## Features
+# **SSD1306 OLED Display Library**
 
-- Control SSD1306 OLED displays via I2C.
-- Support for text and bitmap rendering.
-- Bitmap image generator to convert images into displayable formats.
-- Easy-to-use functions for drawing pixels, lines, and text.
+A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. It supports various features such as custom fonts, progress bars, animated text, bitmap rendering, and more. This library works seamlessly with microcontrollers like **Arduino** and **ESP32** over **I2C** communication.
 
-## Table of Contents
+Additionally, the library includes a **Bitmap Generator** tool in Python, which helps convert images to bitmap arrays for easy display on the OLED screen.
 
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Basic Setup](#basic-setup)
-  - [Text Rendering](#text-rendering)
-  - [Bitmap Rendering](#bitmap-rendering)
-  - [Bitmap Generator](#bitmap-generator)
-- [Constants](#constants)
-- [Methods](#methods)
-  - [Constructor](#constructor)
-  - [Methods for Displaying Content](#methods-for-displaying-content)
-- [License](#license)
+## **Features**
+- **Text Display**: Print static text and animated text (typewriter effect).
+- **Custom Fonts**: Supports custom fonts and character sets.
+- **Progress Bar**: Display progress bars with various styles.
+- **Bitmap Rendering**: Draw bitmap images onto the OLED display.
+- **Brightness Control**: Adjust display brightness (0-100%).
+- **I2C Communication**: Built on I2C communication for simple wiring.
+- **Custom Preferences**: Customize OLED display setup with a set of options.
 
-## Installation
+## **Installation**
 
-1. Clone or download this repository to your local machine.
-2. Open Arduino IDE.
-3. Go to **Sketch > Include Library > Add .ZIP Library...**.
-4. Select the ZIP file you downloaded and click **Open**.
+### 1. Installing the Library
 
-Now you can include the library in your Arduino projects.
+To use the library, you need to download or clone this repository into your **Arduino libraries** folder.
 
-```cpp
-#include <SSD1306.h>
+```bash
+git clone https://github.com/styropyr0/oled.h.git
 ```
 
-## Usage
+Alternatively, you can manually download the ZIP file and add it to the **Arduino IDE** by navigating to **Sketch → Include Library → Add .ZIP Library**.
 
-### Basic Setup
+### 2. Installing Dependencies
 
-To get started, initialize the SSD1306 display in your Arduino code.
+The library uses the **Wire** library for I2C communication, which is pre-installed with the Arduino IDE. No additional libraries are required.
+
+## **Hardware Requirements**
+- **SSD1306-based OLED display** (typically 128x64 or 128x32 pixels).
+- **Arduino Board** (e.g., Arduino UNO, ESP32, or ESP8266).
+
+## **Pin Configuration**
+By default, the library uses I2C communication. The I2C pins are:
+- **SDA (Data)**: Typically pin `A4` on most Arduino boards (varies by board).
+- **SCL (Clock)**: Typically pin `A5` on most Arduino boards (varies by board).
+
+For ESP32 and other microcontrollers, you can configure these pins in the `Wire.begin(SDA_PIN, SCL_PIN);` function.
+
+## **Library Usage**
+
+### 1. **Initializing the OLED Display**
+
+To use the library, instantiate the `OLED` class with the display’s width and height (e.g., 128x64 or 128x32).
 
 ```cpp
-#include <SSD1306.h>
+#include "SSD1306.h"
 
-// Define the display object
-SSD1306 display(SSD1306_I2C_ADDRESS, SDA_PIN, SCL_PIN); // Modify pins as per your setup
+// Create OLED object with width and height (128x64)
+OLED oled(128, 64);
 
 void setup() {
-  display.begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS);
-  display.clearDisplay();
-  display.display();
+  oled.clearScr();  // Clear the screen
+  oled.print("Hello, World!", 0, 0);  // Print text at (0, 0)
 }
 
 void loop() {
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 0);
-  display.print("Hello, SSD1306!");
-  display.display();
-  delay(1000);
+  // Main loop logic
 }
 ```
 
-### Text Rendering
+### 2. **Custom Fonts**
 
-To render text, you can use the `setTextSize()`, `setTextColor()`, and `setCursor()` methods.
+You can use custom fonts by defining an array of font data. This library uses 5x7 bitmaps for characters by default, but you can change the font with the `setFont()` method.
 
-```cpp
-display.setTextSize(2);          // Set text size (1, 2, 3, ...)
-display.setTextColor(SSD1306_WHITE);  // Set text color (WHITE or BLACK)
-display.setCursor(10, 10);      // Set cursor position
-display.print("Hello World!");
-display.display();               // Display the content on the screen
-```
-
-### Bitmap Rendering
-
-You can render bitmap images using the `drawBitmap()` method. The image should be generated using the Bitmap Generator tool described below.
+#### Example: Setting a Custom Font
 
 ```cpp
-#include "bitmap.h"  // Include the header where the bitmap is stored
+// Define a simple custom font (5x7 pixels)
+const uint8_t myFont[5][5] = {
+  {0x1F, 0x1F, 0x00, 0x00, 0x00},  // Example character data
+  // More characters...
+};
+
+OLED oled(128, 64);
 
 void setup() {
-  display.begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS);
-  display.clearDisplay();
-  display.drawBitmap(0, 0, splash, 128, 64, SSD1306_WHITE); // Render the bitmap
-  display.display();
+  oled.setFont(myFont);  // Set the custom font
+  oled.print("Custom Font", 0, 0);  // Display with custom font
 }
 ```
 
-### Bitmap Generator
+### 3. **Printing Static Text**
 
-The **Bitmap Generator** is a Python script that converts an image to a format that can be used by the Arduino code. The Python script takes an image, converts it to black and white, and then generates a C array representation of the image that can be used directly in your Arduino code.
+Use the `print()` method to display static text at a given `(x, y)` coordinate.
 
-#### How to Use the Bitmap Generator
+#### Example: Printing Text
 
-You can use the **Bitmap Generator** either via the command line or by running the Python script directly within a Python interpreter.
+```cpp
+oled.print("Hello, OLED!", 0, 0);  // Prints "Hello, OLED!" at (0, 0)
+```
 
-##### Command Line Usage
+### 4. **Animated Text (Typewriter Effect)**
 
-1. **Install Python Dependencies**:
-   - Ensure that Python is installed on your system.
-   - Install the `Pillow` library for image processing:
-     ```bash
-     pip install pillow
-     ```
+Use the `printAnimated()` method for a typewriter effect, where text is displayed one character at a time.
 
-2. **Run the Bitmap Generator**:
-   You can run the bitmap generator via the command line as follows:
+#### Example: Animated Text
 
-   ```bash
-   python bitmap_generator.py <image_path> <output_file>
-   ```
+```cpp
+oled.printAnimated("Welcome!", 0, 0, 100);  // Print text with a 100 ms delay between characters
+```
 
-   Example:
-   ```bash
-   python bitmap_generator.py image.png splash.h
-   ```
+### 5. **Progress Bars**
 
-   Example:
-   ```bash
-   python bitmap_generator.py image.png splash.txt
-   ```
+You can display progress bars in multiple styles (1-10 for progress bars, 11-15 for loaders). The `progressBar()` method accepts the progress value (0-100) and a style number.
 
-   This command will generate a file `splash.h` or `splash.txt` containing the bitmap data, which you can then include in your Arduino project.
+#### Example: Progress Bar
 
-##### Python Interpreter Usage
+```cpp
+oled.progressBar(50, 0, 10, 1);  // Displays a 50% progress bar at (0, 10), style 1
+```
 
-Alternatively, you can run the Bitmap Generator file manually using a python interpreter like VS-Code. It works same as the command line usage. Enter the image file path and data file name, and the data will be generated and saved to the file.
+### 6. **Bitmap Rendering**
 
-This will generate a `splash.h` or any kind of file you provide containing the bitmap data for use in your Arduino sketch.
+The library includes the `draw()` method to display bitmaps on the OLED. You can convert images into bitmap arrays using the **Bitmap Generator** Python tool (explained below).
 
-#### Recommended usage
+#### Example: Displaying a Bitmap
 
-It is better to provide the data file as a `.h` file as you can create multiple of them for different images and include it on your project.
+```cpp
+const uint8_t myBitmap[] = {
+  // Your bitmap data here, generated by the Bitmap Generator
+};
 
-#### Example Output
+oled.draw(myBitmap, 0, 0, 16, 16);  // Draw a 16x16 bitmap at coordinates (0, 0)
+```
 
-The generated output will be a C array that can be directly used in your Arduino code. The array will look something like this:
+### 7. **Clearing the Screen**
+
+Use the `clearScr()` method to clear the screen.
+
+```cpp
+oled.clearScr();  // Clears the display
+```
+
+### 8. **Adjusting Brightness**
+
+Use the `setBrightness()` method to adjust the display’s brightness. It accepts a percentage value (0-100).
+
+```cpp
+oled.setBrightness(80);  // Set the brightness to 80%
+```
+
+### 9. **Custom OLED Setup**
+
+The `manualSetup()` method allows you to pass an array of settings to configure the OLED display manually.
+
+```cpp
+uint8_t customSettings[] = {
+  0xA8, 0x3F,  // Multiplex ratio
+  0xD3, 0x00,  // Display offset
+  // More settings...
+};
+
+oled.manualSetup(customSettings);  // Apply custom settings
+```
+
+### 10. **Turn Display Off on Clear**
+
+You can disable the display when you clear the screen using the `turnOffOnClr()` method.
+
+```cpp
+oled.turnOffOnClr(true);  // Turn off display when cleared
+```
+
+---
+
+## **Constants**
+
+### 1. **Display Settings Constants**:
+
+- **OLED_OFF**: `0xAE` – Turns the display off.
+- **OLED_ON**: `0xAF` – Turns the display on.
+- **DISP_CLOCK_DIV_RATIO**: `0xD5` – Set the display clock division ratio.
+- **MULTIPLEX**: `0xA8` – Set the multiplex ratio for the display.
+- **CHRG_PUMP**: `0x8D` – Charge pump command for OLEDs that require it.
+- **DISP_OFFSET**: `0xD3` – Display offset setting.
+- **MEM_ADDRESS_MODE**: `0x20` – Memory addressing mode.
+- **COM_CONFIG**: `0xDA` – Common pins configuration.
+- **CONTRAST**: `0x81` – Set the contrast level.
+- **PRE_CHRG**: `0xD9` – Pre-charge period configuration.
+- **VCOMH_DESEL**: `0xDB` – VCOMH deselect level.
+
+### 2. **Registry Commands**:
+
+- **CLK_RATIO_RST**: `0x80` – Clock ratio reset.
+- **MULTIPLEX_RATIO_RST**: `0x3F` – Multiplex ratio reset.
+- **OFFSET_NO**: `0x00` – No offset for display.
+- **HSCROLL_RIGHT**: `0x26` – Horizontal scroll right.
+- **HSCROLL_LEFT**: `0x27` – Horizontal scroll left.
+- **VHSCROLL_RIGHT**: `0x29` – Vertical horizontal scroll right.
+- **VHSCROLL_LEFT**: `0x2A` – Vertical horizontal scroll left.
+- **STOP_SCROLL**: `0x2E` – Stop scroll.
+- **START_SCROLL**: `0x2F` – Start scroll.
+- **START_LINE**: `0x40` – Set start line for display.
+- **CHRG_PUMP_75**: `0x14` – Charge pump setting at 75%.
+- **CHRG_PUMP_85**: `0x94` – Charge pump setting at 85%.
+- **CHRG_PUMP_90**: `0x95` – Charge pump setting at 90%.
+- **CHRG_PUMP_OFF**: `0x11` – Turn off charge pump.
+- **HORIZONTAL**: `0x00` – Horizontal address mode.
+- **VERTICAL**: `0x01` – Vertical address mode.
+- **PAGE**: `0x02` – Page addressing mode.
+- **SEG_REMAP_0**: `0xA0` – Segment remap for address 0.
+- **SEG_REMAP_127**: `0xA1` – Segment remap for address 127.
+- **COM_OUT_SCAN_NORMAL**: `0xC0` – Normal scan direction for COM
+
+ lines.
+- **COM_OUT_SCAN_REVERSE**: `0xC8` – Reverse scan direction for COM lines.
+
+---
+
+## **Bitmap Generator Tool**
+
+### Overview
+
+The **Bitmap Generator** tool helps you convert images to bitmaps that can be displayed on your SSD1306 OLED screen. This tool is written in **Python** and uses the **Pillow** library to process images.
+
+### Running the Bitmap Generator
+
+#### Command-Line Usage
+
+You can run the **Bitmap Generator** directly from the command line:
+
+```bash
+python image_to_bitmap.py <image_path> <output_file>
+```
+
+For example, to convert an image located at `images/logo.png` to a bitmap:
+
+```bash
+python image_to_bitmap.py images/logo.png output_logo.h
+```
+
+#### Python Script Usage
+
+You can also run the script interactively:
+
+```bash
+python image_to_bitmap.py
+```
+
+This will prompt you for the image path and the output file name:
+
+```
+Enter the path to the image: images/logo.png
+Enter the output file name: output_logo.h
+```
+
+The script will generate the bitmap data and save it in the output file.
+
+#### Script Details
+
+- **Image Format**: The script expects the image to be in `.png`, `.jpg`, or other common formats supported by **Pillow**.
+- **Threshold**: The `threshold` parameter (default `50`) controls how dark the pixels should be to be considered “on” for the OLED. You can adjust this value to get the desired result.
+
+### Example Bitmap Output
+
+The Python script will generate output in the following format:
 
 ```cpp
 const uint8_t PROGMEM splash[] = {
-  0b11111111, 0b11111111, 0b11111111, 0b11111111, ...
+  0b11111111, 0b00000000, 0b11111111, 0b00000000,  // Row 1
+  0b00000000, 0b11111111, 0b00000000, 0b11111111,  // Row 2
+  // More rows...
 };
 ```
 
-### Important Notes:
-- The Bitmap Generator converts the image to a **black and white** format.
-- The **threshold** parameter (default 50) can be adjusted to control the conversion of grayscale pixels to either black or white. A lower threshold will make more of the image black, while a higher threshold will make it more white.
+This array can then be used directly in your Arduino code to display the image.
 
-## Constants
+## **License**
 
-- **SSD1306_I2C_ADDRESS**: The I2C address of the SSD1306 display (commonly `0x3C` or `0x3D`).
-- **SSD1306_WHITE**: The color constant for white pixels.
-- **SSD1306_BLACK**: The color constant for black pixels.
-
-## Methods
-
-### Constructor
-
-```cpp
-SSD1306(uint8_t i2c_address, uint8_t sda_pin, uint8_t scl_pin);
-```
-- **i2c_address**: The I2C address of the SSD1306 display.
-- **sda_pin**: The SDA pin used for I2C communication.
-- **scl_pin**: The SCL pin used for I2C communication.
-
-### `begin()`
-
-```cpp
-void begin(uint8_t vcc, uint8_t address);
-```
-- **vcc**: Power supply setting (`SSD1306_SWITCHCAPVCC` or `SSD1306_EXTERNALVCC`).
-- **address**: The I2C address of the display.
-
-### `clearDisplay()`
-
-```cpp
-void clearDisplay();
-```
-Clears the display buffer.
-
-### `display()`
-
-```cpp
-void display();
-```
-Pushes the buffer content to the display.
-
-### `setCursor()`
-
-```cpp
-void setCursor(uint8_t x, uint8_t y);
-```
-- **x**: The horizontal position (0–127).
-- **y**: The vertical position (0–63).
-
-### `setTextSize()`
-
-```cpp
-void setTextSize(uint8_t size);
-```
-Sets the text size (1 is the smallest, 2 is double the size, etc.).
-
-### `setTextColor()`
-
-```cpp
-void setTextColor(uint8_t color);
-```
-- **color**: `SSD1306_WHITE` or `SSD1306_BLACK`.
-
-### `drawBitmap()`
-
-```cpp
-void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t w, uint8_t h, uint8_t color);
-```
-- **x**: The x-coordinate.
-- **y**: The y-coordinate.
-- **bitmap**: The pointer to the bitmap array.
-- **w**: The width of the bitmap.
-- **h**: The height of the bitmap.
-- **color**: `SSD1306_WHITE` or `SSD1306_BLACK`.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
+This library is licensed under the **MIT License**.
