@@ -365,7 +365,7 @@ void OLED::clearScr()
     if (clear == true)
         execute(OLED_OFF);
 
-    for (uint8_t page = 0; page < 8; page++)
+    for (uint8_t page = 0; page < HEIGHT / 8; page++)
     {
         Wire.beginTransmission(ADDR);
         Wire.write(0x00);
@@ -374,7 +374,7 @@ void OLED::clearScr()
         Wire.write(0x10);
         Wire.endTransmission();
 
-        for (uint8_t col = 0; col < 128; col++)
+        for (uint8_t col = 0; col < WIDTH; col++)
             sendData(0x00);
     }
     execute(OLED_ON);
@@ -387,9 +387,9 @@ void OLED::turnOffOnClr(bool mode)
 
 void OLED::getFont(char c)
 {
-    if (c == '\n' || 128 - charWidth < fontWidth)
+    if (c == '\n' || WIDTH - charWidth < fontWidth)
     {
-        for (uint8_t j = 0; j < 128 - charWidth; j++)
+        for (uint8_t j = 0; j < WIDTH - charWidth; j++)
         {
             sendData(0x00);
         }
@@ -512,7 +512,7 @@ void OLED::setPosition(uint8_t x, uint8_t y)
     execute(0);
     execute(WIDTH - 1);
     execute(SET_PG_ADDR);
-    execute(y < 8 ? y : 7);
+    execute(y < HEIGHT / 8 ? y : HEIGHT / 8 - 1);
     execute((HEIGHT / 8) - 1);
     offset(x);
 }
@@ -554,7 +554,7 @@ void OLED::draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uin
                 break;
         }
         vPos++;
-        if (vPos > 7)
+        if (vPos > (HEIGHT / 8) - 1)
             break;
         setPosition(x, vPos);
     }
