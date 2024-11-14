@@ -24,6 +24,7 @@ def image_to_bitmap(image_path, threshold=50):
                     row.append(",")
                     c = 0
                 elif c == width and c % 8 == 0:
+                    row.append(",")
                     c = 0
                 elif c % 8 == 0:
                     row.append(", 0b")
@@ -45,4 +46,12 @@ if __name__ == "__main__":
     with open(output_file, "w") as file:
         file.write("\n".join(bitmap))
 
-    print(f"Bitmap written to {output_file}")
+    print(
+        f"Bitmap written to {output_file}. Do you want to print it here?\nPress [Y] to print."
+    )
+    if len(sys.argv) == 2:
+        if sys.argv[1] == "Y".lower():
+            print("\n".join(bitmap))
+    else:
+        if input() == "Y".lower():
+            print("\n".join(bitmap))
