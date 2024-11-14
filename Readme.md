@@ -1,7 +1,3 @@
-Sure! I'll include all the constants and provide detailed examples for the functions in your library. Here's the updated `README.md` with the full list of constants and more function usage examples:
-
----
-
 # **SSD1306 OLED Display Library**
 
 A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. It supports various features such as custom fonts, progress bars, animated text, bitmap rendering, and more. This library works seamlessly with microcontrollers like **Arduino** and **ESP32** over **I2C** communication.
