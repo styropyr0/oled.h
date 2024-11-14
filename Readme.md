@@ -1,6 +1,3 @@
-Got it! Here's the complete `README.md` in Markdown format, with the appropriate information about the **Bitmap Generator** and how to use it, without showing the code.
-
-```markdown
 # SSD1306 Display Library for Arduino
 
 This repository contains a custom library for controlling an **SSD1306 OLED display** with an Arduino. It supports text rendering, bitmap images, and various other display functionalities. Additionally, a **bitmap generator** is included to convert images into displayable bitmap format, which can be used in your Arduino code for rendering images on the screen.
