@@ -204,9 +204,7 @@ oled.turnOffOnClr(true);  // Turn off display when cleared
 - **PAGE**: `0x02` – Page addressing mode.
 - **SEG_REMAP_0**: `0xA0` – Segment remap for address 0.
 - **SEG_REMAP_127**: `0xA1` – Segment remap for address 127.
-- **COM_OUT_SCAN_NORMAL**: `0xC0` – Normal scan direction for COM
-
- lines.
+- **COM_OUT_SCAN_NORMAL**: `0xC0` – Normal scan direction for COM lines.
 - **COM_OUT_SCAN_REVERSE**: `0xC8` – Reverse scan direction for COM lines.
 
 ---
