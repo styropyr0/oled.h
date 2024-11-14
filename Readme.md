@@ -1,223 +1,236 @@
-# SSD1306 OLED Display Library
+# SSD1306 Display Library for Arduino
 
-## Description
-
-This project provides an easy-to-use Arduino library for controlling OLED displays with the SSD1306 driver. It supports various features such as custom fonts, animations, progress bars, and more. The library is designed to work with a range of OLED screens, offering flexibility in usage, especially for 128x64 or 128x32 pixel displays. You can display strings, images, progress bars, and even adjust screen brightness, making it ideal for various embedded applications.
-
----
+This repository contains a custom library for controlling an **SSD1306 OLED display** with an Arduino. It supports bitmap images, text, and various other display functionalities. Additionally, a **bitmap generator** is included to convert images into displayable bitmap format, which can be used in the Arduino code for rendering images on the screen.
 
 ## Features
 
-- Custom font support (can define custom fonts and languages)
-- Animated text with a typewriter effect
-- Multiple progress bar styles (including loader variants)
-- Brightness control (adjust OLED pixel brightness)
-- Image drawing support (for custom bitmaps)
-- Screen clear with options to control the display mode (on/off)
-- Flexible setup for custom configurations
+- Control SSD1306 OLED displays via I2C.
+- Support for text and bitmap rendering.
+- Bitmap image generator for converting images into displayable formats.
+- Easy-to-use functions for drawing pixels, lines, and text.
 
----
+## Table of Contents
 
-## Enums
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Basic Setup](#basic-setup)
+  - [Text Rendering](#text-rendering)
+  - [Bitmap Rendering](#bitmap-rendering)
+  - [Bitmap Generator](#bitmap-generator)
+- [Constants](#constants)
+- [Methods](#methods)
+  - [Constructor](#constructor)
+  - [Methods for Displaying Content](#methods-for-displaying-content)
+- [License](#license)
 
-### `dimensions`
+## Installation
 
-These enums define the width and height for different OLED screen configurations.
+1. Clone or download this repository to your local machine.
+2. Open Arduino IDE.
+3. Go to **Sketch > Include Library > Add .ZIP Library...**.
+4. Select the ZIP file you downloaded and click **Open**.
 
-```cpp
-enum dimensions
-{
-    WIDTH_128 = 0x80,  // Width 128 pixels
-    WIDTH_64 = 0x40,   // Width 64 pixels
-    HEIGHT_64 = 0x40,  // Height 64 pixels
-    HEIGHT_32 = 0x20   // Height 32 pixels
-};
-```
-
-### `registryAddress`
-
-These enums define the various register addresses used for controlling the OLED display.
+Now you can include the library in your Arduino projects.
 
 ```cpp
-enum registryAddress
-{
-    OLED_OFF = 0xAE,
-    OLED_ON = 0xAF,
-    DISP_CLOCK_DIV_RATIO = 0xD5,
-    MULTIPLEX = 0xA8,
-    CHRG_PUMP = 0x8D,
-    DISP_OFFSET = 0xD3,
-    MEM_ADDRESS_MODE = 0x20,
-    COM_CONFIG = 0xDA,
-    CONTRAST = 0x81,
-    PRE_CHRG = 0xD9,
-    VCOMH_DESEL = 0xDB,
-    TURN_ON_ALL_PIXELS = 0xA4,
-    SET_DISP_NORMAL = 0xA6,
-    SET_COL_ADDR = 0x21,
-    SET_PG_ADDR = 0x22
-};
-```
+#include <SSD1306.h>
+Usage
+Basic Setup
+To get started, initialize the SSD1306 display in your Arduino code.
 
-### `registryCommands`
-
-These enums define specific commands that can be sent to the SSD1306 OLED display to configure various settings.
-
-```cpp
-enum registryCommands
-{
-    CLK_RATIO_RST = 0x80,
-    MULTIPLEX_RATIO_RST = 0x3F,
-    OFFSET_NO = 0x00,
-    HSCROLL_RIGHT = 0x26,
-    HSCROLL_LEFT = 0x27,
-    VHSCROLL_RIGHT = 0x29,
-    VHSCROLL_LEFT = 0x2A,
-    STOP_SCROLL = 0x2E,
-    START_SCROLL = 0x2F,
-    START_LINE = 0x40,
-    CHRG_PUMP_75 = 0x14,
-    CHRG_PUMP_85 = 0x94,
-    CHRG_PUMP_90 = 0x95,
-    CHRG_PUMP_OFF = 0x11,
-    HORIZONTAL = 0x00,
-    VERTICAL = 0x01,
-    PAGE = 0x02,
-    SEG_REMAP_0 = 0xA0,
-    SEG_REMAP_127 = 0xA1,
-    COM_OUT_SCAN_NORMAL = 0xC0,
-    COM_OUT_SCAN_REMAP = 0xC8,
-    COM_ALT = 0x12,
-    CONTRAST_RST = 0x7F,
-    CONTRAST_MAX = 0xFF,
-    PRE_CHRG_RST = 0x22,
-    VCOMH_65 = 0x00,
-    VCOMH_71 = 0x10,
-    VCOMH_77 = 0x20,
-    VCOMH_83 = 0x30,
-    ZERO = 0x00
-};
-```
-
----
-
-## Class: `OLED`
-
-The `OLED` class provides all the functions needed to control the SSD1306 OLED display.
-
-### Constructor
-
-```cpp
-OLED(uint8_t width, uint8_t height);
-```
-
-- **width**: Width of the display (usually 128).
-- **height**: Height of the display (usually 64 or 32).
-
-### Methods
-
-- **`void setFont(const uint8_t (*fontArray)[5])`**  
-  Sets a custom font for the characters. `fontArray` is a 2D array representing the custom font.
-
-- **`void clearCustomFont()`**  
-  Resets to the default font.
-
-- **`void print(char *string, uint8_t x, uint8_t y)`**  
-  Prints a string at the specified coordinates (x, y).
-
-- **`void printAnimated(char *string, uint8_t x, uint8_t y, int delay)`**  
-  Prints a string with a typewriter animation effect at the specified coordinates. You can set the delay between characters.
-
-- **`void print_c(char *string, uint8_t x, uint8_t y)`**  
-  Clears the screen before printing the string.
-
-- **`void manualSetup(uint8_t *dataSet)`**  
-  Allows custom manual setup for the display.
-
-- **`void clearScr()`**  
-  Clears the screen.
-
-- **`char *convertString(String string)`**  
-  Converts a `String` object to a dynamic `char*` array.
-
-- **`void progressBar(uint8_t progress, uint8_t x, uint8_t y, int style)`**  
-  Displays a progress bar at the specified coordinates.  
-  **Note**: Styles 1-10 are progress bars, and styles 11-15 are loading animations.
-
-- **`void turnOffOnClr(bool mode)`**  
-  Turns the display off when clearing the screen if `mode` is true.
-
-- **`void setBrightness(uint8_t brightness)`**  
-  Sets the display brightness as a percentage (0-100).
-
-- **`void draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height)`**  
-  Draws a bitmap image at the specified coordinates with the given width and height.
-
----
-
-## Progress Bar Variants
-
-The `progressBar` method supports different variants, including both standard progress bars and loading animations. You can choose from the following styles:
-
-- **Styles 1-10**: Progress bars that display the completion of a task.
-- **Styles 11-15**: Loading animations to show a task is in progress.
-
-Each style has its own unique appearance, and you can customize the `progress` parameter (0-100) to show the completion percentage.
-
----
-
-## Example Usage
-
-### Basic Example
-
-```cpp
-#include <Wire.h>
+cpp
+Copy code
 #include <SSD1306.h>
 
-OLED oled(128, 64);  // Create an OLED object with a 128x64 display
+// Define the display object
+SSD1306 display(SSD1306_I2C_ADDRESS, SDA_PIN, SCL_PIN); // Modify pins as per your setup
 
 void setup() {
-    Wire.begin();
-    oled.manualSetup();  // Initialize the display
-
-    oled.print("Hello, World!", 0, 0);  // Print a string at (0, 0)
-    oled.setBrightness(80);  // Set brightness to 80%
+  display.begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS);
+  display.clearDisplay();
+  display.display();
 }
 
 void loop() {
-    // Your loop code here
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.print("Hello, SSD1306!");
+  display.display();
+  delay(1000);
 }
-```
+Text Rendering
+To render text, you can use the setTextSize(), setTextColor(), and setCursor() methods.
 
-### Animated Text Example
+cpp
+Copy code
+display.setTextSize(2);          // Set text size (1, 2, 3, ...)
+display.setTextColor(SSD1306_WHITE);  // Set text color (WHITE or BLACK)
+display.setCursor(10, 10);      // Set cursor position
+display.print("Hello World!");
+display.display();               // Display the content on the screen
+Bitmap Rendering
+You can render bitmap images using the drawBitmap() method. The image should be generated using the Bitmap Generator tool described below.
 
-```cpp
-oled.printAnimated("Loading...", 0, 10, 200);  // Print "Loading..." with typewriter effect
-```
+cpp
+Copy code
+#include "bitmap.h"  // Include the header where the bitmap is stored
 
-### Progress Bar Example
-
-```cpp
-void loop() {
-    for (int i = 0; i <= 100; i++) {
-        oled.progressBar(i, 10, 30, 1);  // Show progress bar with style 1
-        delay(50);  // Delay to simulate progress
-    }
+void setup() {
+  display.begin(SSD1306_SWITCHCAPVCC, SSD1306_I2C_ADDRESS);
+  display.clearDisplay();
+  display.drawBitmap(0, 0, splash, 128, 64, SSD1306_WHITE); // Render the bitmap
+  display.display();
 }
-```
+Bitmap Generator
+The Bitmap Generator is a Python script that converts an image to a format that can be used by the Arduino code. The Python script takes an image, converts it to black and white, and then generates a C array representation of the image that can be used directly in your Arduino code.
 
-### Custom Bitmap Example
+How to use the Bitmap Generator (Python)
+Install dependencies:
 
-```cpp
-const uint8_t logo[] = {
-    // Your bitmap data here (1 byte = 8 pixels)
+Make sure Python is installed on your system.
+Install the Pillow library for image processing:
+bash
+Copy code
+pip install pillow
+Run the Bitmap Generator: You can use the bitmap generator via the command line or by running the Python script directly.
+
+Command Line Usage:
+
+bash
+Copy code
+python bitmap_generator.py <image_path> <output_file>
+Example:
+
+bash
+Copy code
+python bitmap_generator.py image.png splash.h
+This will generate a file splash.h containing the bitmap data.
+
+Python Interpreter: Alternatively, you can run the script within a Python interpreter:
+
+python
+Copy code
+>>> from bitmap_generator import image_to_bitmap
+>>> bitmap = image_to_bitmap('image.png', threshold=50)
+>>> with open('splash.h', 'w') as f:
+>>>     f.write("\n".join(bitmap))
+This will save the bitmap data to splash.h, which you can include in your Arduino project.
+
+Example Output:
+The generated output will be a C array that can be directly used in your Arduino sketch:
+
+cpp
+Copy code
+const uint8_t PROGMEM splash[] = {
+  0b11111111, 0b11111111, 0b11111111, 0b11111111, ...
 };
+Bitmap Generator Code:
+python
+Copy code
+import sys
+from PIL import Image
 
-oled.draw(logo, 0, 0, 32, 32);  // Draw the bitmap at position (0, 0) with size 32x32
-```
+def image_to_bitmap(image_path, threshold=50):
+    image = Image.open(image_path)
+    grayscale_image = image.convert("L")
+    bw_image = grayscale_image.point(lambda x: 0 if x < threshold else 1, "1")
+    width, height = bw_image.size
+    bitmap_array = []
+    bitmap_array.append("const uint8_t PROGMEM splash[] = {")
+    c = 0
+    for y in range(height):
+        row = []
+        row.append("0b")
+        for x in range(width):
+            c += 1
+            pixel = bw_image.getpixel((x, y))
+            row.append(str(pixel))
+            if x > 0:
+                if c == width and c % 8 != 0:
+                    for p in range(((8 - (width % 8)) + width) - c):
+                        row.append("0")
+                    row.append(",")
+                    c = 0
+                elif c == width and c % 8 == 0:
+                    c = 0
+                elif c % 8 == 0:
+                    row.append(", 0b")
+        bitmap_array.append("".join(row))
+    bitmap_array.append("};")
+    return bitmap_array
 
----
+if __name__ == "__main__":
+    print("SSD1306 BITMAP GENERATOR\nDeveloped by: Saurav Sajeev\n")
+    if len(sys.argv) == 3:
+        image_path = sys.argv[1]
+        output_file = sys.argv[2]
+    else:
+        image_path = input("Enter the path to the image: ")
+        output_file = input("Enter the output file name: ")
 
-## License
+    bitmap = image_to_bitmap(image_path)
+    with open(output_file, "w") as file:
+        file.write("\n".join(bitmap))
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+    print(f"Bitmap written to {output_file}")
+Constants
+SSD1306_I2C_ADDRESS: The I2C address of the SSD1306 display (commonly 0x3C or 0x3D).
+SSD1306_WHITE: The color constant for white pixels.
+SSD1306_BLACK: The color constant for black pixels.
+Methods
+Constructor
+cpp
+Copy code
+SSD1306(uint8_t i2c_address, uint8_t sda_pin, uint8_t scl_pin);
+i2c_address: The I2C address of the SSD1306 display.
+sda_pin: The SDA pin used for I2C communication.
+scl_pin: The SCL pin used for I2C communication.
+begin()
+cpp
+Copy code
+void begin(uint8_t vcc, uint8_t address);
+vcc: Power supply setting (SSD1306_SWITCHCAPVCC or SSD1306_EXTERNALVCC).
+address: The I2C address of the display.
+clearDisplay()
+cpp
+Copy code
+void clearDisplay();
+Clears the display buffer.
+
+display()
+cpp
+Copy code
+void display();
+Pushes the buffer content to the display.
+
+setCursor()
+cpp
+Copy code
+void setCursor(uint8_t x, uint8_t y);
+x: The horizontal position (0–127).
+y: The vertical position (0–63).
+setTextSize()
+cpp
+Copy code
+void setTextSize(uint8_t size);
+Sets the text size (1 is the smallest, 2 is double the size, etc.).
+
+setTextColor()
+cpp
+Copy code
+void setTextColor(uint8_t color);
+color: SSD1306_WHITE or SSD1306_BLACK.
+drawBitmap()
+cpp
+Copy code
+void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t w, uint8_t h, uint8_t color);
+x: The x-coordinate.
+y: The y-coordinate.
+bitmap: The pointer to the bitmap array.
+w: The width of the bitmap.
+h: The height of the bitmap.
+color: SSD1306_WHITE or SSD1306_BLACK.
+License
+This project is licensed under the MIT License - see the LICENSE file for details.
