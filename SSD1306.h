@@ -39,6 +39,9 @@ enum registryAddress
 enum registryCommands
 {
     CLK_RATIO_RST = 0x80,
+    CLK_RATIO_HIGH = 0xF0,
+    CLK_RATIO_MED = 0x91,
+    CLK_RATIO_LOW = 0x80,
     MULTIPLEX_RATIO_RST = 0x3F,
     OFFSET_NO = 0x00,
     HSCROLL_RIGHT = 0x26,
@@ -48,10 +51,10 @@ enum registryCommands
     STOP_SCROLL = 0x2E,
     START_SCROLL = 0x2F,
     START_LINE = 0x40,
-    CHRG_PUMP_75 = 0x14,
-    CHRG_PUMP_85 = 0x94,
-    CHRG_PUMP_90 = 0x95,
-    CHRG_PUMP_OFF = 0x11,
+    CHRG_PUMP_75 = 0x24,
+    CHRG_PUMP_85 = 0x27,
+    CHRG_PUMP_90 = 0x4F,
+    CHRG_PUMP_OFF = 0x10,
     HORIZONTAL = 0x00,
     VERTICAL = 0x01,
     PAGE = 0x02,
@@ -63,11 +66,19 @@ enum registryCommands
     CONTRAST_RST = 0x7F,
     CONTRAST_MAX = 0xFF,
     PRE_CHRG_RST = 0x22,
+    PRE_CHRG_MAX = 0xFF,
     VCOMH_65 = 0x00,
     VCOMH_71 = 0x10,
     VCOMH_77 = 0x20,
     VCOMH_83 = 0x30,
     ZERO = 0x00
+};
+
+enum powerModes
+{
+    LOW_POWER_MODE = 0x01,
+    BALANCED_MODE = 0x02,
+    PERFORMANCE_MODE = 0x03
 };
 
 class OLED
@@ -153,6 +164,11 @@ public:
      * @param height Height of the bitmap.
      */
     void draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height);
+    /**
+     * @brief Sets the power mode. There are three available power modes.
+     * @param mode The power mode. Use enum values for power mode - (LOW_POWER_MODE or BALANCED_MODE or PERFORMANCE_MODE).
+     */
+    void setPowerMode(uint8_t mode);
 
 private:
     uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0, fontWidth = 5;
@@ -164,7 +180,9 @@ private:
     void sendData(uint8_t data);
     void setPosition(uint8_t x, uint8_t y);
     void offset(uint8_t dist);
-    void drawPixel(uint8_t x, uint8_t y);
+    void lowPowerMode(void);
+    void balancedPowerMode(void);
+    void performancePowerMode(void);
 };
 
 #endif

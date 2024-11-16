@@ -255,7 +255,7 @@ void OLED::autoSetup()
         {
             OLED_OFF, DISP_CLOCK_DIV_RATIO,
             CLK_RATIO_RST, MULTIPLEX,
-            MULTIPLEX_RATIO_RST, DISP_OFFSET,
+            HEIGHT - 1, DISP_OFFSET,
             OFFSET_NO, START_LINE, CHRG_PUMP,
             CHRG_PUMP_75, MEM_ADDRESS_MODE,
             HORIZONTAL, SEG_REMAP_127,
@@ -558,4 +558,50 @@ void OLED::draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uin
             break;
         setPosition(x, vPos);
     }
+}
+
+void OLED::setPowerMode(uint8_t mode)
+{
+    switch (mode)
+    {
+    case PERFORMANCE_MODE:
+        performancePowerMode();
+        break;
+    case BALANCED_MODE:
+        balancedPowerMode();
+        break;
+    case LOW_POWER_MODE:
+        lowPowerMode();
+        break;
+    }
+}
+
+void OLED::performancePowerMode()
+{
+    execute(CHRG_PUMP);
+    execute(CHRG_PUMP_75);
+    execute(PRE_CHRG);
+    execute(PRE_CHRG_MAX);
+    execute(VCOMH_DESEL);
+    execute(VCOMH_83);
+}
+
+void OLED::balancedPowerMode()
+{
+    execute(CHRG_PUMP);
+    execute(CHRG_PUMP_75);
+    execute(PRE_CHRG);
+    execute(0xF1);
+    execute(VCOMH_DESEL);
+    execute(VCOMH_77);
+}
+
+void OLED::lowPowerMode()
+{
+    execute(CHRG_PUMP);
+    execute(CHRG_PUMP_85);
+    execute(PRE_CHRG);
+    execute(PRE_CHRG_RST);
+    execute(VCOMH_DESEL);
+    execute(VCOMH_65);
 }
