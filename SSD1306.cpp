@@ -562,22 +562,28 @@ void OLED::draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uin
 
 void OLED::setPowerMode(uint8_t mode)
 {
-    switch (mode)
+    if (mode > 0x00 && mode < 0x04)
     {
-    case PERFORMANCE_MODE:
-        performancePowerMode();
-        break;
-    case BALANCED_MODE:
-        balancedPowerMode();
-        break;
-    case LOW_POWER_MODE:
-        lowPowerMode();
-        break;
+        currentPowerMode = mode;
+        switch (mode)
+        {
+        case PERFORMANCE_MODE:
+            performancePowerMode();
+            break;
+        case BALANCED_MODE:
+            balancedPowerMode();
+            break;
+        case LOW_POWER_MODE:
+            lowPowerMode();
+            break;
+        }
     }
 }
 
 void OLED::performancePowerMode()
 {
+    execute(DISP_CLOCK_DIV_RATIO);
+    execute(CLK_RATIO_HIGH);
     execute(CHRG_PUMP);
     execute(CHRG_PUMP_75);
     execute(PRE_CHRG);
@@ -588,6 +594,8 @@ void OLED::performancePowerMode()
 
 void OLED::balancedPowerMode()
 {
+    execute(DISP_CLOCK_DIV_RATIO);
+    execute(CLK_RATIO_MED);
     execute(CHRG_PUMP);
     execute(CHRG_PUMP_75);
     execute(PRE_CHRG);
@@ -598,10 +606,54 @@ void OLED::balancedPowerMode()
 
 void OLED::lowPowerMode()
 {
+    execute(DISP_CLOCK_DIV_RATIO);
+    execute(CLK_RATIO_LOW);
     execute(CHRG_PUMP);
     execute(CHRG_PUMP_85);
     execute(PRE_CHRG);
     execute(PRE_CHRG_RST);
     execute(VCOMH_DESEL);
     execute(VCOMH_65);
+}
+
+void OLED::superBrightness(bool mode)
+{
+    if (mode)
+    {
+        setBrightness(100);
+        execute(DISP_CLOCK_DIV_RATIO);
+        execute(0xF4);
+        execute(CHRG_PUMP);
+        execute(CHRG_PUMP_75);
+        execute(PRE_CHRG);
+        execute(PRE_CHRG_MAX);
+        execute(VCOMH_DESEL);
+        execute(VCOMH_83);
+    }
+    else
+        setPowerMode(currentPowerMode);
+}
+
+void OLED::invertDisplay()
+{
+    if (!invert)
+    {
+        execute(INVERT);
+        invert = 1;
+    }
+    else
+    {
+        execute(REVERT);
+        invert = 0;
+    }
+}
+
+void OLED::entireDisplayON()
+{
+    execute(ENTIRE_DISP_ON);
+}
+
+void OLED::entireDisplayOFF()
+{
+    execute(RESUME_FROM_VRAM);
 }

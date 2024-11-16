@@ -21,6 +21,10 @@ enum registryAddress
 {
     OLED_OFF = 0xAE,
     OLED_ON = 0xAF,
+    INVERT = 0xA7,
+    REVERT = 0xA6,
+    ENTIRE_DISP_ON = 0xA5,
+    RESUME_FROM_VRAM = 0xA4,
     DISP_CLOCK_DIV_RATIO = 0xD5,
     MULTIPLEX = 0xA8,
     CHRG_PUMP = 0x8D,
@@ -39,9 +43,9 @@ enum registryAddress
 enum registryCommands
 {
     CLK_RATIO_RST = 0x80,
-    CLK_RATIO_HIGH = 0xF0,
-    CLK_RATIO_MED = 0x91,
-    CLK_RATIO_LOW = 0x80,
+    CLK_RATIO_HIGH = 0x80,
+    CLK_RATIO_MED = 0xB0,
+    CLK_RATIO_LOW = 0xF0,
     MULTIPLEX_RATIO_RST = 0x3F,
     OFFSET_NO = 0x00,
     HSCROLL_RIGHT = 0x26,
@@ -169,9 +173,20 @@ public:
      * @param mode The power mode. Use enum values for power mode - (LOW_POWER_MODE or BALANCED_MODE or PERFORMANCE_MODE).
      */
     void setPowerMode(uint8_t mode);
+    /**
+     * @brief Turns super brightness ON or OFF. Super brightness may be unstable.
+     * @param mode True or false to turn it ON or OFF.
+     */
+    void superBrightness(bool mode);
+    /**
+     * @brief Inverts the display pixels.
+     */
+    void invertDisplay();
+    void entireDisplayON();
+    void entireDisplayOFF();
 
 private:
-    uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0, fontWidth = 5;
+    uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0;
     const uint8_t (*fontSet)[5];
     bool IS_SETUP = false, clear = false;
     void autoSetup();
