@@ -4,6 +4,8 @@ A lightweight and versatile library to control SSD1306-based OLED displays with 
 
 Additionally, the library includes a **Bitmap Generator** tool in Python, which helps convert images to bitmap arrays for easy display on the OLED screen.
 
+Please note that SSD1306 has 128 independently controllable **Columns** along the width, and 8 independently controllable **Pages** along the height. The total pixel count along the height is divided into **Pages** of 8 pixels high. In scenarios such as printing texts, bitmaps, progress bars, you should keep this in mind.
+
 ## **Features**
 - **Text Display**: Print static text and animated text (typewriter effect).
 - **Custom Fonts**: Supports custom fonts and character sets.
