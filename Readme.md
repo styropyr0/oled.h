@@ -1,6 +1,6 @@
 # **SSD1306 OLED Display Library**
 
-A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. This library offers a range of features including custom fonts, progress bars, animated text, bitmap rendering, and more. It works seamlessly with microcontrollers like **Arduino**, **ESP32**, and **ESP8266** over **I2C** communication.
+A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. This library offers a wide range of features including custom fonts, progress bars, animated text, bitmap rendering, and more. It works seamlessly with microcontrollers like **Arduino**, **ESP32**, and **ESP8266** over **I2C** communication.
 
 Additionally, the library includes a **Bitmap Generator** tool in Python, which helps convert images to bitmap arrays for easy display on the OLED screen.
 
@@ -13,6 +13,10 @@ Additionally, the library includes a **Bitmap Generator** tool in Python, which 
 - **I2C Communication**: Built on I2C communication for simple wiring.
 - **Custom Preferences**: Customize OLED display setup with a set of options.
 - **Operator Overloading**: Use simple operators to display text and bitmaps.
+- **Power Modes**: Control the display power for optimized performance.
+- **Super Brightness**: Turn super brightness on or off (may be unstable).
+- **Display Inversion**: Invert or restore the display colors.
+- **Geometric Shapes**: Draw rectangles, circles, and lines on the display.
 
 ## **Installation**
 
@@ -56,6 +60,7 @@ OLED oled(128, 64);
 void setup() {
   oled.clearScr();  // Clear the screen
   oled.print("Hello, World!", 0, 0);  // Print text at (0, 0)
+  oled << "This method also prints!" << 0 << 3;   // Print text at (0, 3)
 }
 
 void loop() {
@@ -182,6 +187,71 @@ You can disable the display when you clear the screen using the `turnOffOnClr()`
 oled.turnOffOnClr(true);  // Turn off display when cleared
 ```
 
+### 12. **Power Modes**
+
+The display can operate in different power modes. Choose between low power, balanced, or performance mode to optimize energy consumption or display quality.
+
+#### Example: Setting Power Mode
+
+```cpp
+oled.setPowerMode(LOW_POWER_MODE);  // Set the display to low power mode
+```
+
+### 13. **Super Brightness**
+
+Enable or disable super brightness for high-intensity display, though note it may cause instability.
+
+#### Example: Super Brightness
+
+```cpp
+oled.superBrightness(true);  // Turn on super brightness
+```
+
+### 14. **Inverting the Display**
+
+Invert the pixels on the display to change all white pixels to black and vice versa.
+
+#### Example: Inverting Display
+
+```cpp
+oled.invertDisplay();  // Invert the display colors
+```
+
+### 15. **Entire Display ON/OFF**
+
+You can turn the entire display on or off.
+
+#### Example: Entire Display ON/OFF
+
+```cpp
+oled.entireDisplayON();  // Turn all pixels on
+oled.entireDisplayOFF();  // Revert back to the content
+```
+
+### 16. **Drawing Geometric Shapes**
+
+You can draw shapes such as rectangles, circles, and lines on the OLED display.
+
+#### Example: Drawing a Rectangle
+
+```cpp
+oled.rectangle(10, 10, 50, 30, 5);  // Draw a rectangle at (10, 10) with width 50, height 30, and 5px corner radius
+```
+
+#### Example: Drawing a Circle
+
+```cpp
+oled.circle(64, 32, 20);  // Draw a circle at (64, 32) with radius 20
+```
+
+#### Example: Drawing a Line
+
+```cpp
+oled.line(0, 0, 127, 63);  // Draw a line from (0, 
+
+0) to (127, 63)
+```
+
 ---
 
 ## **Constants**
@@ -199,32 +269,6 @@ oled.turnOffOnClr(true);  // Turn off display when cleared
 - **CONTRAST**: `0x81` – Set the contrast level.
 - **PRE_CHRG**: `0xD9` – Pre-charge period configuration.
 - **VCOMH_DESEL**: `0xDB` – VCOMH deselect level.
-
-### 2. **Registry Commands**:
-
-- **CLK_RATIO_RST**: `0x80` – Clock ratio reset.
-- **MULTIPLEX_RATIO_RST**: `0x3F` – Multiplex ratio reset.
-- **OFFSET_NO**: `0x00` – No offset for display.
-- **HSCROLL_RIGHT**: `0x26` – Horizontal scroll right.
-- **HSCROLL_LEFT**: `0x27` – Horizontal scroll left.
-- **VHSCROLL_RIGHT**: `0x29` – Vertical horizontal scroll right.
-- **VHSCROLL_LEFT**: `0x2A` – Vertical horizontal scroll left.
-- **STOP_SCROLL**: `0x2E` – Stop scroll.
-- **START_SCROLL**: `0x2F` – Start scroll.
-- **START_LINE**: `0x40` – Set start line for display.
-- **CHRG_PUMP_75**: `0x14` – Charge pump setting at 75%.
-- **CHRG_PUMP_85**: `0x94` – Charge pump setting
-
- at 85%.
-- **CHRG_PUMP_90**: `0x95` – Charge pump setting at 90%.
-- **CHRG_PUMP_OFF**: `0x11` – Turn off charge pump.
-- **HORIZONTAL**: `0x00` – Horizontal address mode.
-- **VERTICAL**: `0x01` – Vertical address mode.
-- **PAGE**: `0x02` – Page addressing mode.
-- **SEG_REMAP_0**: `0xA0` – Segment remap for address 0.
-- **SEG_REMAP_127**: `0xA1` – Segment remap for address 127.
-- **COM_OUT_SCAN_NORMAL**: `0xC0` – Normal scan direction for COM lines.
-- **COM_OUT_SCAN_REVERSE**: `0xC8` – Reverse scan direction for COM lines.
 
 ---
 
@@ -289,3 +333,4 @@ This array can then be used directly in your Arduino code to display the image.
 ## **License**
 
 This library is licensed under the **MIT License**.
+
