@@ -249,28 +249,119 @@ oled.circle(64, 32, 20);  // Draw a circle at (64, 32) with radius 20
 #### Example: Drawing a Line
 
 ```cpp
-oled.line(0, 0, 127, 63);  // Draw a line from (0, 
-
-0) to (127, 63)
+oled.line(0, 0, 127, 63);  // Draw a line from (0, 0) to (127, 63)
 ```
 
 ---
 
 ## **Constants**
 
-### 1. **Display Settings Constants**:
+Here are the constants you can use to configure various settings for your SSD1306 OLED display.
+
+### 1. **Display Settings Constants**
+
+These constants represent important display control values.
 
 - **OLED_OFF**: `0xAE` – Turns the display off.
 - **OLED_ON**: `0xAF` – Turns the display on.
-- **DISP_CLOCK_DIV_RATIO**: `0xD5` – Set the display clock division ratio.
-- **MULTIPLEX**: `0xA8` – Set the multiplex ratio for the display.
-- **CHRG_PUMP**: `0x8D` – Charge pump command for OLEDs that require it.
-- **DISP_OFFSET**: `0xD3` – Display offset setting.
-- **MEM_ADDRESS_MODE**: `0x20` – Memory addressing mode.
-- **COM_CONFIG**: `0xDA` – Common pins configuration.
-- **CONTRAST**: `0x81` – Set the contrast level.
-- **PRE_CHRG**: `0xD9` – Pre-charge period configuration.
+- **INVERT**: `0xA7` – Inverts the display pixels.
+- **REVERT**: `0xA6` – Reverts the display pixels.
+- **ENTIRE_DISP_ON**: `0xA5` – Turns on all the pixels.
+- **RESUME_FROM_VRAM**: `0xA4` – Resumes from VRAM.
+
+### 2. **Display Power Mode Constants**
+
+These constants represent the different power modes for the OLED display.
+
+- **LOW_POWER_MODE**: `0x00` – Low power mode.
+- **BALANCED_MODE**: `0x01` – Balanced mode.
+- **PERFORMANCE_MODE**: `0x02` – Performance mode.
+
+### 3. **Geometry Constants**
+
+These constants define the geometry of the display.
+
+- **WIDTH_128**: `0x80` – Display width of 128 pixels.
+- **HEIGHT_64**: `0x40` – Display height of 64 pixels.
+
+### 4. **Bitmap Mode Constants**
+
+Use these constants to control the bitmap rendering.
+
+- **HORIZONTAL**: `0x00` – Horizontal memory addressing mode.
+- **VERTICAL**: `0x01` – Vertical memory addressing mode.
+- **PAGE**: `0x02` – Page addressing mode.
+
+### 5. **Special Commands Constants**
+
+- **CHRG_PUMP**: `0x8D` – Charge pump control command.
+- **CONTRAST**: `0x81` – Set the display contrast.
+- **PRE_CHRG**: `0xD9` – Pre-charge period control.
 - **VCOMH_DESEL**: `0xDB` – VCOMH deselect level.
+
+---
+
+## **New Functions**
+
+Here are some of the new features added to this library:
+
+1. **setPowerMode()**  
+   Sets the power mode. You can choose from **LOW_POWER_MODE**, **BALANCED_MODE**, or **PERFORMANCE_MODE**.
+
+   ```cpp
+   oled.setPowerMode(PERFORMANCE_MODE);
+   ```
+
+2. **superBrightness()**  
+  
+
+ Turns super brightness ON or OFF (may cause instability).
+
+   ```cpp
+   oled.superBrightness(true);  // Enable super brightness
+   ```
+
+3. **invertDisplay()**  
+   Inverts the pixels of the display.
+
+   ```cpp
+   oled.invertDisplay();
+   ```
+
+4. **entireDisplayON()**  
+   Turns on all pixels of the display.
+
+   ```cpp
+   oled.entireDisplayON();
+   ```
+
+5. **entireDisplayOFF()**  
+   Reverts the display to its previous content.
+
+   ```cpp
+   oled.entireDisplayOFF();
+   ```
+
+6. **rectangle()**  
+   Draws a rectangle with specified dimensions at the given coordinates.
+
+   ```cpp
+   oled.rectangle(10, 10, 50, 30, 5);  // Draw rectangle with corner radius 5
+   ```
+
+7. **circle()**  
+   Draws a circle at the specified coordinates.
+
+   ```cpp
+   oled.circle(64, 32, 20);  // Draw a circle at the center
+   ```
+
+8. **line()**  
+   Draws a line between the specified coordinates.
+
+   ```cpp
+   oled.line(0, 0, 127, 63);  // Draw a diagonal line
+   ```
 
 ---
 
@@ -296,43 +387,8 @@ For example, to convert an image located at `images/logo.png` to a bitmap:
 python image_to_bitmap.py images/logo.png output_logo.h
 ```
 
-#### Python Script Usage
-
-You can also run the script interactively:
-
-```bash
-python image_to_bitmap.py
-```
-
-This will prompt you for the image path and the output file name:
-
-```
-Enter the path to the image: images/logo.png
-Enter the output file name: output_logo.h
-```
-
-The script will generate the bitmap data and save it in the output file.
-
-#### Script Details
-
-- **Image Format**: The script expects the image to be in `.png`, `.jpg`, or other common formats supported by **Pillow**.
-- **Threshold**: The `threshold` parameter (default `50`) controls how dark the pixels should be to be considered “on” for the OLED. You can adjust this value to get the desired result.
-
-### Example Bitmap Output
-
-The Python script will generate output in the following format:
-
-```cpp
-const uint8_t PROGMEM splash[] = {
-  0b11111111, 0b00000000, 0b11111111, 0b00000000,  // Row 1
-  0b00000000, 0b11111111, 0b00000000, 0b11111111,  // Row 2
-  // More rows...
-};
-```
-
-This array can then be used directly in your Arduino code to display the image.
+---
 
 ## **License**
 
 This library is licensed under the **MIT License**.
-
