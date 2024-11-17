@@ -1,7 +1,6 @@
 import sys
 from PIL import Image
 
-
 def image_to_bitmap(image_path, threshold=50):
     image = Image.open(image_path)
     grayscale_image = image.convert("L")

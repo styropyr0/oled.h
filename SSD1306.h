@@ -70,7 +70,7 @@ enum registryCommands
     CONTRAST_RST = 0x7F,
     CONTRAST_MAX = 0xFF,
     PRE_CHRG_RST = 0x22,
-    PRE_CHRG_MAX = 0xFF,
+    PRE_CHRG_MAX = 0xAA,
     VCOMH_65 = 0x00,
     VCOMH_71 = 0x10,
     VCOMH_77 = 0x20,
@@ -109,7 +109,7 @@ public:
      * @param x The X coordinate.
      * @param y The Y coordinate.
      */
-    void print(char *string, uint8_t x, uint8_t y);
+    void print(const char *string, uint8_t x, uint8_t y);
     /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates with a typewriter animation.
      * @param string The string to be printed.
@@ -117,14 +117,14 @@ public:
      * @param y The Y coordinate.
      * @param delay The delay between each character.
      */
-    void printAnimated(char *string, uint8_t x, uint8_t y, int delay);
+    void printAnimated(const char *string, uint8_t x, uint8_t y, int delay);
     /**
      * @brief Clears the screen and prints the string passed on the display at the specified X, Y coordinates.
      * @param string The string to be printed.
      * @param x The X coordinate.
      * @param y The Y coordinate.
      */
-    void print_c(char *string, uint8_t x, uint8_t y);
+    void print_c(const char *string, uint8_t x, uint8_t y);
     /**
      * @brief Accepts a dataSet and setup the display with custom preferences.
      * @param dataSet Array of custom preferences.
@@ -182,11 +182,57 @@ public:
      * @brief Inverts the display pixels.
      */
     void invertDisplay();
+    /**
+     * @brief Turns all the pixels ON.
+     */
     void entireDisplayON();
+    /**
+     * @brief Reverts back to the content.
+     */
     void entireDisplayOFF();
+    /**
+     * @brief Draws a rectangle with the specified dimensions at the specified coordinates.
+     * @param startX Top-left X coordinate.
+     * @param startY Top-left Y coordinate.
+     * @param width Width of the rectangle in pixels
+     * @param height Height of the rectangle in pixels.
+     * @param cornerRadius Radius of each corner. Use 0 for flat.
+     */
+    void rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t height, uint8_t cornerRadius);
+    /**
+     * @brief Draws a circle at the specified coordinates.
+     * @param centerX X coordinate of center.
+     * @param centerY Y coordinate of center.
+     * @param radius Radius of the circle.
+     */
+    void circle(uint8_t centerX, uint8_t centerY, uint8_t radius);
+    /**
+     * @brief Draws a line between the specified coordinates.
+     * @param startX Starting X coordinate.
+     * @param startY Starting Y coordinate.
+     * @param endX Ending X coordinate.
+     * @param endY Ending Y coordinate.
+     */
+    void line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY);
+    /**
+     * @name Text chaining operator.
+     */
+    OLED &operator<<(const char *string);
+    /**
+     * @name Bitmap chaining operator.
+     */
+    OLED &operator[](const uint8_t *bitmap);
+    /**
+     * @name Coordinates chaining operator.
+     */
+    OLED &operator<<(int coordinate);
 
 private:
     uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0;
+    const char *stringToPrint;
+    uint8_t bitmapCoords[3];
+    const uint8_t *imgData;
+    uint8_t count = 0, outMode = 0;
     const uint8_t (*fontSet)[5];
     bool IS_SETUP = false, clear = false;
     void autoSetup();
@@ -194,10 +240,14 @@ private:
     void getFont(char c);
     void sendData(uint8_t data);
     void setPosition(uint8_t x, uint8_t y);
-    void offset(uint8_t dist);
     void lowPowerMode(void);
     void balancedPowerMode(void);
     void performancePowerMode(void);
+    void drawPixel(uint8_t x, uint8_t y);
+    void drawCircleQuarter(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t corner);
+    void verticalLine(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY);
+    uint8_t checkXBounds(uint8_t x);
+    uint8_t checkYBounds(uint8_t y);
 };
 
 #endif
