@@ -1,6 +1,6 @@
 # **SSD1306 OLED Display Library**
 
-A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. It supports various features such as custom fonts, progress bars, animated text, bitmap rendering, and more. This library works seamlessly with microcontrollers like **Arduino** and **ESP32** over **I2C** communication.
+A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. This library offers a range of features including custom fonts, progress bars, animated text, bitmap rendering, and more. It works seamlessly with microcontrollers like **Arduino**, **ESP32**, and **ESP8266** over **I2C** communication.
 
 Additionally, the library includes a **Bitmap Generator** tool in Python, which helps convert images to bitmap arrays for easy display on the OLED screen.
 
@@ -8,10 +8,11 @@ Additionally, the library includes a **Bitmap Generator** tool in Python, which 
 - **Text Display**: Print static text and animated text (typewriter effect).
 - **Custom Fonts**: Supports custom fonts and character sets.
 - **Progress Bar**: Display progress bars with various styles.
-- **Bitmap Rendering**: Draw bitmap images onto the OLED display.
+- **Bitmap Rendering**: Draw bitmap images on the OLED display.
 - **Brightness Control**: Adjust display brightness (0-100%).
 - **I2C Communication**: Built on I2C communication for simple wiring.
 - **Custom Preferences**: Customize OLED display setup with a set of options.
+- **Operator Overloading**: Use simple operators to display text and bitmaps.
 
 ## **Installation**
 
@@ -85,7 +86,7 @@ void setup() {
 
 ### 3. **Printing Static Text**
 
-Use the `print()` method to display static text at a given `(x, y)` coordinate.
+You can print static text at a given `(x, y)` coordinate using the `print()` method.
 
 #### Example: Printing Text
 
@@ -127,7 +128,23 @@ const uint8_t myBitmap[] = {
 oled.draw(myBitmap, 0, 0, 16, 16);  // Draw a 16x16 bitmap at coordinates (0, 0)
 ```
 
-### 7. **Clearing the Screen**
+### 7. **Chaining Operators for Display**
+
+The library also includes operator overloading to simplify the process of displaying text and bitmaps. You can use the `<<` operator to print text and the `[]` operator to display bitmaps.
+
+#### Example: Printing Text Using Chaining Operators
+
+```cpp
+oled << "Hello, World!" << 0 << 0;  // Prints "Hello, World!" at (0, 0)
+```
+
+#### Example: Displaying a Bitmap Using Chaining Operators
+
+```cpp
+oled[myBitmap] << 0 << 0 << 16 << 16;  // Draws a 16x16 bitmap at (0, 0)
+```
+
+### 8. **Clearing the Screen**
 
 Use the `clearScr()` method to clear the screen.
 
@@ -135,7 +152,7 @@ Use the `clearScr()` method to clear the screen.
 oled.clearScr();  // Clears the display
 ```
 
-### 8. **Adjusting Brightness**
+### 9. **Adjusting Brightness**
 
 Use the `setBrightness()` method to adjust the display’s brightness. It accepts a percentage value (0-100).
 
@@ -143,7 +160,7 @@ Use the `setBrightness()` method to adjust the display’s brightness. It accept
 oled.setBrightness(80);  // Set the brightness to 80%
 ```
 
-### 9. **Custom OLED Setup**
+### 10. **Custom OLED Setup**
 
 The `manualSetup()` method allows you to pass an array of settings to configure the OLED display manually.
 
@@ -157,7 +174,7 @@ uint8_t customSettings[] = {
 oled.manualSetup(customSettings);  // Apply custom settings
 ```
 
-### 10. **Turn Display Off on Clear**
+### 11. **Turn Display Off on Clear**
 
 You can disable the display when you clear the screen using the `turnOffOnClr()` method.
 
@@ -196,7 +213,9 @@ oled.turnOffOnClr(true);  // Turn off display when cleared
 - **START_SCROLL**: `0x2F` – Start scroll.
 - **START_LINE**: `0x40` – Set start line for display.
 - **CHRG_PUMP_75**: `0x14` – Charge pump setting at 75%.
-- **CHRG_PUMP_85**: `0x94` – Charge pump setting at 85%.
+- **CHRG_PUMP_85**: `0x94` – Charge pump setting
+
+ at 85%.
 - **CHRG_PUMP_90**: `0x95` – Charge pump setting at 90%.
 - **CHRG_PUMP_OFF**: `0x11` – Turn off charge pump.
 - **HORIZONTAL**: `0x00` – Horizontal address mode.
