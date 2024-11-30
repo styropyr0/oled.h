@@ -19,6 +19,7 @@ Please note that SSD1306 has 128 independently controllable **Columns** along th
 - **Super Brightness**: Turn super brightness on or off (may be unstable).
 - **Display Inversion**: Invert or restore the display colors.
 - **Geometric Shapes**: Draw rectangles, circles, and lines on the display.
+- **Fast and efficient**: This library is built from scratch, from the very basic hardware level programming. Hence, it runs faster than libraries which are built on top of existing libraries.
 
 ## **Installation**
 
