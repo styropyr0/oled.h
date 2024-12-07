@@ -283,7 +283,7 @@ void OLED::setFont(const uint8_t (*fontArray)[5])
     fontWidth = 5;
 }
 
-OLED &OLED::operator<<(const char *string)
+OLED &OLED::operator<<(String string)
 {
     outMode = 0;
     count = 0;
@@ -345,44 +345,64 @@ void OLED::execute(uint8_t instruction)
     Wire.endTransmission();
 }
 
-void OLED::print(const char *string, uint8_t x, uint8_t y)
+void OLED::print(String string, uint8_t x, uint8_t y)
 {
     step = 0;
     charWidth = 0;
     if (IS_SETUP)
     {
+        delete[] tempString;
         execute(OLED_OFF);
         setPosition(x, y);
+        convert(string);
         charWidth += x;
-        while (*string)
+
+        char *ptr = tempString;
+        while (*ptr)
         {
-            getFont(*string++);
+            getFont(*ptr++);
             if (charWidth >= 127)
                 charWidth = 0;
         }
         execute(OLED_ON);
+
+        delete[] tempString;
+        tempString = nullptr;
     }
 }
 
-void OLED::printAnimated(const char *string, uint8_t x, uint8_t y, int delay)
+void OLED::printAnimated(String string, uint8_t x, uint8_t y, int delay)
 {
     step = 0;
     charWidth = 0;
     if (IS_SETUP)
     {
+        delete[] tempString;
         execute(OLED_OFF);
         clearScr();
+        convert(string);
         setPosition(x, y);
         charWidth += x;
-        while (*string)
+
+        char *ptr = tempString;
+        while (*ptr)
         {
             ::delay(delay);
-            getFont(*string++);
+            getFont(*ptr++);
             if (charWidth >= 127)
                 charWidth = 0;
         }
         execute(OLED_ON);
+
+        delete[] tempString;
+        tempString = nullptr;
     }
+}
+
+void OLED::convert(String string)
+{
+    tempString = new char[string.length() + 1];
+    string.toCharArray(tempString, string.length() + 1);
 }
 
 char *OLED::convertString(String string)
@@ -392,23 +412,30 @@ char *OLED::convertString(String string)
     return str;
 }
 
-void OLED::print_c(const char *string, uint8_t x, uint8_t y)
+void OLED::print_c(String string, uint8_t x, uint8_t y)
 {
     step = 0;
     charWidth = 0;
     if (IS_SETUP)
     {
+        delete[] tempString;
+        convert(string);
         execute(OLED_OFF);
         clearScr();
         setPosition(x, y);
         charWidth += x;
-        while (*string)
+
+        char *ptr = tempString;
+        while (*ptr)
         {
-            getFont(*string++);
+            getFont(*ptr++);
             if (charWidth >= 127)
                 charWidth = 0;
         }
         execute(OLED_ON);
+
+        delete[] tempString;
+        tempString = nullptr;
     }
 }
 

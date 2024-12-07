@@ -109,7 +109,7 @@ public:
      * @param x The X coordinate.
      * @param y The Y coordinate.
      */
-    void print(const char *string, uint8_t x, uint8_t y);
+    void print(String string, uint8_t x, uint8_t y);
     /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates with a typewriter animation.
      * @param string The string to be printed.
@@ -117,14 +117,14 @@ public:
      * @param y The Y coordinate.
      * @param delay The delay between each character.
      */
-    void printAnimated(const char *string, uint8_t x, uint8_t y, int delay);
+    void printAnimated(String string, uint8_t x, uint8_t y, int delay);
     /**
      * @brief Clears the screen and prints the string passed on the display at the specified X, Y coordinates.
      * @param string The string to be printed.
      * @param x The X coordinate.
      * @param y The Y coordinate.
      */
-    void print_c(const char *string, uint8_t x, uint8_t y);
+    void print_c(String string, uint8_t x, uint8_t y);
     /**
      * @brief Accepts a dataSet and setup the display with custom preferences.
      * @param dataSet Array of custom preferences.
@@ -217,7 +217,7 @@ public:
     /**
      * @name Text chaining operator.
      */
-    OLED &operator<<(const char *string);
+    OLED &operator<<(String string);
     /**
      * @name Bitmap chaining operator.
      */
@@ -229,15 +229,17 @@ public:
 
 private:
     uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0;
-    const char *stringToPrint;
+    String stringToPrint;
     uint8_t bitmapCoords[3];
     const uint8_t *imgData;
+    char *tempString;
     uint8_t count = 0, outMode = 0;
     const uint8_t (*fontSet)[5];
     bool IS_SETUP = false, clear = false;
     void autoSetup();
     void execute(uint8_t instruction);
     void getFont(char c);
+    void convert(String string);
     void sendData(uint8_t data);
     void setPosition(uint8_t x, uint8_t y);
     void lowPowerMode(void);
