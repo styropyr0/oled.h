@@ -251,6 +251,13 @@ public:
      * @name Coordinates chaining operator.
      */
     OLED &operator<<(int coordinate);
+    /**
+     * @brief Clears the area between the two specified coordinates.
+     * @param startX Starting point for clearing the screen.
+     * @param endX The point to which the display shall be cleared.
+     * @param page Page number.
+     */
+    void clearArea(uint8_t startX, uint8_t endX, uint8_t page);
 
 private:
     uint8_t HEIGHT = 0, WIDTH = 0, address = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0;

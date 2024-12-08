@@ -263,6 +263,17 @@ Use the `printHighlighted()` method to print the text as highlighted.
 
 ```cpp
 oled.printHighlighted("Welcome!", 0, 0);  // Print text with a highlighted effect
+```
+
+### 18. **Clear Area**
+
+Use the `clearArea()` method to clear a specific region along the width of the display.
+
+#### Example: Highlighted Text
+
+```cpp
+oled.clearArea(20, 40, 0);  // Clears the region from 20 to 40 in the page 0.
+```
 
 ---
 

@@ -496,6 +496,18 @@ void OLED::clearScr()
     execute(OLED_ON);
 }
 
+void OLED::clearArea(uint8_t startX, uint8_t endX, uint8_t page)
+{
+    uint8_t diff = endX - startX;
+    if (startX == endX || startX >= WIDTH || startX < 0 || endX >= WIDTH || endX < 0 || page >= HEIGHT / 8 || page < 0)
+        return;
+    setPosition(diff < 0 ? endX : startX, page);
+    for (uint8_t i = 0; i < abs(diff); i++)
+    {
+        sendData(0x00);
+    }
+}
+
 void OLED::turnOffOnClr(bool mode)
 {
     clear = mode;
