@@ -241,16 +241,25 @@ static const uint8_t PROGMEM progressBarSet1[2][20] =
          0x3E, 0x3E, 0x3E, 0x3E, 0x1C},
 };
 
-// static const uint8_t PROGMEM rectangleSet[][]={
-//     {0xFF, 0x}
-// }
-
 OLED::OLED(uint8_t width, uint8_t height)
 {
-    Wire.begin();
     WIDTH = width;
     HEIGHT = height;
+    address = ADDR;
+}
+
+OLED::OLED(uint8_t width, uint8_t height, uint8_t address)
+{
+    WIDTH = width;
+    HEIGHT = height;
+    OLED::address = address;
+}
+
+void OLED::begin()
+{
+    Wire.begin();
     autoSetup();
+    clearBuffer();
 }
 
 void OLED::autoSetup()
@@ -339,7 +348,7 @@ void OLED::clearCustomFont()
 
 void OLED::execute(uint8_t instruction)
 {
-    Wire.beginTransmission(ADDR);
+    Wire.beginTransmission(address);
     Wire.write(0x00);
     Wire.write(instruction);
     Wire.endTransmission();
@@ -360,7 +369,7 @@ void OLED::print(String string, uint8_t x, uint8_t y)
         char *ptr = tempString;
         while (*ptr)
         {
-            getFont(*ptr++);
+            getFont(*ptr++, false);
             if (charWidth >= 127)
                 charWidth = 0;
         }
@@ -371,7 +380,33 @@ void OLED::print(String string, uint8_t x, uint8_t y)
     }
 }
 
-void OLED::printAnimated(String string, uint8_t x, uint8_t y, int delay)
+void OLED::printHighlighted(String string, uint8_t x, uint8_t y)
+{
+    step = 0;
+    charWidth = 0;
+    if (IS_SETUP)
+    {
+        delete[] tempString;
+        execute(OLED_OFF);
+        setPosition(x, y);
+        convert(string);
+        charWidth += x;
+
+        char *ptr = tempString;
+        while (*ptr)
+        {
+            getFont(*ptr++, true);
+            if (charWidth >= 127)
+                charWidth = 0;
+        }
+        execute(OLED_ON);
+
+        delete[] tempString;
+        tempString = nullptr;
+    }
+}
+
+void OLED::printAnimated(String string, uint8_t x, uint8_t y, int delay, bool highlight)
 {
     step = 0;
     charWidth = 0;
@@ -388,7 +423,7 @@ void OLED::printAnimated(String string, uint8_t x, uint8_t y, int delay)
         while (*ptr)
         {
             ::delay(delay);
-            getFont(*ptr++);
+            getFont(*ptr++, highlight);
             if (charWidth >= 127)
                 charWidth = 0;
         }
@@ -428,7 +463,7 @@ void OLED::print_c(String string, uint8_t x, uint8_t y)
         char *ptr = tempString;
         while (*ptr)
         {
-            getFont(*ptr++);
+            getFont(*ptr++, false);
             if (charWidth >= 127)
                 charWidth = 0;
         }
@@ -444,9 +479,11 @@ void OLED::clearScr()
     if (clear == true)
         execute(OLED_OFF);
 
+    clearBuffer();
+
     for (uint8_t page = 0; page < HEIGHT / 8; page++)
     {
-        Wire.beginTransmission(ADDR);
+        Wire.beginTransmission(address);
         Wire.write(0x00);
         Wire.write(0xB0 + page);
         Wire.write(0x00);
@@ -464,35 +501,36 @@ void OLED::turnOffOnClr(bool mode)
     clear = mode;
 }
 
-void OLED::getFont(char c)
+void OLED::getFont(char c, bool highlight)
 {
-    if (c == '\n' || WIDTH - charWidth < fontWidth)
-    {
-        for (uint8_t j = 0; j < WIDTH - charWidth; j++)
+    if (highlight)
+        if (c == '\n' || WIDTH - charWidth < fontWidth)
         {
-            sendData(0x00);
-        }
-        if (c != '\n')
-        {
-            for (uint8_t i = 0; i < fontWidth; i++)
-                sendData(pgm_read_byte(&fontSet[c - 32][i]));
-            sendData(0x00);
-            charWidth = fontWidth + 1;
-            step++;
+            for (uint8_t j = 0; j < WIDTH - charWidth; j++)
+            {
+                sendData(highlight ? 0xFF : 0x00);
+            }
+            if (c != '\n')
+            {
+                for (uint8_t i = 0; i < fontWidth; i++)
+                    sendData(highlight ? ~pgm_read_byte(&fontSet[c - 32][i]) : pgm_read_byte(&fontSet[c - 32][i]));
+                sendData(highlight ? 0xFF : 0x00);
+                charWidth = fontWidth + 1;
+                step++;
+            }
+            else
+                charWidth = 0;
         }
         else
-            charWidth = 0;
-    }
-    else
-    {
-        for (uint8_t i = 0; i < fontWidth; i++)
         {
+            for (uint8_t i = 0; i < fontWidth; i++)
+            {
+                charWidth++;
+                sendData(highlight ? ~pgm_read_byte(&fontSet[c - 32][i]) : pgm_read_byte(&fontSet[c - 32][i]));
+            }
+            sendData(highlight ? 0xFF : 0x00);
             charWidth++;
-            sendData(pgm_read_byte(&fontSet[c - 32][i]));
         }
-        sendData(0x00);
-        charWidth++;
-    }
 }
 
 void OLED ::progressBar(uint8_t progress, uint8_t x, uint8_t y, int style)
@@ -588,7 +626,7 @@ void OLED::setPosition(uint8_t x, uint8_t y)
 
 void OLED::sendData(uint8_t data)
 {
-    Wire.beginTransmission(ADDR);
+    Wire.beginTransmission(address);
     Wire.write(0x40);
     Wire.write(data);
     Wire.endTransmission();
@@ -766,38 +804,41 @@ void OLED::drawCircleQuarter(uint8_t centerX, uint8_t centerY, uint8_t radius, u
     }
 }
 
-void OLED::rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t height, uint8_t cornerRadius)
+void OLED::rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness)
 {
-    line(startX + cornerRadius, startY + height, startX + width - cornerRadius, startY + height);
-    line(startX + cornerRadius, startY, startX + width - cornerRadius, startY);
+    if (cornerRadius > (width / 2))
+        cornerRadius = width / 2;
+    if (cornerRadius > (height / 2))
+        cornerRadius = height / 2;
 
-    drawCircleQuarter(startX + cornerRadius, startY + cornerRadius, cornerRadius, 1);
-    drawCircleQuarter(startX + width - cornerRadius, startY + cornerRadius, cornerRadius, 2);
-    drawCircleQuarter(startX + cornerRadius, startY + height - cornerRadius, cornerRadius, 3);
-    drawCircleQuarter(startX + width - cornerRadius, startY + height - cornerRadius, cornerRadius, 4);
+    startX = checkXBounds(startX);
+    startY = checkYBounds(startY);
+    CLR_BUFF = false;
 
-    verticalLine(startX, startY + cornerRadius, startX, startY + height - cornerRadius);
-    verticalLine(startX + width, startY + cornerRadius, startX + width, startY + height - cornerRadius);
-}
+    if (thickness > 10)
+        thickness = 10;
 
-void OLED::verticalLine(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY)
-{
-    if (startX > WIDTH | startY > HEIGHT)
-        return;
-    setPosition(startX, startY / 8);
-    sendData(0xFF << startY % 8);
-    for (int i = (startY / 8) + 1; i <= endY / 8; i++)
+    for (uint8_t t = 0; t < thickness; t++)
     {
-        if (i > 7)
-            break;
-        setPosition(startX, i);
-        sendData(0xFF);
+        startX += t;
+        startY += t;
+        width -= 2 * t;
+        height -= 2 * t;
+        line(startX + cornerRadius, startY, startX + width - cornerRadius, startY, 1);
+        line(startX + cornerRadius, startY + height, startX + width - cornerRadius, startY + height, 1);
+        line(startX, startY + cornerRadius, startX, startY + height - cornerRadius, 1);
+        line(startX + width, startY + cornerRadius, startX + width, startY + height - cornerRadius, 1);
+
+        if (cornerRadius > 0)
+        {
+            drawCircleHelper(startX + cornerRadius, startY + cornerRadius, cornerRadius, 1);
+            drawCircleHelper(startX + width - cornerRadius, startY + cornerRadius, cornerRadius, 2);
+            drawCircleHelper(startX + width - cornerRadius, startY + height - cornerRadius, cornerRadius, 4);
+            drawCircleHelper(startX + cornerRadius, startY + height - cornerRadius, cornerRadius, 8);
+        }
     }
-    if (endY < 8)
-    {
-        setPosition(startX, endY / 8);
-        sendData(0xFF >> (7 - (endY % 8)));
-    }
+    CLR_BUFF = true;
+    displayBuffer();
 }
 
 uint8_t OLED::checkXBounds(uint8_t x)
@@ -814,76 +855,155 @@ uint8_t OLED::checkYBounds(uint8_t y)
 
 void OLED::drawPixel(uint8_t x, uint8_t y)
 {
-    if (x > WIDTH_128 || y > HEIGHT)
+    if (x > WIDTH || y > HEIGHT)
         return;
-    execute(0xB0 + (y / 8));
-    execute(0x00 + (x % 16));
-    execute(0x10 + (x / 16));
-    uint8_t pixelData = 1 << (y % 8);
-    sendData(pixelData);
+
+    int page = y / 8;
+    int bit = y % 8;
+
+    buffer[x + page * 128] |= (1 << bit);
 }
 
-void OLED::line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY)
+void OLED::line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness)
 {
-    checkXBounds(startX);
-    checkYBounds(startY);
-    checkXBounds(endX);
-    checkYBounds(endY);
+    int dx = abs(endX - startX);
+    int dy = -abs(endY - startY);
+    int sx = startX < endX ? 1 : -1;
+    int sy = startY < endY ? 1 : -1;
+    int err = dx + dy;
 
-    int dx = abs(endX - startX), sx = startX < endX ? 1 : -1;
-    int dy = -abs(endY - startY), sy = startY < endY ? 1 : -1;
-    int err = dx + dy, e2;
-
-    while (true)
+    for (int i = -thickness / 2; i <= thickness / 2; i++)
     {
-        drawPixel(startX, startY);
-        if (startX == endX && startY == endY)
-            break;
-        e2 = 2 * err;
-        if (e2 >= dy)
+        int startX_offset = startX + i * sy;
+        int startY_offset = startY - i * sx;
+        int endX_offset = endX + i * sy;
+        int endY_offset = endY - i * sx;
+        int err_offset = err;
+
+        while (true)
         {
-            err += dy;
-            startX += sx;
+            drawPixel(startX_offset, startY_offset);
+            if (startX_offset == endX_offset && startY_offset == endY_offset)
+                break;
+            int e2 = 2 * err_offset;
+            if (e2 >= dy)
+            {
+                err_offset += dy;
+                startX_offset += sx;
+            }
+            if (e2 <= dx)
+            {
+                err_offset += dx;
+                startY_offset += sy;
+            }
         }
-        if (e2 <= dx)
+    }
+    if (CLR_BUFF)
+        displayBuffer();
+}
+
+void OLED::circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thickness)
+{
+    if (thickness < 1)
+        thickness = 1;
+    for (uint8_t i = 0; i < thickness; i++)
+    {
+        int f = 1 - radius;
+        int ddF_x = 1;
+        int ddF_y = -2 * radius;
+        int x = 0;
+        int y = radius;
+
+        drawPixel(centerX, centerY + radius);
+        drawPixel(centerX, centerY - radius);
+        drawPixel(centerX + radius, centerY);
+        drawPixel(centerX - radius, centerY);
+
+        while (x < y)
         {
-            err += dx;
-            startY += sy;
+            if (f >= 0)
+            {
+                y--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            x++;
+            ddF_x += 2;
+            f += ddF_x;
+
+            drawPixel(centerX + x, centerY + y);
+            drawPixel(centerX - x, centerY + y);
+            drawPixel(centerX + x, centerY - y);
+            drawPixel(centerX - x, centerY - y);
+            drawPixel(centerX + y, centerY + x);
+            drawPixel(centerX - y, centerY + x);
+            drawPixel(centerX + y, centerY - x);
+            drawPixel(centerX - y, centerY - x);
+        }
+        radius--;
+    }
+    displayBuffer();
+}
+
+void OLED::displayBuffer()
+{
+    for (uint8_t page = 0; page < 8; page++)
+    {
+        execute(0xB0 + page);
+        execute(0x00);
+        execute(0x10);
+
+        for (uint8_t col = 0; col < 128; col++)
+        {
+            sendData(buffer[page * 128 + col]);
         }
     }
 }
 
-void OLED::circle(uint8_t centerX, uint8_t centerY, uint8_t radius)
+void OLED::drawCircleHelper(int x0, int y0, int r, uint8_t cornerName)
 {
-    execute(MEM_ADDRESS_MODE);
-    execute(PAGE);
-    int x = radius;
-    int y = 0;
-    int err = 0;
+    int f = 1 - r;
+    int ddF_x = 1;
+    int ddF_y = -2 * r;
+    int x = 0;
+    int y = r;
 
-    while (x >= y)
+    while (x <= y)
     {
-        drawPixel(centerX + x, centerY + y);
-        drawPixel(centerX + y, centerY + x);
-        drawPixel(centerX - y, centerY + x);
-        drawPixel(centerX - x, centerY + y);
-        drawPixel(centerX - x, centerY - y);
-        drawPixel(centerX - y, centerY - x);
-        drawPixel(centerX + y, centerY - x);
-        drawPixel(centerX + x, centerY - y);
-
-        if (err <= 0)
+        if (f >= 0)
         {
-            y += 1;
-            err += 2 * y + 1;
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
         }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
 
-        if (err > 0)
+        if (cornerName & 0x1)
         {
-            x -= 1;
-            err -= 2 * x + 1;
+            drawPixel(x0 - x, y0 - y);
+            drawPixel(x0 - y, y0 - x);
+        }
+        if (cornerName & 0x2)
+        {
+            drawPixel(x0 + x, y0 - y);
+            drawPixel(x0 + y, y0 - x);
+        }
+        if (cornerName & 0x4)
+        {
+            drawPixel(x0 + x, y0 + y);
+            drawPixel(x0 + y, y0 + x);
+        }
+        if (cornerName & 0x8)
+        {
+            drawPixel(x0 - y, y0 + x);
+            drawPixel(x0 - x, y0 + y);
         }
     }
-    execute(MEM_ADDRESS_MODE);
-    execute(HORIZONTAL);
+}
+
+void OLED::clearBuffer()
+{
+    memset(buffer, 0, sizeof(buffer));
 }

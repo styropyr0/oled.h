@@ -18,7 +18,7 @@ Please note that SSD1306 has 128 independently controllable **Columns** along th
 - **Power Modes**: Control the display power for optimized performance.
 - **Super Brightness**: Turn super brightness on or off (may be unstable).
 - **Display Inversion**: Invert or restore the display colors.
-- **Geometric Shapes**: Draw rectangles, circles, and lines on the display.
+- **Geometric Shapes**: Draw rectangles, circles, and lines on the display with customizable thickness.
 - **Fast and efficient**: This library is built from scratch, from the very basic hardware level programming. Hence, it runs faster than libraries which are built on top of existing libraries.
 
 ## **Installation**
@@ -84,9 +84,11 @@ const uint8_t myFont[5][5] = {
   // More characters...
 };
 
-OLED oled(128, 64);
+//The I2C address is 0x3C by default. If you want to use another I2C address, you may pass it as the third parameter.
+OLED oled(128, 64); 
 
 void setup() {
+  oled.begin();
   oled.setFont(myFont);  // Set the custom font
   oled.print("Custom Font", 0, 0);  // Display with custom font
 }
@@ -109,7 +111,7 @@ Use the `printAnimated()` method for a typewriter effect, where text is displaye
 #### Example: Animated Text
 
 ```cpp
-oled.printAnimated("Welcome!", 0, 0, 100);  // Print text with a 100 ms delay between characters
+oled.printAnimated("Welcome!", 0, 0, 100, false);  // Print text with a 100 ms delay between characters, set true for highlight effect
 ```
 
 ### 5. **Progress Bars**
@@ -238,20 +240,29 @@ You can draw shapes such as rectangles, circles, and lines on the OLED display.
 #### Example: Drawing a Rectangle
 
 ```cpp
-oled.rectangle(10, 10, 50, 30, 5);  // Draw a rectangle at (10, 10) with width 50, height 30, and 5px corner radius
+oled.rectangle(10, 10, 50, 30, 5, 2);  // Draw a rectangle at (10, 10) with width 50, height 30, 5px corner radius, and 2px thickness
 ```
 
 #### Example: Drawing a Circle
 
 ```cpp
-oled.circle(64, 32, 20);  // Draw a circle at (64, 32) with radius 20
+oled.circle(64, 32, 20, 2);  // Draw a circle at (64, 32) with radius 20, and thickness 2px
 ```
 
 #### Example: Drawing a Line
 
 ```cpp
-oled.line(0, 0, 127, 63);  // Draw a line from (0, 0) to (127, 63)
+oled.line(0, 0, 127, 63, 2);  // Draw a line from (0, 0) to (127, 63), 2px thick
 ```
+
+### 17. **Highlighted Text**
+
+Use the `printHighlighted()` method to print the text as highlighted.
+
+#### Example: Highlighted Text
+
+```cpp
+oled.printHighlighted("Welcome!", 0, 0);  // Print text with a highlighted effect
 
 ---
 
@@ -344,24 +355,24 @@ Here are some of the new features added to this library:
    ```
 
 6. **rectangle()**  
-   Draws a rectangle with specified dimensions at the given coordinates.
+   Draws a rectangle with specified dimensions at the given coordinates, with specified thickness.
 
    ```cpp
-   oled.rectangle(10, 10, 50, 30, 5);  // Draw rectangle with corner radius 5
+   oled.rectangle(10, 10, 50, 30, 5, 3);  // Draw rectangle with corner radius 5, 3px thick
    ```
 
 7. **circle()**  
-   Draws a circle at the specified coordinates.
+   Draws a circle at the specified coordinates, with specified thickness.
 
    ```cpp
-   oled.circle(64, 32, 20);  // Draw a circle at the center
+   oled.circle(64, 32, 20, 2);  // Draw a circle at the center, 2px thick
    ```
 
 8. **line()**  
-   Draws a line between the specified coordinates.
+   Draws a line between the specified coordinates, with specified thickness.
 
    ```cpp
-   oled.line(0, 0, 127, 63);  // Draw a diagonal line
+   oled.line(0, 0, 127, 63, 4);  // Draw a diagonal line, 4px thick
    ```
 
 ---

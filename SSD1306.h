@@ -89,40 +89,62 @@ class OLED
 {
 public:
     /**
-     * @brief Constructor which initialize OLED display object.
+     * @brief Constructor which initialize OLED display object. By default, address is 0x3C. If you want to use a different address, please specify it as the third parameter.
      * @param width The width of the OLED display.
      * @param height The height of the OLED display.
      */
     OLED(uint8_t width, uint8_t height);
+    /**
+     * @brief Constructor which initialize OLED display object, with a custom I2C address.
+     * @param width The width of the OLED display.
+     * @param height The height of the OLED display.
+     * @param address The SSD1306 display's I2C address.
+     */
+    OLED(uint8_t width, uint8_t height, uint8_t address);
     /**
      * @brief Set a custom font set for the characters. You could also set a custom language character.
      * @param fontArray The array of fonts.
      */
     void setFont(const uint8_t (*fontArray)[5]);
     /**
+     * @brief Setup the display. You may call this in the setup function.
+     */
+    void begin();
+    /**
      * @brief Set the font as the default font.
      */
     void clearCustomFont();
     /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates.
+     * @note The display is vertically divided into 8 pages. Hence, Y ranges from 0 to 7.
      * @param string The string to be printed.
      * @param x The X coordinate.
-     * @param y The Y coordinate.
+     * @param y The page number.
      */
     void print(String string, uint8_t x, uint8_t y);
     /**
-     * @brief Prints the string passed on the display at the specified X, Y coordinates with a typewriter animation.
+     * @brief Prints the string passed on the display at the specified X, Y coordinates as highlighted.
+     * @note The display is vertically divided into 8 pages. Hence, Y ranges from 0 to 7.
      * @param string The string to be printed.
      * @param x The X coordinate.
-     * @param y The Y coordinate.
+     * @param y The page number.
+     */
+    void printHighlighted(String string, uint8_t x, uint8_t y);
+    /**
+     * @brief Prints the string passed on the display at the specified X, Y coordinates with a typewriter animation.
+     * @note The display is vertically divided into 8 pages. Hence, Y ranges from 0 to 7.
+     * @param string The string to be printed.
+     * @param x The X coordinate.
+     * @param y The page number.
      * @param delay The delay between each character.
      */
-    void printAnimated(String string, uint8_t x, uint8_t y, int delay);
+    void printAnimated(String string, uint8_t x, uint8_t y, int delay, bool highlight);
     /**
      * @brief Clears the screen and prints the string passed on the display at the specified X, Y coordinates.
+     * @note The display is vertically divided into 8 pages. Hence, Y ranges from 0 to 7.
      * @param string The string to be printed.
      * @param x The X coordinate.
-     * @param y The Y coordinate.
+     * @param y The page number.
      */
     void print_c(String string, uint8_t x, uint8_t y);
     /**
@@ -197,23 +219,26 @@ public:
      * @param width Width of the rectangle in pixels
      * @param height Height of the rectangle in pixels.
      * @param cornerRadius Radius of each corner. Use 0 for flat.
+     * @param thickness Thickness of the rectangle.
      */
-    void rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t height, uint8_t cornerRadius);
+    void rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness);
     /**
      * @brief Draws a circle at the specified coordinates.
      * @param centerX X coordinate of center.
      * @param centerY Y coordinate of center.
      * @param radius Radius of the circle.
+     * @param thickness Thickness of the circle.
      */
-    void circle(uint8_t centerX, uint8_t centerY, uint8_t radius);
+    void circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thickness);
     /**
      * @brief Draws a line between the specified coordinates.
      * @param startX Starting X coordinate.
      * @param startY Starting Y coordinate.
      * @param endX Ending X coordinate.
      * @param endY Ending Y coordinate.
+     * @param thickness Thickness of the line.
      */
-    void line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY);
+    void line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness);
     /**
      * @name Text chaining operator.
      */
@@ -228,17 +253,18 @@ public:
     OLED &operator<<(int coordinate);
 
 private:
-    uint8_t HEIGHT = 0, WIDTH = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0;
+    uint8_t HEIGHT = 0, WIDTH = 0, address = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0;
     String stringToPrint;
     uint8_t bitmapCoords[3];
+    uint8_t buffer[128 * 64 / 8];
     const uint8_t *imgData;
     char *tempString;
     uint8_t count = 0, outMode = 0;
     const uint8_t (*fontSet)[5];
-    bool IS_SETUP = false, clear = false;
+    bool IS_SETUP = false, clear = false, CLR_BUFF = true;
     void autoSetup();
     void execute(uint8_t instruction);
-    void getFont(char c);
+    void getFont(char c, bool highlight);
     void convert(String string);
     void sendData(uint8_t data);
     void setPosition(uint8_t x, uint8_t y);
@@ -246,10 +272,12 @@ private:
     void balancedPowerMode(void);
     void performancePowerMode(void);
     void drawPixel(uint8_t x, uint8_t y);
+    void displayBuffer(void);
     void drawCircleQuarter(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t corner);
-    void verticalLine(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY);
     uint8_t checkXBounds(uint8_t x);
     uint8_t checkYBounds(uint8_t y);
+    void drawCircleHelper(int x0, int y0, int r, uint8_t cornerName);
+    void clearBuffer(void);
 };
 
 #endif
