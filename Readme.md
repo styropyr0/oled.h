@@ -283,44 +283,46 @@ Here are the constants you can use to configure various settings for your SSD130
 
 ### 1. **Display Settings Constants**
 
-These constants represent important display control values.
-
-- **OLED_OFF**: `0xAE` – Turns the display off.
-- **OLED_ON**: `0xAF` – Turns the display on.
-- **INVERT**: `0xA7` – Inverts the display pixels.
-- **REVERT**: `0xA6` – Reverts the display pixels.
-- **ENTIRE_DISP_ON**: `0xA5` – Turns on all the pixels.
-- **RESUME_FROM_VRAM**: `0xA4` – Resumes from VRAM.
+| **Constant**        | **Value** | **Description**                                       |
+|---------------------|-----------|-------------------------------------------------------|
+| `OLED_OFF`          | 0xAE      | Turns the display off.                                |
+| `OLED_ON`           | 0xAF      | Turns the display on.                                 |
+| `INVERT`            | 0xA7      | Inverts the display pixels.                           |
+| `REVERT`            | 0xA6      | Reverts the display pixels.                           |
+| `ENTIRE_DISP_ON`    | 0xA5      | Turns on all the pixels.                              |
+| `RESUME_FROM_VRAM`  | 0xA4      | Resumes from VRAM.                                    |
 
 ### 2. **Display Power Mode Constants**
 
-These constants represent the different power modes for the OLED display.
-
-- **LOW_POWER_MODE**: `0x00` – Low power mode.
-- **BALANCED_MODE**: `0x01` – Balanced mode.
-- **PERFORMANCE_MODE**: `0x02` – Performance mode.
+| **Constant**        | **Value** | **Description**                                       |
+|---------------------|-----------|-------------------------------------------------------|
+| `LOW_POWER_MODE`    | 0x00      | Low power mode.                                       |
+| `BALANCED_MODE`     | 0x01      | Balanced mode.                                        |
+| `PERFORMANCE_MODE`  | 0x02      | Performance mode.                                     |
 
 ### 3. **Geometry Constants**
 
-These constants define the geometry of the display.
-
-- **WIDTH_128**: `0x80` – Display width of 128 pixels.
-- **HEIGHT_64**: `0x40` – Display height of 64 pixels.
+| **Constant**        | **Value** | **Description**                                       |
+|---------------------|-----------|-------------------------------------------------------|
+| `WIDTH_128`         | 0x80      | Display width of 128 pixels.                          |
+| `HEIGHT_64`         | 0x40      | Display height of 64 pixels.                          |
 
 ### 4. **Bitmap Mode Constants**
 
-Use these constants to control the bitmap rendering.
-
-- **HORIZONTAL**: `0x00` – Horizontal memory addressing mode.
-- **VERTICAL**: `0x01` – Vertical memory addressing mode.
-- **PAGE**: `0x02` – Page addressing mode.
+| **Constant**        | **Value** | **Description**                                       |
+|---------------------|-----------|-------------------------------------------------------|
+| `HORIZONTAL`        | 0x00      | Horizontal memory addressing mode.                    |
+| `VERTICAL`          | 0x01      | Vertical memory addressing mode.                      |
+| `PAGE`              | 0x02      | Page addressing mode.                                 |
 
 ### 5. **Special Commands Constants**
 
-- **CHRG_PUMP**: `0x8D` – Charge pump control command.
-- **CONTRAST**: `0x81` – Set the display contrast.
-- **PRE_CHRG**: `0xD9` – Pre-charge period control.
-- **VCOMH_DESEL**: `0xDB` – VCOMH deselect level.
+| **Constant**        | **Value** | **Description**                                       |
+|---------------------|-----------|-------------------------------------------------------|
+| `CHRG_PUMP`         | 0x8D      | Charge pump control command.                          |
+| `CONTRAST`          | 0x81      | Set the display contrast.                             |
+| `PRE_CHRG`          | 0xD9      | Pre-charge period control.                            |
+| `VCOMH_DESEL`       | 0xDB      | VCOMH deselect level.                                 |
 
 ---
 
