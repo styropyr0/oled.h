@@ -55,7 +55,7 @@ For ESP32 and other microcontrollers, you can configure these pins in the `Wire.
 To use the library, instantiate the `OLED` class with the display’s width and height (e.g., 128x64 or 128x32).
 
 ```cpp
-#include "SSD1306.h"
+#include <SSD1306.h>
 
 // Create OLED object with width and height (128x64)
 OLED oled(128, 64);
