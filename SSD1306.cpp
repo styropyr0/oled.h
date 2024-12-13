@@ -414,7 +414,6 @@ void OLED::printAnimated(String string, uint8_t x, uint8_t y, int delay, bool hi
     {
         delete[] tempString;
         execute(OLED_OFF);
-        clearScr();
         convert(string);
         setPosition(x, y);
         charWidth += x;
@@ -515,34 +514,33 @@ void OLED::turnOffOnClr(bool mode)
 
 void OLED::getFont(char c, bool highlight)
 {
-    if (highlight)
-        if (c == '\n' || WIDTH - charWidth < fontWidth)
+    if (c == '\n' || WIDTH - charWidth < fontWidth)
+    {
+        for (uint8_t j = 0; j < WIDTH - charWidth; j++)
         {
-            for (uint8_t j = 0; j < WIDTH - charWidth; j++)
-            {
-                sendData(highlight ? 0xFF : 0x00);
-            }
-            if (c != '\n')
-            {
-                for (uint8_t i = 0; i < fontWidth; i++)
-                    sendData(highlight ? ~pgm_read_byte(&fontSet[c - 32][i]) : pgm_read_byte(&fontSet[c - 32][i]));
-                sendData(highlight ? 0xFF : 0x00);
-                charWidth = fontWidth + 1;
-                step++;
-            }
-            else
-                charWidth = 0;
+            sendData(highlight ? 0xFF : 0x00);
         }
-        else
+        if (c != '\n')
         {
             for (uint8_t i = 0; i < fontWidth; i++)
-            {
-                charWidth++;
                 sendData(highlight ? ~pgm_read_byte(&fontSet[c - 32][i]) : pgm_read_byte(&fontSet[c - 32][i]));
-            }
             sendData(highlight ? 0xFF : 0x00);
-            charWidth++;
+            charWidth = fontWidth + 1;
+            step++;
         }
+        else
+            charWidth = 0;
+    }
+    else
+    {
+        for (uint8_t i = 0; i < fontWidth; i++)
+        {
+            charWidth++;
+            sendData(highlight ? ~pgm_read_byte(&fontSet[c - 32][i]) : pgm_read_byte(&fontSet[c - 32][i]));
+        }
+        sendData(highlight ? 0xFF : 0x00);
+        charWidth++;
+    }
 }
 
 void OLED ::progressBar(uint8_t progress, uint8_t x, uint8_t y, int style)
