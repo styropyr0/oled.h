@@ -323,6 +323,11 @@ public:
     virtual void draw(OLED &oled) = 0;
 
     /**
+     * @brief Returns the type of the object.
+     */
+    virtual const char *type() const = 0;
+
+    /**
      * @brief Virtual destructor for Drawable.
      */
     virtual ~Drawable() = default;
@@ -333,6 +338,7 @@ class Circle : public Drawable
 private:
     uint8_t centreX, centreY, radius, thickness;
     void draw(OLED &oled) override;
+    const char *type() const override;
 
 public:
     /**
@@ -350,6 +356,7 @@ class Rectangle : public Drawable
 private:
     uint8_t x, y, width, height, cornerRadius, thickness;
     void draw(OLED &oled) override;
+    const char *type() const override;
 
 public:
     /**
@@ -366,9 +373,10 @@ public:
 
 class Line : public Drawable
 {
-private:
+protected:
     uint8_t startX, startY, endX, endY, thickness;
     void draw(OLED &oled) override;
+    const char *type() const override;
 
 public:
     /**
@@ -388,6 +396,7 @@ private:
     String text;
     uint8_t x, y;
     void draw(OLED &oled) override;
+    const char *type() const override;
 
 public:
     /**
@@ -405,6 +414,7 @@ private:
     String text;
     uint8_t x, y;
     void draw(OLED &oled) override;
+    const char *type() const override;
 
 public:
     /**
@@ -424,6 +434,7 @@ private:
     int delay;
     bool highlight;
     void draw(OLED &oled) override;
+    const char *type() const override;
 
 public:
     /**
@@ -443,6 +454,7 @@ private:
     const uint8_t *dataSet;
     uint8_t x, y, width, height;
     void draw(OLED &oled) override;
+    const char *type() const override;
 
 public:
     /**
@@ -456,18 +468,33 @@ public:
     Bitmap(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height);
 };
 
+class GridView : public Drawable
+{
+private:
+    Drawable *drawable;
+    uint8_t count, countPerLine, startX, startY, seperationX, seperationY;
+    void draw(OLED &oled) override;
+    const char *type() const override;
+    bool checkType();
+
+public:
+    GridView(Drawable *drawable, uint8_t count, uint8_t countPerLine, uint8_t startX, uint8_t startY, uint8_t seperationX, uint8_t seperationY);
+};
+
 /**
  * @brief Fragment is a collection of static drawable objects.
  * Use the add function to add the drawables into the fragment.
  * Use the inflate function to inflate the fragment.
+ * Once inflated, if the fragment is modified, you may use the recycle method to apply changes.
  */
 class Fragment
 {
 private:
     FragmentManager &manager;
     Drawable **drawables;
-    int drawableCount;
-    int drawableCapacity;
+    uint8_t drawableCount;
+    uint8_t drawableCapacity;
+    uint8_t lastCount = 0;
 
 public:
     /**
@@ -491,6 +518,12 @@ public:
      * @brief Draws all drawable objects in the fragment on the OLED display.
      */
     void inflate();
+
+    /**
+     * @brief Applies changes without re-inflating the drawables.
+     * It is recommended to call recycle after modifying a fragment which is already inflated.
+     */
+    void recycle();
 };
 
 #endif
