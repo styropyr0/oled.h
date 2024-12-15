@@ -48,6 +48,7 @@ void Fragment::inflate()
     OLED &oled = *manager.getOLED();
     for (int i = 0; i < drawableCount; ++i)
     {
+        yield();
         drawables[i]->draw(oled);
     }
     lastCount = drawableCount;
@@ -61,4 +62,9 @@ void Fragment::recycle()
         drawables[i]->draw(oled);
     }
     lastCount = drawableCount;
+}
+
+void Fragment::detach()
+{
+    delete this;
 }
