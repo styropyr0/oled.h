@@ -19,6 +19,7 @@ Please note that SSD1306 has 128 independently controllable **Columns** along th
 - **Super Brightness**: Turn super brightness on or off (may be unstable).
 - **Display Inversion**: Invert or restore the display colors.
 - **Geometric Shapes**: Draw rectangles, circles, and lines on the display with customizable thickness.
+- **Fragments and GridView**: Dynamically manage and render multiple drawable objects on the screen efficiently.
 - **Fast and efficient**: This library is built from scratch, from the very basic hardware level programming. Hence, it runs faster than libraries which are built on top of existing libraries.
 
 ## **Installation**
@@ -61,6 +62,7 @@ To use the library, instantiate the `OLED` class with the display’s width and 
 OLED oled(128, 64);
 
 void setup() {
+  oled.begin();  // Initialize the OLED display
   oled.clearScr();  // Clear the screen
   oled.print("Hello, World!", 0, 0);  // Print text at (0, 0)
   oled << "This method also prints!" << 0 << 3;   // Print text at (0, 3)
@@ -71,7 +73,72 @@ void loop() {
 }
 ```
 
-### 2. **Custom Fonts**
+### 2. **Fragments: Manage Dynamic Drawables**
+
+Fragments provide a way to dynamically manage and render multiple drawable objects on the screen efficiently. This feature is especially useful for applications that require frequent updates to specific parts of the display.
+
+Fragments in this library are inspired by Android development fragments. Similar to their Android counterparts, they allow developers to handle multiple independent and reusable components within the OLED display. This can be particularly helpful in scenarios where different portions of the screen require updates independently.
+
+> **Note**: To use fragments, you need to include `Fragments.h`. It is separated from the main library to avoid taking up unnecessary memory when fragments are not used.
+
+#### **Using Fragments**
+
+You can create a `Fragment` to hold multiple `Drawable` objects. Drawables can be added, updated, or removed dynamically.
+
+```cpp
+#include <SSD1306.h>
+#include <Fragments.h>
+
+// Create OLED and Fragment objects
+OLED oled(128, 64);
+Fragment fragment;
+
+void setup() {
+  oled.begin();
+
+  // Add drawables to the fragment
+  fragment.add(new Text("Hello", 0, 0));
+  fragment.add(new Circle(64, 32, 10));
+
+  // Draw all the fragment’s drawables
+  fragment.draw(&oled);
+}
+```
+
+#### **Recycling Fragments**
+
+Fragments can be updated dynamically without re-adding all drawables, saving memory and processing time.
+
+```cpp
+fragment.recycle();  // Redraw the fragment’s contents on the OLED
+```
+
+#### **GridView: Structured Layouts**
+
+The `GridView` class allows you to organize and render multiple drawables in a grid-like layout. This is ideal for creating tables or menu systems.
+
+```cpp
+#include <SSD1306.h>
+#include <Fragments.h>
+
+// Create OLED, Fragment, and GridView objects
+OLED oled(128, 64);
+Fragment fragment;
+GridView gridView;
+
+void setup() {
+  oled.begin();
+
+  // Add a grid of circles to the fragment
+  gridView.init(new Circle(0, 0, 4), 4, 4, 16, 16);  // 4x4 grid with 16px spacing
+  fragment.add(&gridView);
+
+  // Draw the fragment containing the grid
+  fragment.draw(&oled);
+}
+```
+
+### 3. **Custom Fonts**
 
 You can use custom fonts by defining an array of font data. This library uses 5x7 bitmaps for characters by default, but you can change the font with the `setFont()` method.
 
@@ -84,8 +151,7 @@ const uint8_t myFont[5][5] = {
   // More characters...
 };
 
-//The I2C address is 0x3C by default. If you want to use another I2C address, you may pass it as the third parameter.
-OLED oled(128, 64); 
+OLED oled(128, 64);
 
 void setup() {
   oled.begin();
@@ -94,7 +160,7 @@ void setup() {
 }
 ```
 
-### 3. **Printing Static Text**
+### 4. **Printing Static Text**
 
 You can print static text at a given `(x, y)` coordinate using the `print()` method.
 
@@ -102,16 +168,6 @@ You can print static text at a given `(x, y)` coordinate using the `print()` met
 
 ```cpp
 oled.print("Hello, OLED!", 0, 0);  // Prints "Hello, OLED!" at (0, 0)
-```
-
-### 4. **Animated Text (Typewriter Effect)**
-
-Use the `printAnimated()` method for a typewriter effect, where text is displayed one character at a time.
-
-#### Example: Animated Text
-
-```cpp
-oled.printAnimated("Welcome!", 0, 0, 100, false);  // Print text with a 100 ms delay between characters, set true for highlight effect
 ```
 
 ### 5. **Progress Bars**
@@ -323,70 +379,6 @@ Here are the constants you can use to configure various settings for your SSD130
 | `CONTRAST`          | 0x81      | Set the display contrast.                             |
 | `PRE_CHRG`          | 0xD9      | Pre-charge period control.                            |
 | `VCOMH_DESEL`       | 0xDB      | VCOMH deselect level.                                 |
-
----
-
-## **New Functions**
-
-Here are some of the new features added to this library:
-
-1. **setPowerMode()**  
-   Sets the power mode. You can choose from **LOW_POWER_MODE**, **BALANCED_MODE**, or **PERFORMANCE_MODE**.
-
-   ```cpp
-   oled.setPowerMode(PERFORMANCE_MODE);
-   ```
-
-2. **superBrightness()**  
-  
-
- Turns super brightness ON or OFF (may cause instability).
-
-   ```cpp
-   oled.superBrightness(true);  // Enable super brightness
-   ```
-
-3. **invertDisplay()**  
-   Inverts the pixels of the display.
-
-   ```cpp
-   oled.invertDisplay();
-   ```
-
-4. **entireDisplayON()**  
-   Turns on all pixels of the display.
-
-   ```cpp
-   oled.entireDisplayON();
-   ```
-
-5. **entireDisplayOFF()**  
-   Reverts the display to its previous content.
-
-   ```cpp
-   oled.entireDisplayOFF();
-   ```
-
-6. **rectangle()**  
-   Draws a rectangle with specified dimensions at the given coordinates, with specified thickness.
-
-   ```cpp
-   oled.rectangle(10, 10, 50, 30, 5, 3);  // Draw rectangle with corner radius 5, 3px thick
-   ```
-
-7. **circle()**  
-   Draws a circle at the specified coordinates, with specified thickness.
-
-   ```cpp
-   oled.circle(64, 32, 20, 2);  // Draw a circle at the center, 2px thick
-   ```
-
-8. **line()**  
-   Draws a line between the specified coordinates, with specified thickness.
-
-   ```cpp
-   oled.line(0, 0, 127, 63, 4);  // Draw a diagonal line, 4px thick
-   ```
 
 ---
 
