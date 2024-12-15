@@ -65,6 +65,7 @@ public:
      * @param thickness Thickness of the circle.
      */
     Circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thickness);
+    ~Circle();
     friend class GridView;
 };
 
@@ -86,6 +87,7 @@ public:
      * @param thickness Thickness of the rectangle.
      */
     Rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness);
+    ~Rectangle();
     friend class GridView;
 };
 
@@ -106,6 +108,7 @@ public:
      * @param thickness Thickness of the line.
      */
     Line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness);
+    ~Line();
     friend class GridView;
 };
 
@@ -125,6 +128,7 @@ public:
      * @param y The Y coordinate.
      */
     Text(String text, uint8_t x, uint8_t y);
+    ~Text();
 };
 
 class HighlightedText : public Drawable
@@ -143,6 +147,7 @@ public:
      * @param y The Y coordinate.
      */
     HighlightedText(String text, uint8_t x, uint8_t y);
+    ~HighlightedText();
 };
 
 class AnimatedText : public Drawable
@@ -165,6 +170,7 @@ public:
      * @param highlight Whether the text should be highlighted.
      */
     AnimatedText(String text, uint8_t x, uint8_t y, int delay, bool highlight);
+    ~AnimatedText();
 };
 
 class Bitmap : public Drawable
@@ -185,6 +191,7 @@ public:
      * @param height Height of the bitmap.
      */
     Bitmap(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height);
+    ~Bitmap();
     friend class GridView;
 };
 
@@ -199,6 +206,7 @@ private:
 
 public:
     GridView(Drawable *drawable, uint8_t count, uint8_t countPerLine, uint8_t startX, uint8_t startY, uint8_t seperationX, uint8_t seperationY);
+    ~GridView();
 };
 
 /**
