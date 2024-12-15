@@ -170,7 +170,17 @@ You can print static text at a given `(x, y)` coordinate using the `print()` met
 oled.print("Hello, OLED!", 0, 0);  // Prints "Hello, OLED!" at (0, 0)
 ```
 
-### 5. **Progress Bars**
+### 5. **Animated Text (Typewriter Effect)**
+
+Use the `printAnimated()` method for a typewriter effect, where text is displayed one character at a time.
+
+#### Example: Animated Text
+
+```cpp
+oled.printAnimated("Welcome!", 0, 0, 100, false);  // Print text with a 100 ms delay between characters, set true for highlight effect
+```
+
+### 6. **Progress Bars**
 
 You can display progress bars in multiple styles (1-10 for progress bars, 11-15 for loaders). The `progressBar()` method accepts the progress value (0-100) and a style number.
 
@@ -180,7 +190,7 @@ You can display progress bars in multiple styles (1-10 for progress bars, 11-15 
 oled.progressBar(50, 0, 10, 1);  // Displays a 50% progress bar at (0, 10), style 1
 ```
 
-### 6. **Bitmap Rendering**
+### 7. **Bitmap Rendering**
 
 The library includes the `draw()` method to display bitmaps on the OLED. You can convert images into bitmap arrays using the **Bitmap Generator** Python tool (explained below).
 
@@ -194,7 +204,7 @@ const uint8_t myBitmap[] = {
 oled.draw(myBitmap, 0, 0, 16, 16);  // Draw a 16x16 bitmap at coordinates (0, 0)
 ```
 
-### 7. **Chaining Operators for Display**
+### 8. **Chaining Operators for Display**
 
 The library also includes operator overloading to simplify the process of displaying text and bitmaps. You can use the `<<` operator to print text and the `[]` operator to display bitmaps.
 
@@ -210,7 +220,7 @@ oled << "Hello, World!" << 0 << 0;  // Prints "Hello, World!" at (0, 0)
 oled[myBitmap] << 0 << 0 << 16 << 16;  // Draws a 16x16 bitmap at (0, 0)
 ```
 
-### 8. **Clearing the Screen**
+### 9. **Clearing the Screen**
 
 Use the `clearScr()` method to clear the screen.
 
@@ -218,7 +228,7 @@ Use the `clearScr()` method to clear the screen.
 oled.clearScr();  // Clears the display
 ```
 
-### 9. **Adjusting Brightness**
+### 10. **Adjusting Brightness**
 
 Use the `setBrightness()` method to adjust the display’s brightness. It accepts a percentage value (0-100).
 
@@ -226,7 +236,7 @@ Use the `setBrightness()` method to adjust the display’s brightness. It accept
 oled.setBrightness(80);  // Set the brightness to 80%
 ```
 
-### 10. **Custom OLED Setup**
+### 11. **Custom OLED Setup**
 
 The `manualSetup()` method allows you to pass an array of settings to configure the OLED display manually.
 
@@ -240,7 +250,7 @@ uint8_t customSettings[] = {
 oled.manualSetup(customSettings);  // Apply custom settings
 ```
 
-### 11. **Turn Display Off on Clear**
+### 12. **Turn Display Off on Clear**
 
 You can disable the display when you clear the screen using the `turnOffOnClr()` method.
 
@@ -248,7 +258,7 @@ You can disable the display when you clear the screen using the `turnOffOnClr()`
 oled.turnOffOnClr(true);  // Turn off display when cleared
 ```
 
-### 12. **Power Modes**
+### 13. **Power Modes**
 
 The display can operate in different power modes. Choose between low power, balanced, or performance mode to optimize energy consumption or display quality.
 
@@ -258,7 +268,7 @@ The display can operate in different power modes. Choose between low power, bala
 oled.setPowerMode(LOW_POWER_MODE);  // Set the display to low power mode
 ```
 
-### 13. **Super Brightness**
+### 14. **Super Brightness**
 
 Enable or disable super brightness for high-intensity display, though note it may cause instability.
 
@@ -268,7 +278,7 @@ Enable or disable super brightness for high-intensity display, though note it ma
 oled.superBrightness(true);  // Turn on super brightness
 ```
 
-### 14. **Inverting the Display**
+### 15. **Inverting the Display**
 
 Invert the pixels on the display to change all white pixels to black and vice versa.
 
@@ -278,7 +288,7 @@ Invert the pixels on the display to change all white pixels to black and vice ve
 oled.invertDisplay();  // Invert the display colors
 ```
 
-### 15. **Entire Display ON/OFF**
+### 16. **Entire Display ON/OFF**
 
 You can turn the entire display on or off.
 
@@ -289,7 +299,7 @@ oled.entireDisplayON();  // Turn all pixels on
 oled.entireDisplayOFF();  // Revert back to the content
 ```
 
-### 16. **Drawing Geometric Shapes**
+### 17. **Drawing Geometric Shapes**
 
 You can draw shapes such as rectangles, circles, and lines on the OLED display.
 
@@ -311,7 +321,7 @@ oled.circle(64, 32, 20, 2);  // Draw a circle at (64, 32) with radius 20, and th
 oled.line(0, 0, 127, 63, 2);  // Draw a line from (0, 0) to (127, 63), 2px thick
 ```
 
-### 17. **Highlighted Text**
+### 18. **Highlighted Text**
 
 Use the `printHighlighted()` method to print the text as highlighted.
 
@@ -321,7 +331,7 @@ Use the `printHighlighted()` method to print the text as highlighted.
 oled.printHighlighted("Welcome!", 0, 0);  // Print text with a highlighted effect
 ```
 
-### 18. **Clear Area**
+### 19. **Clear Area**
 
 Use the `clearArea()` method to clear a specific region along the width of the display.
 
