@@ -18,6 +18,11 @@ const char *Circle::type() const
     return "Circle";
 }
 
+Circle::~Circle()
+{
+    delete this;
+}
+
 Rectangle::Rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness)
     : x(x), y(y), width(width), height(height), cornerRadius(cornerRadius), thickness(thickness) {}
 
@@ -29,6 +34,11 @@ void Rectangle::draw(OLED &oled)
 const char *Rectangle::type() const
 {
     return "Rectangle";
+}
+
+Rectangle::~Rectangle()
+{
+    delete this;
 }
 
 Line::Line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness)
@@ -44,6 +54,11 @@ const char *Line::type() const
     return "Line";
 }
 
+Line::~Line()
+{
+    delete this;
+}
+
 Bitmap::Bitmap(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height)
     : dataSet(dataSet), x(x), y(y), width(width), height(height) {}
 
@@ -55,6 +70,11 @@ void Bitmap::draw(OLED &oled)
 const char *Bitmap::type() const
 {
     return "Bitmap";
+}
+
+Bitmap::~Bitmap()
+{
+    delete this;
 }
 
 Text::Text(String text, uint8_t x, uint8_t y)
@@ -70,6 +90,11 @@ const char *Text::type() const
     return "Text";
 }
 
+Text::~Text()
+{
+    delete this;
+}
+
 HighlightedText::HighlightedText(String text, uint8_t x, uint8_t y)
     : text(text), x(x), y(y) {}
 
@@ -83,6 +108,11 @@ const char *HighlightedText::type() const
     return "HighlightedText";
 }
 
+HighlightedText::~HighlightedText()
+{
+    delete this;
+}
+
 AnimatedText::AnimatedText(String text, uint8_t x, uint8_t y, int delay, bool highlight)
     : text(text), x(x), y(y), delay(delay), highlight(highlight) {}
 
@@ -94,6 +124,11 @@ void AnimatedText::draw(OLED &oled)
 const char *AnimatedText::type() const
 {
     return "AnimatedText";
+}
+
+AnimatedText::~AnimatedText()
+{
+    delete this;
 }
 
 GridView::GridView(Drawable *drawable, uint8_t count, uint8_t countPerLine, uint8_t startX, uint8_t startY, uint8_t seperationX, uint8_t seperationY)
@@ -193,4 +228,9 @@ bool GridView::checkType()
 const char *GridView::type() const
 {
     return "GridView";
+}
+
+GridView::~GridView()
+{
+    delete this;
 }
