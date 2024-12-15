@@ -91,17 +91,17 @@ You can create a `Fragment` to hold multiple `Drawable` objects. Drawables can b
 
 // Create OLED and Fragment objects
 OLED oled(128, 64);
-Fragment fragment;
+FragmentManager manager(oled);// Create a manager for the Fragments. The manager is attached to the corresponding oled object.
 
 void setup() {
   oled.begin();
-
+  Fragment fragment(manager);
   // Add drawables to the fragment
   fragment.add(new Text("Hello", 0, 0));
-  fragment.add(new Circle(64, 32, 10));
+  fragment.add(new Circle(64, 32, 10, 2));
 
   // Draw all the fragment’s drawables
-  fragment.draw(&oled);
+  fragment.inflate();
 }
 ```
 
@@ -123,18 +123,17 @@ The `GridView` class allows you to organize and render multiple drawables in a g
 
 // Create OLED, Fragment, and GridView objects
 OLED oled(128, 64);
-Fragment fragment;
-GridView gridView;
+FragmentManager manager(oled);
 
 void setup() {
   oled.begin();
 
   // Add a grid of circles to the fragment
-  gridView.init(new Circle(0, 0, 4), 4, 4, 16, 16);  // 4x4 grid with 16px spacing
-  fragment.add(&gridView);
-
-  // Draw the fragment containing the grid
-  fragment.draw(&oled);
+  Fragment fragment(manager); // Attach the manager to the required Fragment.
+  Circle* circle = new Circle(0, 0, 8, 2);
+  GridView* grid = new GridView(circle, 12, 4, 10, 10, 10, 10);
+  fragment.add(gridView);
+  fragment.inflate();// Draw the fragment containing the grid
 }
 ```
 
