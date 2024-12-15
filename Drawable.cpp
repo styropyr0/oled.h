@@ -1,4 +1,5 @@
 #include "SSD1306.h"
+#include "Fragments.h"
 
 /**
  * @author Saurav Sajeev
@@ -100,21 +101,88 @@ GridView::GridView(Drawable *drawable, uint8_t count, uint8_t countPerLine, uint
 
 void GridView::draw(OLED &oled)
 {
-    // uint8_t temp_x = (startX - endX), temp_y = abs(startY - endY);
     if (checkType())
     {
-        for (int i = 0; i < count; i++)
+        uint8_t tempX;
+        if (drawable->type() == "Line")
         {
-            if (drawable->type() == "Line")
+            Line *line = static_cast<Line *>(drawable);
+            uint8_t dX = abs(line->startX - line->endX);
+            uint8_t dY = abs(line->startY - line->endY);
+            tempX = startX;
+
+            for (uint8_t col = 0; col < count / countPerLine; col++)
             {
-                // line(startX+temp_x*i, startY+temp_y*i, )
+                startX = tempX;
+                for (uint8_t row = 0; row < countPerLine; row++)
+                {
+                    line->startX = startX;
+                    line->startY = startY;
+                    line->endX = line->startX + dX;
+                    line->endY = line->startY + dY;
+                    startX += dX + seperationX;
+                    line->draw(oled);
+                    yield();
+                }
+                startY += dY + seperationY;
+            }
+        }
+        else if (drawable->type() == "Rectangle")
+        {
+            Rectangle *rectangle = static_cast<Rectangle *>(drawable);
+            tempX = startX;
+            for (uint8_t col = 0; col < count / countPerLine; col++)
+            {
+                startX = tempX;
+                for (uint8_t row = 0; row < countPerLine; row++)
+                {
+                    rectangle->x = startX;
+                    rectangle->y = startY;
+                    startX += rectangle->width + seperationX;
+                    rectangle->draw(oled);
+                    yield();
+                }
+                startY += rectangle->height + seperationY;
+            }
+        }
+        else if (drawable->type() == "Circle")
+        {
+            Circle *circle = static_cast<Circle *>(drawable);
+            tempX = startX;
+            for (uint8_t col = 0; col < count / countPerLine; col++)
+            {
+                startX = tempX;
+                for (uint8_t row = 0; row < countPerLine; row++)
+                {
+                    circle->centreX = startX;
+                    circle->centreY = startY;
+                    startX += circle->radius * 2 + seperationX;
+                    circle->draw(oled);
+                    yield();
+                }
+                startY += circle->radius * 2 + seperationY;
+            }
+        }
+        else if (drawable->type() == "Bitmap")
+        {
+            Bitmap *bitmap = static_cast<Bitmap *>(drawable);
+            tempX = startX;
+            for (uint8_t col = 0; col < count / countPerLine; col++)
+            {
+                startX = tempX;
+                for (uint8_t row = 0; row < countPerLine; row++)
+                {
+                    bitmap->x = startX;
+                    bitmap->y = startY;
+                    startX += bitmap->width + seperationX;
+                    bitmap->draw(oled);
+                    yield();
+                }
+                startY += bitmap->height + seperationY;
             }
         }
     }
-    else
-    {
-        delete drawable;
-    }
+    delete drawable;
 }
 
 bool GridView::checkType()
