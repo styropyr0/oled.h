@@ -20,8 +20,7 @@ const char *Circle::type() const
 
 Circle::~Circle()
 {
-    if (this != nullptr)
-        delete this;
+    // delete this;
 }
 
 Rectangle::Rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness)
@@ -39,8 +38,7 @@ const char *Rectangle::type() const
 
 Rectangle::~Rectangle()
 {
-    if (this != nullptr)
-        delete this;
+    // delete this;
 }
 
 Line::Line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness)
@@ -58,8 +56,7 @@ const char *Line::type() const
 
 Line::~Line()
 {
-    if (this != nullptr)
-        delete this;
+    // delete this;
 }
 
 Bitmap::Bitmap(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height)
@@ -77,8 +74,7 @@ const char *Bitmap::type() const
 
 Bitmap::~Bitmap()
 {
-    if (this != nullptr)
-        delete this;
+    // delete this;
 }
 
 Text::Text(String text, uint8_t x, uint8_t y)
@@ -96,8 +92,7 @@ const char *Text::type() const
 
 Text::~Text()
 {
-    if (this != nullptr)
-        delete this;
+    // delete this;
 }
 
 HighlightedText::HighlightedText(String text, uint8_t x, uint8_t y)
@@ -115,8 +110,7 @@ const char *HighlightedText::type() const
 
 HighlightedText::~HighlightedText()
 {
-    if (this != nullptr)
-        delete this;
+    // delete this;
 }
 
 AnimatedText::AnimatedText(String text, uint8_t x, uint8_t y, int delay, bool highlight)
@@ -134,8 +128,7 @@ const char *AnimatedText::type() const
 
 AnimatedText::~AnimatedText()
 {
-    if (this != nullptr)
-        delete this;
+    // delete this;
 }
 
 GridView::GridView(Drawable *drawable, uint8_t count, uint8_t countPerLine, uint8_t startX, uint8_t startY, uint8_t seperationX, uint8_t seperationY)
@@ -239,6 +232,5 @@ const char *GridView::type() const
 
 GridView::~GridView()
 {
-    if (this != nullptr)
-        delete this;
+    // delete this;
 }

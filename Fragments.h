@@ -219,7 +219,7 @@ class Fragment
 {
 private:
     FragmentManager &manager;
-    Drawable **drawables;
+    Drawable **drawables = nullptr;
     uint8_t drawableCount;
     uint8_t drawableCapacity;
     uint8_t lastCount = 0;

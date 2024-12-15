@@ -36,8 +36,10 @@ void Fragment::add(Drawable *drawable)
         for (int i = 0; i < drawableCount; ++i)
         {
             newDrawables[i] = drawables[i];
+            yield();
         }
-        delete[] drawables;
+        if (drawables != nullptr)
+            delete[] drawables;
         drawables = newDrawables;
     }
     drawables[drawableCount++] = drawable;

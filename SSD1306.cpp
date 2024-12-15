@@ -949,6 +949,7 @@ void OLED::circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thic
             drawPixel(centerX - y, centerY + x);
             drawPixel(centerX + y, centerY - x);
             drawPixel(centerX - y, centerY - x);
+            yield();
         }
         radius--;
     }
