@@ -1,4 +1,5 @@
 #include "SSD1306.h"
+#include "Fragments.h"
 
 /**
  * @author Saurav Sajeev
