@@ -18,6 +18,28 @@ const char *Circle::type() const
     return "Circle";
 }
 
+void Circle::setChangeState()
+{
+    changeState = false;
+}
+
+bool Circle::getChangeState()
+{
+    bool temp = changeState;
+    changeState = false;
+    return changeState;
+}
+
+Circle &Circle::operator=(const Circle &other)
+{
+    centreX = other.centreX;
+    centreY = other.centreY;
+    radius = other.radius;
+    thickness = other.thickness;
+    changeState = true;
+    return *this;
+}
+
 Circle::~Circle()
 {
     // delete this;
@@ -34,6 +56,30 @@ void Rectangle::draw(OLED &oled)
 const char *Rectangle::type() const
 {
     return "Rectangle";
+}
+
+void Rectangle::setChangeState()
+{
+    changeState = false;
+}
+
+bool Rectangle::getChangeState()
+{
+    bool temp = changeState;
+    changeState = false;
+    return changeState;
+}
+
+Rectangle &Rectangle::operator=(const Rectangle &other)
+{
+    x = other.x;
+    y = other.y;
+    width = other.width;
+    height = other.height;
+    cornerRadius = other.cornerRadius;
+    thickness = other.thickness;
+    changeState = true;
+    return *this;
 }
 
 Rectangle::~Rectangle()
@@ -54,6 +100,29 @@ const char *Line::type() const
     return "Line";
 }
 
+void Line::setChangeState()
+{
+    changeState = false;
+}
+
+bool Line::getChangeState()
+{
+    bool temp = changeState;
+    changeState = false;
+    return changeState;
+}
+
+Line &Line::operator=(const Line &other)
+{
+    startX = other.startX;
+    startY = other.startY;
+    endX = other.endX;
+    endY = other.endY;
+    thickness = other.thickness;
+    changeState = true;
+    return *this;
+}
+
 Line::~Line()
 {
     // delete this;
@@ -70,6 +139,29 @@ void Bitmap::draw(OLED &oled)
 const char *Bitmap::type() const
 {
     return "Bitmap";
+}
+
+void Bitmap::setChangeState()
+{
+    changeState = false;
+}
+
+bool Bitmap::getChangeState()
+{
+    bool temp = changeState;
+    changeState = false;
+    return changeState;
+}
+
+Bitmap &Bitmap::operator=(const Bitmap &other)
+{
+    dataSet = other.dataSet;
+    x = other.x;
+    y = other.y;
+    width = other.width;
+    height = other.height;
+    changeState = true;
+    return *this;
 }
 
 Bitmap::~Bitmap()
@@ -90,6 +182,28 @@ const char *Text::type() const
     return "Text";
 }
 
+void Text::setChangeState()
+{
+    changeState = false;
+}
+
+bool Text::getChangeState()
+{
+    bool temp = changeState;
+    changeState = false;
+    return temp;
+}
+
+Text &Text::operator=(const Text &other)
+{
+    text = other.text;
+    x = other.x;
+    y = other.y;
+    changeState = true;
+    changeState = true;
+    return *this;
+}
+
 Text::~Text()
 {
     // delete this;
@@ -108,6 +222,27 @@ const char *HighlightedText::type() const
     return "HighlightedText";
 }
 
+void HighlightedText::setChangeState()
+{
+    changeState = false;
+}
+
+bool HighlightedText::getChangeState()
+{
+    bool temp = changeState;
+    changeState = false;
+    return changeState;
+}
+
+HighlightedText &HighlightedText::operator=(const HighlightedText &other)
+{
+    text = other.text;
+    x = other.x;
+    y = other.y;
+    changeState = true;
+    return *this;
+}
+
 HighlightedText::~HighlightedText()
 {
     // delete this;
@@ -124,6 +259,29 @@ void AnimatedText::draw(OLED &oled)
 const char *AnimatedText::type() const
 {
     return "AnimatedText";
+}
+
+void AnimatedText::setChangeState()
+{
+    changeState = false;
+}
+
+bool AnimatedText::getChangeState()
+{
+    bool temp = changeState;
+    changeState = false;
+    return changeState;
+}
+
+AnimatedText &AnimatedText::operator=(const AnimatedText &other)
+{
+    text = other.text;
+    x = other.x;
+    y = other.y;
+    delay = other.delay;
+    highlight = other.highlight;
+    changeState = true;
+    return *this;
 }
 
 AnimatedText::~AnimatedText()
@@ -228,6 +386,31 @@ bool GridView::checkType()
 const char *GridView::type() const
 {
     return "GridView";
+}
+
+void GridView::setChangeState()
+{
+    changeState = false;
+}
+
+bool GridView::getChangeState()
+{
+    bool temp = changeState;
+    changeState = false;
+    return changeState;
+}
+
+GridView &GridView::operator=(const GridView &other)
+{
+    drawable = other.drawable;
+    count = other.count;
+    countPerLine = other.countPerLine;
+    startX = other.startX;
+    startY = other.startY;
+    seperationX = other.seperationX;
+    seperationY = other.seperationY;
+    changeState = true;
+    return *this;
 }
 
 GridView::~GridView()
