@@ -223,6 +223,7 @@ private:
     uint8_t drawableCount;
     uint8_t drawableCapacity;
     uint8_t lastCount = 0;
+    bool isDetached = false;
 
 public:
     /**

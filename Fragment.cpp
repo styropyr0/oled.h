@@ -68,5 +68,16 @@ void Fragment::recycle()
 
 void Fragment::detach()
 {
-    delete this;
+    if (isDetached)
+        return;
+    isDetached = true;
+    for (int i = 0; i < drawableCount; ++i)
+    {
+        delete drawables[i];
+    }
+    delete[] drawables;
+    drawables = nullptr;
+    drawableCount = 0;
+    drawableCapacity = 0;
+    lastCount = 0;
 }
