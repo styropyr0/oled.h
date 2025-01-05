@@ -91,7 +91,7 @@ You can create a `Fragment` to hold multiple `Drawable` objects. Drawables can b
 
 // Create OLED and Fragment objects
 OLED oled(128, 64);
-FragmentManager manager(oled);// Create a manager for the Fragments. The manager is attached to the corresponding oled object.
+FragmentManager manager(oled); // Create a manager for the Fragments. The manager is attached to the corresponding oled object.
 
 void setup() {
   oled.begin();
@@ -107,11 +107,22 @@ void setup() {
 
 #### **Recycling Fragments**
 
-Fragments can be updated dynamically without re-adding all drawables, saving memory and processing time.
+Fragments can be updated dynamically without re-adding all drawables, saving memory and processing time. There are three ways to recycle fragments:
 
-```cpp
-fragment.recycle();  // Redraw the fragment’s contents on the OLED
-```
+1. **Recycle Modified Drawables**: Applies changes to modified drawables without re-inflating them.
+   ```cpp
+   fragment.recycle();  // Redraw the fragment’s contents on the OLED
+   ```
+
+2. **Recycle All Drawables**: Applies changes to all drawables by re-inflating them.
+   ```cpp
+   fragment.recycleAll();  // Re-inflate all drawables in the fragment
+   ```
+
+3. **Recycle New Drawables**: Applies changes to newly added drawables without re-inflating the existing ones.
+   ```cpp
+   fragment.recycleNew();  // Apply changes to newly added drawables
+   ```
 
 #### **GridView: Structured Layouts**
 
@@ -132,8 +143,109 @@ void setup() {
   Fragment fragment(manager); // Attach the manager to the required Fragment.
   Circle* circle = new Circle(0, 0, 8, 2);
   GridView* grid = new GridView(circle, 12, 4, 10, 10, 10, 10);
-  fragment.add(gridView);
-  fragment.inflate();// Draw the fragment containing the grid
+  fragment.add(grid);
+  fragment.inflate(); // Draw the fragment containing the grid
+}
+```
+
+#### **Visibility Modifiers**
+
+You can now control the visibility of individual drawables within a fragment. This allows for more dynamic and flexible display management.
+
+```cpp
+// Set visibility of a drawable
+drawable->setVisibility(false); // Hide the drawable
+drawable->setVisibility(true);  // Show the drawable
+```
+
+#### **Change State Management**
+
+Drawables now support change state management, allowing you to track and update only modified drawables.
+
+```cpp
+// Mark a drawable as changed
+drawable->setChangeState();
+
+// Check if a drawable has changed
+if (drawable->getChangeState()) {
+  // Update the drawable
+}
+```
+
+#### **Reassignment or Change of Drawables After Inflating**
+
+After inflating a fragment, you can reassign or change the drawables dynamically. This allows for efficient updates without the need to re-inflate the entire fragment.
+
+```cpp
+// Example of reassigning a drawable
+Text* textDrawable = new Text("Updated Text", 0, 0);
+fragment.add(textDrawable);
+fragment.recycleNew();  // Apply changes to the newly added drawable
+```
+
+#### **New Drawable Types**
+
+The library now includes additional drawable types such as `Rectangle`, `Line`, `HighlightedText`, `AnimatedText`, and `Bitmap`.
+
+```cpp
+// Example of adding new drawable types
+fragment.add(new Rectangle(10, 10, 50, 30, 5, 2));
+fragment.add(new Line(0, 0, 127, 63, 2));
+fragment.add(new HighlightedText("Highlighted", 0, 10));
+fragment.add(new AnimatedText("Animated", 0, 20, 100, true));
+fragment.add(new Bitmap(bitmapData, 0, 0, 16, 16));
+```
+
+#### **Example Code**
+
+Here's an example code demonstrating the usage of the new features:
+
+```cpp
+#include <SSD1306.h>
+#include <Fragments.h>
+
+// Create OLED object with width and height (128x64)
+OLED oled(128, 64);
+
+// Create a FragmentManager object and attach it to the OLED object
+FragmentManager mgr(oled);
+
+void setup() {
+  // Initialize the OLED display
+  oled.begin();
+  
+  // Initialize serial communication for debugging
+  Serial.begin(9600);
+  
+  // Create a Fragment object and attach it to the FragmentManager
+  Fragment fragment(mgr);
+  
+  // Create drawable objects
+  Rectangle* rectangle = new Rectangle(30, 0, 15, 15, 3, 1);
+  Text* text = new Text("Hello World!", 0, 0);
+  
+  // Add drawables to the fragment
+  fragment.add(rectangle);
+  fragment.add(text);
+  
+  // Draw all the fragment’s drawables
+  fragment.inflate();
+
+  // Wait for 2 seconds
+  delay(2000);
+
+  // Reassign the text drawable with new content and position
+  *text = Text("This is new text!", 10, 3);
+  
+  // Hide the rectangle drawable
+  rectangle->setVisibility(false);
+  
+  // Recycle all drawables to apply changes
+  fragment.recycleAll();
+}
+
+void loop() {
+  // Main loop logic (empty in this example)
 }
 ```
 
