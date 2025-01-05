@@ -259,6 +259,8 @@ public:
      */
     void clearArea(uint8_t startX, uint8_t endX, uint8_t page);
 
+    void plot(uint8_t maxX, uint8_t maxY, uint8_t x, uint8_t y, uint8_t style);
+
 private:
     uint8_t HEIGHT = 0, WIDTH = 0, address = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0;
     String stringToPrint;

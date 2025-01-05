@@ -83,8 +83,8 @@ void Fragment::recycle()
     {
         if (drawables[i]->getChangeState())
         {
-        drawables[i]->draw(oled);
-    }
+            drawables[i]->draw(oled);
+        }
     }
     lastCount = drawableCount;
 }
