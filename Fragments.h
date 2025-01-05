@@ -47,6 +47,16 @@ public:
      * @brief Virtual destructor for Drawable.
      */
     virtual ~Drawable() = default;
+
+    /**
+     * @brief Changes the modifications state of the object.
+     */
+    virtual void setChangeState() = 0;
+
+    /**
+     * @brief Returns the modification state of the object.
+     */
+    virtual bool getChangeState() = 0;
 };
 
 class Circle : public Drawable
@@ -55,6 +65,9 @@ private:
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t centreX, centreY, radius, thickness;
+    bool changeState = true;
+    void setChangeState() override;
+    bool getChangeState() override;
 
 public:
     /**
@@ -75,6 +88,9 @@ private:
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t x, y, width, height, cornerRadius, thickness;
+    bool changeState = true;
+    void setChangeState() override;
+    bool getChangeState() override;
 
 public:
     /**
@@ -97,6 +113,9 @@ private:
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t startX, startY, endX, endY, thickness;
+    bool changeState = true;
+    void setChangeState() override;
+    bool getChangeState() override;
 
 public:
     /**
@@ -119,6 +138,9 @@ private:
     uint8_t x, y;
     void draw(OLED &oled) override;
     const char *type() const override;
+    bool changeState = true;
+    void setChangeState() override;
+    bool getChangeState() override;
 
 public:
     /**
@@ -138,6 +160,9 @@ private:
     uint8_t x, y;
     void draw(OLED &oled) override;
     const char *type() const override;
+    bool changeState = true;
+    void setChangeState() override;
+    bool getChangeState() override;
 
 public:
     /**
@@ -159,6 +184,9 @@ private:
     bool highlight;
     void draw(OLED &oled) override;
     const char *type() const override;
+    bool changeState = true;
+    void setChangeState() override;
+    bool getChangeState() override;
 
 public:
     /**
@@ -180,6 +208,9 @@ private:
     uint8_t x, y, width, height;
     void draw(OLED &oled) override;
     const char *type() const override;
+    bool changeState = true;
+    void setChangeState() override;
+    bool getChangeState() override;
 
 public:
     /**
@@ -202,7 +233,10 @@ private:
     uint8_t count, countPerLine, startX, startY, seperationX, seperationY;
     void draw(OLED &oled) override;
     const char *type() const override;
+    bool changeState = true;
     bool checkType();
+    void setChangeState() override;
+    bool getChangeState() override;
 
 public:
     GridView(Drawable *drawable, uint8_t count, uint8_t countPerLine, uint8_t startX, uint8_t startY, uint8_t seperationX, uint8_t seperationY);
