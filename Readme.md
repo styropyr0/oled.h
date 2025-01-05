@@ -162,25 +162,18 @@ drawable->setVisibility(true);  // Show the drawable
 
 Drawables now support change state management, allowing you to track and update only modified drawables.
 
-```cpp
-// Mark a drawable as changed
-drawable->setChangeState();
-
-// Check if a drawable has changed
-if (drawable->getChangeState()) {
-  // Update the drawable
-}
-```
-
 #### **Reassignment or Change of Drawables After Inflating**
 
 After inflating a fragment, you can reassign or change the drawables dynamically. This allows for efficient updates without the need to re-inflate the entire fragment.
 
 ```cpp
-// Example of reassigning a drawable
-Text* textDrawable = new Text("Updated Text", 0, 0);
+Text* textDrawable = new Text("New Text", 0, 0);
 fragment.add(textDrawable);
-fragment.recycleNew();  // Apply changes to the newly added drawable
+fragment.inflate();
+
+//Change the text content after some time
+*textDrawable = Text("Updated Text", 0, 0);
+fragment.recycleAll();  // Apply changes to the newly added drawable
 ```
 
 #### **New Drawable Types**
