@@ -255,6 +255,12 @@ public:
     void recycle();
 
     /**
+     * @brief Applies changes to newly added drawables without re-inflating the drawables.
+     * It is recommended to call recycle after adding a view to a fragment which is already inflated.
+     */
+    void recycleNew();
+
+    /**
      * @brief Removes all fragments and frees up memory.
      * It is recommended to call detach if you no longer use a fragment.
      * This will not clear the screen.

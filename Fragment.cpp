@@ -20,11 +20,14 @@ Fragment::Fragment(FragmentManager &manager)
 
 Fragment::~Fragment()
 {
-    for (int i = 0; i < drawableCount; ++i)
+    if (!isDetached)
     {
-        delete drawables[i];
+        for (int i = 0; i < drawableCount; ++i)
+        {
+            delete drawables[i];
+        }
+        delete[] drawables;
     }
-    delete[] drawables;
 }
 
 void Fragment::add(Drawable *drawable)
@@ -56,10 +59,21 @@ void Fragment::inflate()
     lastCount = drawableCount;
 }
 
-void Fragment::recycle()
+void Fragment::recycleNew()
 {
     OLED &oled = *manager.getOLED();
     for (int i = lastCount - 1; i < drawableCount; ++i)
+    {
+        drawables[i]->draw(oled);
+    }
+    lastCount = drawableCount;
+}
+
+void Fragment::recycle()
+{
+    OLED &oled = *manager.getOLED();
+    oled.clearScr();
+    for (int i = 0; i < drawableCount; ++i)
     {
         drawables[i]->draw(oled);
     }
