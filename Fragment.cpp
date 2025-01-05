@@ -28,6 +28,11 @@ Fragment::~Fragment()
         }
         delete[] drawables;
     }
+    drawables = nullptr;
+    drawableCount = 0;
+    drawableCapacity = 0;
+    lastCount = 0;
+    isDetached = true;
 }
 
 void Fragment::add(Drawable *drawable)
