@@ -70,8 +70,11 @@ void Fragment::recycleNew()
     OLED &oled = *manager.getOLED();
     for (int i = lastCount - 1; i < drawableCount; ++i)
     {
-        drawables[i]->draw(oled);
-        drawables[i]->setChangeState();
+        if (drawables[i]->getVisibility())
+        {
+            drawables[i]->draw(oled);
+            drawables[i]->setChangeState();
+        }
     }
     lastCount = drawableCount;
 }
@@ -84,6 +87,21 @@ void Fragment::recycle()
         if (drawables[i]->getChangeState())
         {
             drawables[i]->draw(oled);
+        }
+    }
+    lastCount = drawableCount;
+}
+
+void Fragment::recycleAll()
+{
+    OLED &oled = *manager.getOLED();
+    oled.clearScr();
+    for (int i = 0; i < drawableCount; ++i)
+    {
+        if (drawables[i]->getVisibility())
+        {
+            drawables[i]->draw(oled);
+            drawables[i]->setChangeState();
         }
     }
     lastCount = drawableCount;

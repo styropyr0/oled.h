@@ -40,6 +40,16 @@ Circle &Circle::operator=(const Circle &other)
     return *this;
 }
 
+void Circle::setVisibility(bool visibility)
+{
+    this->visibility = visibility;
+}
+
+bool Circle::getVisibility()
+{
+    return visibility;
+}
+
 Circle::~Circle()
 {
     // delete this;
@@ -80,6 +90,16 @@ Rectangle &Rectangle::operator=(const Rectangle &other)
     thickness = other.thickness;
     changeState = true;
     return *this;
+}
+
+void Rectangle::setVisibility(bool visibility)
+{
+    this->visibility = visibility;
+}
+
+bool Rectangle::getVisibility()
+{
+    return visibility;
 }
 
 Rectangle::~Rectangle()
@@ -123,6 +143,16 @@ Line &Line::operator=(const Line &other)
     return *this;
 }
 
+void Line::setVisibility(bool visibility)
+{
+    this->visibility = visibility;
+}
+
+bool Line::getVisibility()
+{
+    return visibility;
+}
+
 Line::~Line()
 {
     // delete this;
@@ -162,6 +192,16 @@ Bitmap &Bitmap::operator=(const Bitmap &other)
     height = other.height;
     changeState = true;
     return *this;
+}
+
+void Bitmap::setVisibility(bool visibility)
+{
+    this->visibility = visibility;
+}
+
+bool Bitmap::getVisibility()
+{
+    return visibility;
 }
 
 Bitmap::~Bitmap()
@@ -204,6 +244,16 @@ Text &Text::operator=(const Text &other)
     return *this;
 }
 
+void Text::setVisibility(bool visibility)
+{
+    this->visibility = visibility;
+}
+
+bool Text::getVisibility()
+{
+    return visibility;
+}
+
 Text::~Text()
 {
     // delete this;
@@ -241,6 +291,16 @@ HighlightedText &HighlightedText::operator=(const HighlightedText &other)
     y = other.y;
     changeState = true;
     return *this;
+}
+
+void HighlightedText::setVisibility(bool visibility)
+{
+    this->visibility = visibility;
+}
+
+bool HighlightedText::getVisibility()
+{
+    return visibility;
 }
 
 HighlightedText::~HighlightedText()
@@ -282,6 +342,16 @@ AnimatedText &AnimatedText::operator=(const AnimatedText &other)
     highlight = other.highlight;
     changeState = true;
     return *this;
+}
+
+void AnimatedText::setVisibility(bool visibility)
+{
+    this->visibility = visibility;
+}
+
+bool AnimatedText::getVisibility()
+{
+    return visibility;
 }
 
 AnimatedText::~AnimatedText()
@@ -411,6 +481,16 @@ GridView &GridView::operator=(const GridView &other)
     seperationY = other.seperationY;
     changeState = true;
     return *this;
+}
+
+void GridView::setVisibility(bool visibility)
+{
+    this->visibility = visibility;
+}
+
+bool GridView::getVisibility()
+{
+    return visibility;
 }
 
 GridView::~GridView()

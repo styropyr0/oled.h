@@ -57,6 +57,16 @@ public:
      * @brief Returns the modification state of the object.
      */
     virtual bool getChangeState() = 0;
+
+    /**
+     * @brief Set the visibility of the drawable.
+     */
+    virtual void setVisibility(bool visibility) = 0;
+
+    /**
+     * @brief Returns the visibility of the drawable.
+     */
+    virtual bool getVisibility() = 0;
 };
 
 class Circle : public Drawable
@@ -65,9 +75,10 @@ private:
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t centreX, centreY, radius, thickness;
-    bool changeState = true;
+    bool changeState = true, visibility = true;
     void setChangeState() override;
     bool getChangeState() override;
+    bool getVisibility() override;
 
 public:
     /**
@@ -79,6 +90,7 @@ public:
      */
     Circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thickness);
     Circle &operator=(const Circle &other);
+    void setVisibility(bool visibility) override;
     ~Circle();
     friend class GridView;
 };
@@ -89,9 +101,10 @@ private:
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t x, y, width, height, cornerRadius, thickness;
-    bool changeState = true;
+    bool changeState = true, visibility = true;
     void setChangeState() override;
     bool getChangeState() override;
+    bool getVisibility() override;
 
 public:
     /**
@@ -105,6 +118,7 @@ public:
      */
     Rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness);
     Rectangle &operator=(const Rectangle &other);
+    void setVisibility(bool visibility) override;
     ~Rectangle();
     friend class GridView;
 };
@@ -115,9 +129,10 @@ private:
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t startX, startY, endX, endY, thickness;
-    bool changeState = true;
+    bool changeState = true, visibility = true;
     void setChangeState() override;
     bool getChangeState() override;
+    bool getVisibility() override;
 
 public:
     /**
@@ -130,6 +145,7 @@ public:
      */
     Line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness);
     Line &operator=(const Line &other);
+    void setVisibility(bool visibility) override;
     ~Line();
     friend class GridView;
 };
@@ -141,9 +157,10 @@ private:
     uint8_t x, y;
     void draw(OLED &oled) override;
     const char *type() const override;
-    bool changeState = true;
+    bool changeState = true, visibility = true;
     void setChangeState() override;
     bool getChangeState() override;
+    bool getVisibility() override;
 
 public:
     /**
@@ -154,6 +171,7 @@ public:
      */
     Text(String text, uint8_t x, uint8_t y);
     Text &operator=(const Text &other);
+    void setVisibility(bool visibility) override;
     ~Text();
 };
 
@@ -164,9 +182,10 @@ private:
     uint8_t x, y;
     void draw(OLED &oled) override;
     const char *type() const override;
-    bool changeState = true;
+    bool changeState = true, visibility = true;
     void setChangeState() override;
     bool getChangeState() override;
+    bool getVisibility() override;
 
 public:
     /**
@@ -177,6 +196,7 @@ public:
      */
     HighlightedText(String text, uint8_t x, uint8_t y);
     HighlightedText &operator=(const HighlightedText &other);
+    void setVisibility(bool visibility) override;
     ~HighlightedText();
 };
 
@@ -189,9 +209,10 @@ private:
     bool highlight;
     void draw(OLED &oled) override;
     const char *type() const override;
-    bool changeState = true;
+    bool changeState = true, visibility = true;
     void setChangeState() override;
     bool getChangeState() override;
+    bool getVisibility() override;
 
 public:
     /**
@@ -204,6 +225,7 @@ public:
      */
     AnimatedText(String text, uint8_t x, uint8_t y, int delay, bool highlight);
     AnimatedText &operator=(const AnimatedText &other);
+    void setVisibility(bool visibility) override;
     ~AnimatedText();
 };
 
@@ -214,9 +236,10 @@ private:
     uint8_t x, y, width, height;
     void draw(OLED &oled) override;
     const char *type() const override;
-    bool changeState = true;
+    bool changeState = true, visibility = true;
     void setChangeState() override;
     bool getChangeState() override;
+    bool getVisibility() override;
 
 public:
     /**
@@ -229,6 +252,7 @@ public:
      */
     Bitmap(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height);
     Bitmap &operator=(const Bitmap &other);
+    void setVisibility(bool visibility) override;
     ~Bitmap();
     friend class GridView;
 };
@@ -240,14 +264,16 @@ private:
     uint8_t count, countPerLine, startX, startY, seperationX, seperationY;
     void draw(OLED &oled) override;
     const char *type() const override;
-    bool changeState = true;
+    bool changeState = true, visibility = true;
     bool checkType();
     void setChangeState() override;
     bool getChangeState() override;
+    bool getVisibility() override;
 
 public:
     GridView(Drawable *drawable, uint8_t count, uint8_t countPerLine, uint8_t startX, uint8_t startY, uint8_t seperationX, uint8_t seperationY);
     GridView &operator=(const GridView &other);
+    void setVisibility(bool visibility) override;
     ~GridView();
 };
 
@@ -291,10 +317,16 @@ public:
     void inflate();
 
     /**
-     * @brief Applies changes without re-inflating the drawables.
+     * @brief Applies changes to modified drawables without re-inflating them.
      * It is recommended to call recycle after modifying a fragment which is already inflated.
      */
     void recycle();
+
+    /**
+     * @brief Applies changes to modified drawables re-inflating all of them.
+     * It is recommended to call recycle after modifying a fragment which is already inflated.
+     */
+    void recycleAll();
 
     /**
      * @brief Applies changes to newly added drawables without re-inflating the drawables.
