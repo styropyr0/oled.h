@@ -85,11 +85,7 @@ Fragments provide a way to dynamically manage and render multiple drawable objec
 
 Fragments in this library are inspired by Android development fragments. Similar to their Android counterparts, they allow developers to handle multiple independent and reusable components within the OLED display. This can be particularly helpful in scenarios where different portions of the screen require updates independently.
 
-> **Note**: To use fragments, you need to include 
-
-Fragments.h
-
-. It is separated from the main library to avoid taking up unnecessary memory when fragments are not used.
+> **Note**: To use fragments, you need to include Fragments.h. It is separated from the main library to avoid taking up unnecessary memory when fragments are not used.
 
 #### Using Fragments
 
