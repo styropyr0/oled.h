@@ -1,4 +1,4 @@
-# **SSD1306 OLED Display Library**
+# SSD1306 OLED Display Library
 
 A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. This library offers a wide range of features including custom fonts, progress bars, animated text, bitmap rendering, and more. It works seamlessly with microcontrollers like **Arduino**, **ESP32**, and **ESP8266** over **I2C** communication.
 
@@ -6,7 +6,8 @@ Additionally, the library includes a **Bitmap Generator** tool in Python, which 
 
 Please note that SSD1306 has 128 independently controllable **Columns** along the width, and 8 independently controllable **Pages** along the height. The total pixel count along the height is divided into **Pages** of 8 pixels high. In scenarios such as printing texts, bitmaps, progress bars, you should keep this in mind.
 
-## **Features**
+## Features
+
 - **Text Display**: Print static text and animated text (typewriter effect).
 - **Custom Fonts**: Supports custom fonts and character sets.
 - **Progress Bar**: Display progress bars with various styles.
@@ -20,9 +21,8 @@ Please note that SSD1306 has 128 independently controllable **Columns** along th
 - **Display Inversion**: Invert or restore the display colors.
 - **Geometric Shapes**: Draw rectangles, circles, and lines on the display with customizable thickness.
 - **Fragments and GridView**: Dynamically manage and render multiple drawable objects on the screen efficiently.
-- **Fast and efficient**: This library is built from scratch, from the very basic hardware level programming. Hence, it runs faster than libraries which are built on top of existing libraries.
 
-## **Installation**
+## Installation
 
 ### 1. Installing the Library
 
@@ -38,22 +38,28 @@ Alternatively, you can manually download the ZIP file and add it to the **Arduin
 
 The library uses the **Wire** library for I2C communication, which is pre-installed with the Arduino IDE. No additional libraries are required.
 
-## **Hardware Requirements**
+## Hardware Requirements
+
 - **SSD1306-based OLED display** (typically 128x64 or 128x32 pixels).
 - **Arduino Board** (e.g., Arduino UNO, ESP32, or ESP8266).
 
-## **Pin Configuration**
+## Pin Configuration
+
 By default, the library uses I2C communication. The I2C pins are:
 - **SDA (Data)**: Typically pin `A4` on most Arduino boards (varies by board).
 - **SCL (Clock)**: Typically pin `A5` on most Arduino boards (varies by board).
 
 For ESP32 and other microcontrollers, you can configure these pins in the `Wire.begin(SDA_PIN, SCL_PIN);` function.
 
-## **Library Usage**
+## Library Usage
 
-### 1. **Initializing the OLED Display**
+### 1. Initializing the OLED Display
 
-To use the library, instantiate the `OLED` class with the display’s width and height (e.g., 128x64 or 128x32).
+To use the library, instantiate the 
+
+OLED
+
+ class with the display’s width and height (e.g., 128x64 or 128x32).
 
 ```cpp
 #include <SSD1306.h>
@@ -73,17 +79,29 @@ void loop() {
 }
 ```
 
-### 2. **Fragments: Manage Dynamic Drawables**
+### 2. Fragments: Manage Dynamic Drawables
 
 Fragments provide a way to dynamically manage and render multiple drawable objects on the screen efficiently. This feature is especially useful for applications that require frequent updates to specific parts of the display.
 
 Fragments in this library are inspired by Android development fragments. Similar to their Android counterparts, they allow developers to handle multiple independent and reusable components within the OLED display. This can be particularly helpful in scenarios where different portions of the screen require updates independently.
 
-> **Note**: To use fragments, you need to include `Fragments.h`. It is separated from the main library to avoid taking up unnecessary memory when fragments are not used.
+> **Note**: To use fragments, you need to include 
 
-#### **Using Fragments**
+Fragments.h
 
-You can create a `Fragment` to hold multiple `Drawable` objects. Drawables can be added, updated, or removed dynamically.
+. It is separated from the main library to avoid taking up unnecessary memory when fragments are not used.
+
+#### Using Fragments
+
+You can create a 
+
+Fragment
+
+ to hold multiple 
+
+Drawable
+
+ objects. Drawables can be added, updated, or removed dynamically.
 
 ```cpp
 #include <SSD1306.h>
@@ -105,7 +123,7 @@ void setup() {
 }
 ```
 
-#### **Recycling Fragments**
+#### Recycling Fragments
 
 Fragments can be updated dynamically without re-adding all drawables, saving memory and processing time. There are three ways to recycle fragments:
 
@@ -124,7 +142,7 @@ Fragments can be updated dynamically without re-adding all drawables, saving mem
    fragment.recycleNew();  // Apply changes to newly added drawables
    ```
 
-#### **GridView: Structured Layouts**
+#### GridView: Structured Layouts
 
 The `GridView` class allows you to organize and render multiple drawables in a grid-like layout. This is ideal for creating tables or menu systems.
 
@@ -148,7 +166,7 @@ void setup() {
 }
 ```
 
-#### **Visibility Modifiers**
+#### Visibility Modifiers
 
 You can now control the visibility of individual drawables within a fragment. This allows for more dynamic and flexible display management.
 
@@ -158,11 +176,11 @@ drawable->setVisibility(false); // Hide the drawable
 drawable->setVisibility(true);  // Show the drawable
 ```
 
-#### **Change State Management**
+#### Change State Management
 
 Drawables now support change state management, allowing you to track and update only modified drawables.
 
-#### **Reassignment or Change of Drawables After Inflating**
+#### Reassignment or Change of Drawables After Inflating
 
 After inflating a fragment, you can reassign or change the drawables dynamically. This allows for efficient updates without the need to re-inflate the entire fragment.
 
@@ -176,7 +194,7 @@ fragment.inflate();
 fragment.recycleAll();  // Apply changes to the newly added drawable
 ```
 
-#### **New Drawable Types**
+#### New Drawable Types
 
 The library now includes additional drawable types such as `Rectangle`, `Line`, `HighlightedText`, `AnimatedText`, and `Bitmap`.
 
@@ -189,7 +207,24 @@ fragment.add(new AnimatedText("Animated", 0, 20, 100, true));
 fragment.add(new Bitmap(bitmapData, 0, 0, 16, 16));
 ```
 
-#### **Example Code**
+#### Fragment Back Stack Management
+
+Inspired by Android fragments, you can manage a back stack of fragments using `addToBackStack()` and `popBackStack()` methods.
+
+#### Example: Adding a Fragment to Back Stack
+
+```cpp
+Fragment fragment(manager);
+manager.addToBackStack(&fragment);  // Add fragment to back stack
+```
+
+#### Example: Popping a Fragment from Back Stack
+
+```cpp
+manager.popBackStack();  // Pop the last fragment from the back stack
+```
+
+#### Example Code
 
 Here's an example code demonstrating the usage of the new features:
 
@@ -242,7 +277,7 @@ void loop() {
 }
 ```
 
-### 3. **Custom Fonts**
+### 3. Custom Fonts
 
 You can use custom fonts by defining an array of font data. This library uses 5x7 bitmaps for characters by default, but you can change the font with the `setFont()` method.
 
@@ -264,7 +299,7 @@ void setup() {
 }
 ```
 
-### 4. **Printing Static Text**
+### 4. Printing Static Text
 
 You can print static text at a given `(x, y)` coordinate using the `print()` method.
 
@@ -274,7 +309,7 @@ You can print static text at a given `(x, y)` coordinate using the `print()` met
 oled.print("Hello, OLED!", 0, 0);  // Prints "Hello, OLED!" at (0, 0)
 ```
 
-### 5. **Animated Text (Typewriter Effect)**
+### 5. Animated Text (Typewriter Effect)
 
 Use the `printAnimated()` method for a typewriter effect, where text is displayed one character at a time.
 
@@ -284,7 +319,7 @@ Use the `printAnimated()` method for a typewriter effect, where text is displaye
 oled.printAnimated("Welcome!", 0, 0, 100, false);  // Print text with a 100 ms delay between characters, set true for highlight effect
 ```
 
-### 6. **Progress Bars**
+### 6. Progress Bars
 
 You can display progress bars in multiple styles (1-10 for progress bars, 11-15 for loaders). The `progressBar()` method accepts the progress value (0-100) and a style number.
 
@@ -294,7 +329,7 @@ You can display progress bars in multiple styles (1-10 for progress bars, 11-15 
 oled.progressBar(50, 0, 10, 1);  // Displays a 50% progress bar at (0, 10), style 1
 ```
 
-### 7. **Bitmap Rendering**
+### 7. Bitmap Rendering
 
 The library includes the `draw()` method to display bitmaps on the OLED. You can convert images into bitmap arrays using the **Bitmap Generator** Python tool (explained below).
 
@@ -308,7 +343,7 @@ const uint8_t myBitmap[] = {
 oled.draw(myBitmap, 0, 0, 16, 16);  // Draw a 16x16 bitmap at coordinates (0, 0)
 ```
 
-### 8. **Chaining Operators for Display**
+### 8. Chaining Operators for Display
 
 The library also includes operator overloading to simplify the process of displaying text and bitmaps. You can use the `<<` operator to print text and the `[]` operator to display bitmaps.
 
@@ -324,7 +359,7 @@ oled << "Hello, World!" << 0 << 0;  // Prints "Hello, World!" at (0, 0)
 oled[myBitmap] << 0 << 0 << 16 << 16;  // Draws a 16x16 bitmap at (0, 0)
 ```
 
-### 9. **Clearing the Screen**
+### 9. Clearing the Screen
 
 Use the `clearScr()` method to clear the screen.
 
@@ -332,7 +367,7 @@ Use the `clearScr()` method to clear the screen.
 oled.clearScr();  // Clears the display
 ```
 
-### 10. **Adjusting Brightness**
+### 10. Adjusting Brightness
 
 Use the `setBrightness()` method to adjust the display’s brightness. It accepts a percentage value (0-100).
 
@@ -340,7 +375,7 @@ Use the `setBrightness()` method to adjust the display’s brightness. It accept
 oled.setBrightness(80);  // Set the brightness to 80%
 ```
 
-### 11. **Custom OLED Setup**
+### 11. Custom OLED Setup
 
 The `manualSetup()` method allows you to pass an array of settings to configure the OLED display manually.
 
@@ -354,7 +389,7 @@ uint8_t customSettings[] = {
 oled.manualSetup(customSettings);  // Apply custom settings
 ```
 
-### 12. **Turn Display Off on Clear**
+### 12. Turn Display Off on Clear
 
 You can disable the display when you clear the screen using the `turnOffOnClr()` method.
 
@@ -362,7 +397,7 @@ You can disable the display when you clear the screen using the `turnOffOnClr()`
 oled.turnOffOnClr(true);  // Turn off display when cleared
 ```
 
-### 13. **Power Modes**
+### 13. Power Modes
 
 The display can operate in different power modes. Choose between low power, balanced, or performance mode to optimize energy consumption or display quality.
 
@@ -372,7 +407,7 @@ The display can operate in different power modes. Choose between low power, bala
 oled.setPowerMode(LOW_POWER_MODE);  // Set the display to low power mode
 ```
 
-### 14. **Super Brightness**
+### 14. Super Brightness
 
 Enable or disable super brightness for high-intensity display, though note it may cause instability.
 
@@ -382,7 +417,7 @@ Enable or disable super brightness for high-intensity display, though note it ma
 oled.superBrightness(true);  // Turn on super brightness
 ```
 
-### 15. **Inverting the Display**
+### 15. Inverting the Display
 
 Invert the pixels on the display to change all white pixels to black and vice versa.
 
@@ -392,7 +427,7 @@ Invert the pixels on the display to change all white pixels to black and vice ve
 oled.invertDisplay();  // Invert the display colors
 ```
 
-### 16. **Entire Display ON/OFF**
+### 16. Entire Display ON/OFF
 
 You can turn the entire display on or off.
 
@@ -403,7 +438,7 @@ oled.entireDisplayON();  // Turn all pixels on
 oled.entireDisplayOFF();  // Revert back to the content
 ```
 
-### 17. **Drawing Geometric Shapes**
+### 17. Drawing Geometric Shapes
 
 You can draw shapes such as rectangles, circles, and lines on the OLED display.
 
@@ -425,7 +460,7 @@ oled.circle(64, 32, 20, 2);  // Draw a circle at (64, 32) with radius 20, and th
 oled.line(0, 0, 127, 63, 2);  // Draw a line from (0, 0) to (127, 63), 2px thick
 ```
 
-### 18. **Highlighted Text**
+### 18. Highlighted Text
 
 Use the `printHighlighted()` method to print the text as highlighted.
 
@@ -435,23 +470,38 @@ Use the `printHighlighted()` method to print the text as highlighted.
 oled.printHighlighted("Welcome!", 0, 0);  // Print text with a highlighted effect
 ```
 
-### 19. **Clear Area**
+### 19. Clear Area
 
 Use the `clearArea()` method to clear a specific region along the width of the display.
 
-#### Example: Highlighted Text
+#### Example: Clear Area
 
 ```cpp
 oled.clearArea(20, 40, 0);  // Clears the region from 20 to 40 in the page 0.
 ```
 
----
+### 20. Fragment Back Stack Management
 
-## **Constants**
+Inspired by Android fragments, you can manage a back stack of fragments using `addToBackStack()` and `popBackStack()` methods.
+
+#### Example: Adding a Fragment to Back Stack
+
+```cpp
+Fragment fragment(manager);
+manager.addToBackStack(&fragment);  // Add fragment to back stack
+```
+
+#### Example: Popping a Fragment from Back Stack
+
+```cpp
+manager.popBackStack();  // Pop the last fragment from the back stack
+```
+
+## Constants
 
 Here are the constants you can use to configure various settings for your SSD1306 OLED display.
 
-### 1. **Display Settings Constants**
+### 1. Display Settings Constants
 
 | **Constant**        | **Value** | **Description**                                       |
 |---------------------|-----------|-------------------------------------------------------|
@@ -462,7 +512,7 @@ Here are the constants you can use to configure various settings for your SSD130
 | `ENTIRE_DISP_ON`    | 0xA5      | Turns on all the pixels.                              |
 | `RESUME_FROM_VRAM`  | 0xA4      | Resumes from VRAM.                                    |
 
-### 2. **Display Power Mode Constants**
+### 2. Display Power Mode Constants
 
 | **Constant**        | **Value** | **Description**                                       |
 |---------------------|-----------|-------------------------------------------------------|
@@ -477,7 +527,7 @@ Here are the constants you can use to configure various settings for your SSD130
 | `WIDTH_128`         | 0x80      | Display width of 128 pixels.                          |
 | `HEIGHT_64`         | 0x40      | Display height of 64 pixels.                          |
 
-### 4. **Bitmap Mode Constants**
+### 4. **Addressing Mode Constants**
 
 | **Constant**        | **Value** | **Description**                                       |
 |---------------------|-----------|-------------------------------------------------------|
