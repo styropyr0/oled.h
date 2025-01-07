@@ -55,11 +55,7 @@ For ESP32 and other microcontrollers, you can configure these pins in the `Wire.
 
 ### 1. Initializing the OLED Display
 
-To use the library, instantiate the 
-
-OLED
-
- class with the display’s width and height (e.g., 128x64 or 128x32).
+To use the library, instantiate the OLED class with the display’s width and height (e.g., 128x64 or 128x32).
 
 ```cpp
 #include <SSD1306.h>
@@ -89,15 +85,7 @@ Fragments in this library are inspired by Android development fragments. Similar
 
 #### Using Fragments
 
-You can create a 
-
-Fragment
-
- to hold multiple 
-
-Drawable
-
- objects. Drawables can be added, updated, or removed dynamically.
+You can create a Fragmentto hold multiple Drawable objects. Drawables can be added, updated, or removed dynamically.
 
 ```cpp
 #include <SSD1306.h>
