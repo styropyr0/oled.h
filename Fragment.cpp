@@ -7,6 +7,31 @@
 
 FragmentManager::FragmentManager(OLED &oled) : oled(&oled) {}
 
+void FragmentManager::addToBackStack(Fragment *fragment)
+{
+    Fragment **newFragments = new Fragment *[1];
+    for (int i = 0; i < fragmentCount; ++i)
+    {
+        newFragments[i] = fragments[i];
+        yield();
+    }
+    if (fragments != nullptr)
+        delete[] fragments;
+    fragments = newFragments;
+    fragments[fragmentCount++] = fragment;
+}
+
+void FragmentManager::popBackStack()
+{
+    if (fragmentCount > 0)
+    {
+        fragments[--fragmentCount] = nullptr;
+        fragmentCount--;
+        oled->clearScr();
+        fragments[fragmentCount]->recycleAll();
+    }
+}
+
 OLED *FragmentManager::getOLED()
 {
     return oled;

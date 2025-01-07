@@ -3,6 +3,8 @@
 
 #include "SSD1306.h"
 
+class Fragment;
+
 /**
  * @brief Manager for fragments. You can pass different OLED objects for multiple displays to reuse fragments generated
  * by attaching fragment managers to the fragments.
@@ -11,6 +13,8 @@ class FragmentManager
 {
 private:
     OLED *oled;
+    Fragment **fragments = nullptr;
+    int fragmentCount = 0;
 
 public:
     /**
@@ -24,6 +28,16 @@ public:
      * @returns Pointer to the OLED object.
      */
     OLED *getOLED();
+
+    /**
+     * @brief Adds a fragment to the back stack.
+     */
+    void addToBackStack(Fragment *fragment);
+
+    /**
+     * @brief Pops the last fragment from the back stack.
+     */
+    void popBackStack();
 };
 
 /**
