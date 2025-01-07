@@ -1018,7 +1018,3 @@ void OLED::clearBuffer()
 {
     memset(buffer, 0, sizeof(buffer));
 }
-
-// void OLED::plot()
-// {
-// }
