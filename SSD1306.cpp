@@ -814,7 +814,7 @@ void OLED::drawCircleQuarter(uint8_t centerX, uint8_t centerY, uint8_t radius, u
     }
 }
 
-void OLED::rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness)
+void OLED::rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness, bool fill)
 {
     if (cornerRadius > (width / 2))
         cornerRadius = width / 2;
@@ -830,23 +830,60 @@ void OLED::rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t heig
 
     for (uint8_t t = 0; t < thickness; t++)
     {
-        startX += t;
-        startY += t;
-        width -= 2 * t;
-        height -= 2 * t;
-        line(startX + cornerRadius, startY, startX + width - cornerRadius, startY, 1);
-        line(startX + cornerRadius, startY + height, startX + width - cornerRadius, startY + height, 1);
-        line(startX, startY + cornerRadius, startX, startY + height - cornerRadius, 1);
-        line(startX + width, startY + cornerRadius, startX + width, startY + height - cornerRadius, 1);
+        uint8_t innerStartX = startX + t;
+        uint8_t innerStartY = startY + t;
+        uint8_t innerWidth = width - 2 * t;
+        uint8_t innerHeight = height - 2 * t;
+
+        line(innerStartX + cornerRadius, innerStartY, innerStartX + innerWidth - cornerRadius, innerStartY, 1);
+        line(innerStartX + cornerRadius, innerStartY + innerHeight, innerStartX + innerWidth - cornerRadius, innerStartY + innerHeight, 1);
+        line(innerStartX, innerStartY + cornerRadius, innerStartX, innerStartY + innerHeight - cornerRadius, 1);
+        line(innerStartX + innerWidth, innerStartY + cornerRadius, innerStartX + innerWidth, innerStartY + innerHeight - cornerRadius, 1);
 
         if (cornerRadius > 0)
         {
-            drawCircleHelper(startX + cornerRadius, startY + cornerRadius, cornerRadius, 1);
-            drawCircleHelper(startX + width - cornerRadius, startY + cornerRadius, cornerRadius, 2);
-            drawCircleHelper(startX + width - cornerRadius, startY + height - cornerRadius, cornerRadius, 4);
-            drawCircleHelper(startX + cornerRadius, startY + height - cornerRadius, cornerRadius, 8);
+            drawCircleQuarter(innerStartX + cornerRadius, innerStartY + cornerRadius, cornerRadius, 1);
+            drawCircleQuarter(innerStartX + innerWidth - cornerRadius, innerStartY + cornerRadius, cornerRadius, 2);
+            drawCircleQuarter(innerStartX + innerWidth - cornerRadius, innerStartY + innerHeight - cornerRadius, cornerRadius, 4);
+            drawCircleQuarter(innerStartX + cornerRadius, innerStartY + innerHeight - cornerRadius, cornerRadius, 3);
         }
     }
+
+    if (fill)
+    {
+        for (uint8_t i = startX + cornerRadius; i < startX + width - cornerRadius; i++)
+        {
+            for (uint8_t j = startY + 1; j < startY + height; j++)
+            {
+                drawPixel(i, j);
+            }
+        }
+        for (uint8_t i = startX + 1; i < startX + width; i++)
+        {
+            for (uint8_t j = startY + cornerRadius; j < startY + height - cornerRadius; j++)
+            {
+                drawPixel(i, j);
+            }
+        }
+    }
+
+    if (cornerRadius > 0 && fill)
+    {
+        for (int16_t x = -cornerRadius; x <= cornerRadius; x++)
+        {
+            for (int16_t y = -cornerRadius; y <= cornerRadius; y++)
+            {
+                if (x * x + y * y <= cornerRadius * cornerRadius)
+                {
+                    drawPixel(startX + cornerRadius + x, startY + cornerRadius + y);
+                    drawPixel(startX + width - cornerRadius + x, startY + cornerRadius + y);
+                    drawPixel(startX + cornerRadius + x, startY + height - cornerRadius + y);
+                    drawPixel(startX + width - cornerRadius + x, startY + height - cornerRadius + y);
+                }
+            }
+        }
+    }
+
     CLR_BUFF = true;
     displayBuffer();
 }

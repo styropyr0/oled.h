@@ -55,12 +55,12 @@ Circle::~Circle()
     // delete this;
 }
 
-Rectangle::Rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness)
-    : x(x), y(y), width(width), height(height), cornerRadius(cornerRadius), thickness(thickness) {}
+Rectangle::Rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness, bool fill)
+    : x(x), y(y), width(width), height(height), cornerRadius(cornerRadius), thickness(thickness), fill(fill) {}
 
 void Rectangle::draw(OLED &oled)
 {
-    oled.rectangle(x, y, width, height, cornerRadius, thickness);
+    oled.rectangle(x, y, width, height, cornerRadius, thickness, fill);
 }
 
 const char *Rectangle::type() const

@@ -15,7 +15,7 @@ void setup() {
   Fragment fragment(mgr);
   
   // Create drawable objects
-  Rectangle* border = new Rectangle(0, 0, 127, 63, 3, 1);
+  Rectangle* border = new Rectangle(0, 0, 127, 63, 3, 1, false);
   Circle* circle = new Circle(64, 32, 10, 2);
   Text* text = new Text("Initial Text", 10, 3);
   

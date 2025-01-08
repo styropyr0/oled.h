@@ -115,7 +115,7 @@ private:
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t x, y, width, height, cornerRadius, thickness;
-    bool changeState = true, visibility = true;
+    bool changeState = true, visibility = true, fill = false;
     void setChangeState() override;
     bool getChangeState() override;
     bool getVisibility() override;
@@ -130,7 +130,7 @@ public:
      * @param cornerRadius Radius of the corners.
      * @param thickness Thickness of the rectangle.
      */
-    Rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness);
+    Rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness, bool fill);
     Rectangle &operator=(const Rectangle &other);
     void setVisibility(bool visibility) override;
     ~Rectangle();

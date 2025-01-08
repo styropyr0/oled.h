@@ -11,7 +11,7 @@ void setup() {
   oled.clearScr();
   
   // Draw a rectangle at (10, 10) with width 50, height 30, 5px corner radius, and 2px thickness
-  oled.rectangle(10, 10, 50, 30, 5, 2);
+  oled.rectangle(10, 10, 50, 30, 5, 2, false);
 
   delay(1000);
   
