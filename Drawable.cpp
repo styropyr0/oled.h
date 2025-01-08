@@ -89,6 +89,7 @@ Rectangle &Rectangle::operator=(const Rectangle &other)
     cornerRadius = other.cornerRadius;
     thickness = other.thickness;
     changeState = true;
+    fill = other.fill;
     return *this;
 }
 
