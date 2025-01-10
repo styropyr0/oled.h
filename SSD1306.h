@@ -260,10 +260,12 @@ public:
      */
     void clearArea(uint8_t startX, uint8_t endX, uint8_t page);
 
-    // void plot(uint8_t x, uint8_t y, )
+    void plot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t data);
+
+    void pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal);
 
 private:
-    uint8_t HEIGHT = 0, WIDTH = 0, address = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0;
+    uint8_t HEIGHT = 0, WIDTH = 0, address = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0, pulsePlotPos = 0;
     String stringToPrint;
     uint8_t bitmapCoords[3];
     uint8_t buffer[128 * 64 / 8];
