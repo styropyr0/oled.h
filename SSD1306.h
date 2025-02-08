@@ -188,8 +188,8 @@ public:
      */
     void draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height);
     /**
-     * @brief Sets the power mode. There are three available power modes.
-     * @param mode The power mode. Use enum values for power mode - (LOW_POWER_MODE or BALANCED_MODE or PERFORMANCE_MODE).
+     * @brief Sets the power mode. There are four available power modes.
+     * @param mode The power mode. Use enum values for power mode - (LOW_POWER_MODE or BALANCED_MODE or PERFORMANCE_MODE or TURBO_MODE).
      */
     void setPowerMode(uint8_t mode);
     /**
