@@ -80,9 +80,10 @@ enum registryCommands
 
 enum powerModes
 {
-    LOW_POWER_MODE = 0x01,
-    BALANCED_MODE = 0x02,
-    PERFORMANCE_MODE = 0x03
+    LOW_POWER_MODE = 0x01, // Low power consumption, slow display, uses I2C STANDARD MODE (100kHz)
+    BALANCED_MODE = 0x02, // Balanced power consumption, balanced performance, uses I2C STANDARD FAST MODE (200kHz)
+    PERFORMANCE_MODE = 0x03, // More power consumption, faster display, enables I2C FAST MODE (400kHz)
+    TURBO_MODE = 0x04 // I2C FAST MODE PLUS (1MHz). If your device doesn't support this mode, it will automatically switch to last selected mode.
 };
 
 class OLED

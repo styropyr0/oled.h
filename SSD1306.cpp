@@ -258,7 +258,9 @@ OLED::OLED(uint8_t width, uint8_t height, uint8_t address)
 void OLED::begin()
 {
     Wire.begin();
+    Wire.setClock(200000);
     autoSetup();
+    setPowerMode(BALANCED_MODE);
     clearBuffer();
 }
 
@@ -700,14 +702,21 @@ void OLED::setPowerMode(uint8_t mode)
         currentPowerMode = mode;
         switch (mode)
         {
+        case TURBO_MODE:
+            performancePowerMode();
+            Wire.setClock(1000000);
+            break;
         case PERFORMANCE_MODE:
             performancePowerMode();
+            Wire.setClock(400000);
             break;
         case BALANCED_MODE:
             balancedPowerMode();
+            Wire.setClock(200000);
             break;
         case LOW_POWER_MODE:
             lowPowerMode();
+            Wire.setClock(100000);
             break;
         }
     }
