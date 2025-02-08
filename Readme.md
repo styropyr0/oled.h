@@ -68,6 +68,7 @@ void setup() {
   oled.clearScr();  // Clear the screen
   oled.print("Hello, World!", 0, 0);  // Print text at (0, 0)
   oled << "This method also prints!" << 0 << 3;   // Print text at (0, 3)
+  oled.inflate();  //Inflate shall be called to render the items on the display.
 }
 
 void loop() {
@@ -280,6 +281,7 @@ void setup() {
   oled.begin();
   oled.setFont(myFont);  // Set the custom font
   oled.print("Custom Font", 0, 0);  // Display with custom font
+  oled.inflate();  // Render items on the display
 }
 ```
 
@@ -500,9 +502,10 @@ Here are the constants you can use to configure various settings for your SSD130
 
 | **Constant**        | **Value** | **Description**                                       |
 |---------------------|-----------|-------------------------------------------------------|
-| `LOW_POWER_MODE`    | 0x00      | Low power mode.                                       |
-| `BALANCED_MODE`     | 0x01      | Balanced mode.                                        |
-| `PERFORMANCE_MODE`  | 0x02      | Performance mode.                                     |
+| `LOW_POWER_MODE`    | 0x00      | Low power mode. (Uses I2C STANDARD MODE)              |
+| `BALANCED_MODE`     | 0x01      | Balanced mode. (Uses I2C STANDARD FAST MODE)          |
+| `PERFORMANCE_MODE`  | 0x02      | Performance mode. (Uses I2C FAST MODE)                |
+| `TURBO_MODE`        | 0x03      | Turbo mode. (Uses I2C FAST MODE PLUS)                 |
 
 ### 3. **Geometry Constants**
 
