@@ -362,18 +362,21 @@ void OLED::print(String string, uint8_t x, uint8_t y)
     {
         delete[] tempString;
         execute(OLED_OFF);
-        setPosition(x, y);
         convert(string);
         charWidth += x;
 
         char *ptr = tempString;
         while (*ptr)
         {
-            getFont(*ptr++, false);
+            getFont(*ptr++, false, y);
             if (charWidth >= 127)
-                charWidth = 0;
+            {
+                charWidth = charWidth - WIDTH;
+                y += 8;
+            }
         }
         execute(OLED_ON);
+        displayBuffer();
 
         delete[] tempString;
         tempString = nullptr;
@@ -388,18 +391,21 @@ void OLED::printHighlighted(String string, uint8_t x, uint8_t y)
     {
         delete[] tempString;
         execute(OLED_OFF);
-        setPosition(x, y);
         convert(string);
         charWidth += x;
 
         char *ptr = tempString;
         while (*ptr)
         {
-            getFont(*ptr++, true);
+            getFont(*ptr++, true, y);
             if (charWidth >= 127)
-                charWidth = 0;
+            {
+                charWidth = charWidth - WIDTH;
+                y += 8;
+            }
         }
         execute(OLED_ON);
+        displayBuffer();
 
         delete[] tempString;
         tempString = nullptr;
@@ -415,18 +421,21 @@ void OLED::printAnimated(String string, uint8_t x, uint8_t y, int delay, bool hi
         delete[] tempString;
         execute(OLED_OFF);
         convert(string);
-        setPosition(x, y);
         charWidth += x;
 
         char *ptr = tempString;
         while (*ptr)
         {
             ::delay(delay);
-            getFont(*ptr++, highlight);
+            getFont(*ptr++, highlight, y);
             if (charWidth >= 127)
-                charWidth = 0;
+            {
+                charWidth = charWidth - WIDTH;
+                y += 8;
+            }
         }
         execute(OLED_ON);
+        displayBuffer();
 
         delete[] tempString;
         tempString = nullptr;
@@ -456,16 +465,19 @@ void OLED::print_c(String string, uint8_t x, uint8_t y)
         convert(string);
         execute(OLED_OFF);
         clearScr();
-        setPosition(x, y);
         charWidth += x;
 
         char *ptr = tempString;
         while (*ptr)
         {
-            getFont(*ptr++, false);
+            getFont(*ptr++, false, y);
             if (charWidth >= 127)
-                charWidth = 0;
+            {
+                charWidth = charWidth - WIDTH;
+                y += 8;
+            }
         }
+        displayBuffer();
         execute(OLED_ON);
 
         delete[] tempString;
@@ -479,19 +491,8 @@ void OLED::clearScr()
         execute(OLED_OFF);
 
     clearBuffer();
+    displayBuffer();
 
-    for (uint8_t page = 0; page < HEIGHT / 8; page++)
-    {
-        Wire.beginTransmission(address);
-        Wire.write(0x00);
-        Wire.write(0xB0 + page);
-        Wire.write(0x00);
-        Wire.write(0x10);
-        Wire.endTransmission();
-
-        for (uint8_t col = 0; col < WIDTH; col++)
-            sendData(0x00);
-    }
     execute(OLED_ON);
 }
 
@@ -512,38 +513,64 @@ void OLED::turnOffOnClr(bool mode)
     clear = mode;
 }
 
-void OLED::getFont(char c, bool highlight)
+void OLED::getFont(char c, bool highlight, uint8_t y)
 {
     if (c == '\n' || WIDTH - charWidth < fontWidth)
     {
-        for (uint8_t j = 0; j < WIDTH - charWidth; j++)
-        {
-            sendData(highlight ? 0xFF : 0x00);
-        }
+        charWidth += WIDTH - charWidth;
         if (c != '\n')
         {
+            charWidth = 0;
             for (uint8_t i = 0; i < fontWidth; i++)
-                sendData(highlight ? ~pgm_read_byte(&fontSet[c - 32][i]) : pgm_read_byte(&fontSet[c - 32][i]));
-            sendData(highlight ? 0xFF : 0x00);
-            charWidth = fontWidth + 1;
+            {
+                drawFontPixel(highlight ? ~pgm_read_byte(&fontSet[c - 32][i]) : pgm_read_byte(&fontSet[c - 32][i]), charWidth, y + 8);
+                charWidth++;
+            }
+            drawFontPixel(highlight ? 0xFF : 0x00, charWidth++, y + 8);
             step++;
+            charWidth = WIDTH + fontWidth;
         }
         else
-            charWidth = 0;
+            charWidth = WIDTH;
     }
     else
     {
         for (uint8_t i = 0; i < fontWidth; i++)
         {
             charWidth++;
-            sendData(highlight ? ~pgm_read_byte(&fontSet[c - 32][i]) : pgm_read_byte(&fontSet[c - 32][i]));
+            drawFontPixel(highlight ? ~pgm_read_byte(&fontSet[c - 32][i]) : pgm_read_byte(&fontSet[c - 32][i]), charWidth, y);
         }
-        sendData(highlight ? 0xFF : 0x00);
         charWidth++;
+        drawFontPixel(highlight ? 0xFF : 0x00, charWidth, y);
     }
 }
 
-void OLED ::progressBar(uint8_t progress, uint8_t x, uint8_t y, int style)
+void OLED::drawFontPixel(uint8_t data, uint8_t x, uint8_t y)
+{
+    if (x >= WIDTH || y >= HEIGHT)
+        return;
+
+    uint8_t page = y / 8;
+    uint8_t bitPos = y % 8;
+
+    if (bitPos == 0)
+    {
+        buffer[x + page * WIDTH] = data;
+    }
+    else
+    {
+        uint8_t prevData = buffer[x + page * WIDTH];
+        uint8_t nextData = buffer[x + (page + 1) * WIDTH];
+
+        prevData &= ~(0xFF << bitPos);
+        nextData &= ~(0xFF >> (8 - bitPos));
+
+        buffer[x + page * WIDTH] = prevData | (data << bitPos);
+        buffer[x + (page + 1) * WIDTH] = nextData | (data >> (8 - bitPos));
+    }
+}
+
+void OLED::progressBar(uint8_t progress, uint8_t x, uint8_t y, int style)
 {
     setPosition(x, y);
     progress /= 6.25;
@@ -905,14 +932,19 @@ void OLED::drawPixel(uint8_t x, uint8_t y)
     if (x > WIDTH || y > HEIGHT)
         return;
 
-    int page = y / 8;
-    int bit = y % 8;
+    uint8_t page = y / 8;
+    uint8_t bit = y % 8;
 
     buffer[x + page * 128] |= (1 << bit);
 }
 
 void OLED::line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness)
 {
+    startX = checkXBounds(startX);
+    startY = checkYBounds(startY);
+    endX = checkXBounds(endX);
+    endY = checkYBounds(endY);
+
     int dx = abs(endX - startX);
     int dy = -abs(endY - startY);
     int sx = startX < endX ? 1 : -1;
@@ -1060,7 +1092,7 @@ void OLED::plot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t dat
 {
 }
 
-void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal)
+void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal) noexcept
 {
     clearScr();
     x = x >= WIDTH_128 ? WIDTH_128 - 1 : x;
@@ -1076,7 +1108,6 @@ void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *d
     for (uint8_t i = 0; i < size; i++)
     {
         uint8_t yVal = y - (data[i] * (height / 2)) / maxVal;
-        yVal = yVal > height / 2 ? height / 2 : yVal;
         line(x, tempY, x + step, yVal, 1);
         x += step;
         tempY = yVal;

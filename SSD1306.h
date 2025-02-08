@@ -276,7 +276,7 @@ private:
     bool IS_SETUP = false, clear = false, CLR_BUFF = true;
     void autoSetup();
     void execute(uint8_t instruction);
-    void getFont(char c, bool highlight);
+    void getFont(char c, bool highlight, uint8_t y);
     void convert(String string);
     void sendData(uint8_t data);
     void setPosition(uint8_t x, uint8_t y);
@@ -290,6 +290,7 @@ private:
     uint8_t checkYBounds(uint8_t y);
     void drawCircleHelper(int x0, int y0, int r, uint8_t cornerName);
     void clearBuffer(void);
+    void drawFontPixel(uint8_t data, uint8_t x, uint8_t y);
 };
 
 #endif
