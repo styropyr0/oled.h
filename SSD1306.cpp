@@ -361,7 +361,6 @@ void OLED::print(String string, uint8_t x, uint8_t y)
     if (IS_SETUP)
     {
         delete[] tempString;
-        execute(OLED_OFF);
         convert(string);
         charWidth += x;
 
@@ -375,8 +374,6 @@ void OLED::print(String string, uint8_t x, uint8_t y)
                 y += 8;
             }
         }
-        execute(OLED_ON);
-        displayBuffer();
 
         delete[] tempString;
         tempString = nullptr;
@@ -390,7 +387,6 @@ void OLED::printHighlighted(String string, uint8_t x, uint8_t y)
     if (IS_SETUP)
     {
         delete[] tempString;
-        execute(OLED_OFF);
         convert(string);
         charWidth += x;
 
@@ -404,8 +400,6 @@ void OLED::printHighlighted(String string, uint8_t x, uint8_t y)
                 y += 8;
             }
         }
-        execute(OLED_ON);
-        displayBuffer();
 
         delete[] tempString;
         tempString = nullptr;
@@ -419,24 +413,21 @@ void OLED::printAnimated(String string, uint8_t x, uint8_t y, int delay, bool hi
     if (IS_SETUP)
     {
         delete[] tempString;
-        execute(OLED_OFF);
         convert(string);
         charWidth += x;
 
         char *ptr = tempString;
         while (*ptr)
         {
-            ::delay(delay);
             getFont(*ptr++, highlight, y);
             if (charWidth >= 127)
             {
                 charWidth = charWidth - WIDTH;
                 y += 8;
             }
+            displayBuffer();
+            ::delay(delay);
         }
-        execute(OLED_ON);
-        displayBuffer();
-
         delete[] tempString;
         tempString = nullptr;
     }
@@ -463,7 +454,6 @@ void OLED::print_c(String string, uint8_t x, uint8_t y)
     {
         delete[] tempString;
         convert(string);
-        execute(OLED_OFF);
         clearScr();
         charWidth += x;
 
@@ -478,7 +468,6 @@ void OLED::print_c(String string, uint8_t x, uint8_t y)
             }
         }
         displayBuffer();
-        execute(OLED_ON);
 
         delete[] tempString;
         tempString = nullptr;
@@ -850,7 +839,6 @@ void OLED::rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t heig
 
     startX = checkXBounds(startX);
     startY = checkYBounds(startY);
-    CLR_BUFF = false;
 
     if (thickness > 10)
         thickness = 10;
@@ -910,9 +898,6 @@ void OLED::rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t heig
             }
         }
     }
-
-    CLR_BUFF = true;
-    displayBuffer();
 }
 
 uint8_t OLED::checkXBounds(uint8_t x)
@@ -977,8 +962,6 @@ void OLED::line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint
             }
         }
     }
-    if (CLR_BUFF)
-        displayBuffer();
 }
 
 void OLED::circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thickness)
@@ -1022,7 +1005,6 @@ void OLED::circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thic
         }
         radius--;
     }
-    displayBuffer();
 }
 
 void OLED::displayBuffer()
@@ -1113,6 +1095,17 @@ void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *d
         tempY = yVal;
         yield();
     }
+}
+
+void OLED::inflate()
+{
+    displayBuffer();
+}
+
+void OLED::inflateAndClear()
+{
+    clearScr();
+    displayBuffer();
 }
 
 // void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int data, uint8_t size, int maxVal)

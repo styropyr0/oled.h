@@ -116,35 +116,31 @@ public:
     void clearCustomFont();
     /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates.
-     * @note The display is vertically divided into 8 pages. Hence, Y ranges from 0 to 7.
      * @param string The string to be printed.
      * @param x The X coordinate.
-     * @param y The page number.
+     * @param y The y coordinate.
      */
     void print(String string, uint8_t x, uint8_t y);
     /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates as highlighted.
-     * @note The display is vertically divided into 8 pages. Hence, Y ranges from 0 to 7.
      * @param string The string to be printed.
      * @param x The X coordinate.
-     * @param y The page number.
+     * @param y The y coordinate.
      */
     void printHighlighted(String string, uint8_t x, uint8_t y);
     /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates with a typewriter animation.
-     * @note The display is vertically divided into 8 pages. Hence, Y ranges from 0 to 7.
      * @param string The string to be printed.
      * @param x The X coordinate.
-     * @param y The page number.
+     * @param y The y coordinate.
      * @param delay The delay between each character.
      */
     void printAnimated(String string, uint8_t x, uint8_t y, int delay, bool highlight);
     /**
      * @brief Clears the screen and prints the string passed on the display at the specified X, Y coordinates.
-     * @note The display is vertically divided into 8 pages. Hence, Y ranges from 0 to 7.
      * @param string The string to be printed.
      * @param x The X coordinate.
-     * @param y The page number.
+     * @param y The y coordinate.
      */
     void print_c(String string, uint8_t x, uint8_t y);
     /**
@@ -259,6 +255,14 @@ public:
      * @param page Page number.
      */
     void clearArea(uint8_t startX, uint8_t endX, uint8_t page);
+    /**
+     * @brief Inflates the drawing canvas. Draws all the items on the display.
+     */
+    void inflate();
+    /**
+     * @brief Inflates the drawing canvas and clears it. Similar to clearing screen before inflating next time.
+     */
+    void inflateAndClear();
 
     void plot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t data);
 
@@ -273,7 +277,7 @@ private:
     char *tempString;
     uint8_t count = 0, outMode = 0;
     const uint8_t (*fontSet)[5];
-    bool IS_SETUP = false, clear = false, CLR_BUFF = true;
+    bool IS_SETUP = false, clear = false;
     void autoSetup();
     void execute(uint8_t instruction);
     void getFont(char c, bool highlight, uint8_t y);

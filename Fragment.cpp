@@ -87,6 +87,7 @@ void Fragment::inflate()
         drawables[i]->draw(oled);
         drawables[i]->setChangeState();
     }
+    oled.inflate();
     lastCount = drawableCount;
 }
 
@@ -101,6 +102,7 @@ void Fragment::recycleNew()
             drawables[i]->setChangeState();
         }
     }
+    oled.inflate();
     lastCount = drawableCount;
 }
 
@@ -114,6 +116,7 @@ void Fragment::recycle()
             drawables[i]->draw(oled);
         }
     }
+    oled.inflate();
     lastCount = drawableCount;
 }
 
@@ -129,6 +132,7 @@ void Fragment::recycleAll()
             drawables[i]->setChangeState();
         }
     }
+    oled.inflate();
     lastCount = drawableCount;
 }
 
