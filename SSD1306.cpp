@@ -1070,10 +1070,6 @@ void OLED::clearBuffer()
     memset(buffer, 0, sizeof(buffer));
 }
 
-void OLED::plot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t data)
-{
-}
-
 void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal) noexcept
 {
     clearScr();
@@ -1107,29 +1103,3 @@ void OLED::inflateAndClear()
     clearScr();
     displayBuffer();
 }
-
-// void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int data, uint8_t size, int maxVal)
-// {
-//     if (pulsePlotPos == size)
-//     {
-//         pulsePlotPos = 0;
-//         clearScr();
-//     }
-//     x = x >= WIDTH_128 ? WIDTH_128 - 1 : x;
-//     y = y >= HEIGHT_64 ? HEIGHT_64 - 1 : y;
-//     width = x + width >= WIDTH_128 ? WIDTH_128 - x : width;
-//     height = y + height >= HEIGHT_64 ? HEIGHT_64 - y : height;
-//     if (pulsePlotPos == 0)
-//         line(x, y, x + width, y, 1);
-//     uint8_t step = width / size, tempY = y;
-//     if (step < 1)
-//         step = 1;
-//     else if (step > width)
-//         step = width;
-//     uint8_t yVal = y - (data * (height / 2)) / maxVal;
-//     yVal = yVal > height / 2 ? height / 2 : yVal;
-//     line(x, tempY, x + step * pulsePlotPos, yVal, 1);
-//     pulsePlotPos++;
-//     tempY = yVal;
-//     yield();
-// }

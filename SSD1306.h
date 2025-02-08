@@ -263,9 +263,17 @@ public:
      * @brief Inflates the drawing canvas and clears it. Similar to clearing screen before inflating next time.
      */
     void inflateAndClear();
-
-    void plot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t data);
-
+    /**
+     * @brief Draws a pulse plot on the display.
+     * @param x The X coordinate.
+     * @param y The Y coordinate.
+     * @param width Width of the plot.
+     * @param height Height of the plot.
+     * @param data Data array.
+     * @param size Size of the data array.
+     * @param maxVal Maximum value of the data array.
+     * @note EXPERIMENTAL FEATURE
+     */
     void pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal);
 
 private:
