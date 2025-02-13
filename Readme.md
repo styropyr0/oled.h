@@ -254,7 +254,7 @@ void setup() {
   rectangle->setVisibility(false);
   
   // Recycle all drawables to apply changes
-  fragment.recycleAll();
+  fragment.recycle();
 }
 
 void loop() {
@@ -385,7 +385,7 @@ oled.turnOffOnClr(true);  // Turn off display when cleared
 
 ### 13. Power Modes
 
-The display can operate in different power modes. Choose between low power, balanced, or performance mode to optimize energy consumption or display quality.
+The display can operate in different power modes. Choose between low power, balanced, performance, or turbo mode to optimize energy consumption or display quality. Note that turbo mode is not supported by all devices. The device should support 1MHz I2C speed inorder to use turbo mode.
 
 #### Example: Setting Power Mode
 
@@ -546,14 +546,15 @@ The **Bitmap Generator** tool helps you convert images to bitmaps that can be di
 You can run the **Bitmap Generator** directly from the command line:
 
 ```bash
-python image_to_bitmap.py <image_path> <output_file>
+python bitmap_generator.py <image_path> <output_file>
 ```
 
 For example, to convert an image located at `images/logo.png` to a bitmap:
 
 ```bash
-python image_to_bitmap.py images/logo.png output_logo.h
+python bitmap_generator.py images/logo.png output_logo.h
 ```
+One of the best ways to do this is by adding the path to this scrpit as an alias in the Environment Variables. Otherwise, you need to type the entire path of the script every time.
 
 ---
 
