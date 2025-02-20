@@ -3,6 +3,8 @@
 
 #include "SSD1306.h"
 
+#ifdef __cplusplus
+
 class Fragment;
 
 /**
@@ -356,4 +358,5 @@ public:
     void detach();
 };
 
+#endif
 #endif
