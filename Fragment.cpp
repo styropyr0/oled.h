@@ -94,6 +94,7 @@ void Fragment::inflate()
 void Fragment::recycleNew()
 {
     OLED &oled = *manager.getOLED();
+    oled.clearScr();
     for (int i = lastCount - 1; i < drawableCount; ++i)
     {
         if (drawables[i]->getVisibility())
