@@ -1079,7 +1079,7 @@ void OLED::clearBuffer()
     memset(buffer, 0, sizeof(buffer));
 }
 
-void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal) noexcept
+void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal)
 {
     clearScr();
     x = x >= WIDTH_128 ? WIDTH_128 - 1 : x;
