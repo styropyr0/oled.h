@@ -10,6 +10,14 @@ Circle::Circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thickne
 
 void Circle::draw(OLED &oled)
 {
+    if (entity.init)
+    {
+        oled.invertPixelState(false);
+        oled.circle(entity.centreX, entity.centreY, entity.radius, entity.thickness);
+        oled.invertPixelState(true);
+    }
+    oled.invertPixelState(visibility);
+    entity.init = true;
     oled.circle(centreX, centreY, radius, thickness);
 }
 
@@ -27,11 +35,14 @@ bool Circle::getChangeState()
 {
     bool temp = changeState;
     changeState = false;
-    return changeState;
+    return temp;
 }
 
 Circle &Circle::operator=(const Circle &other)
 {
+    if (entity.init)
+        entity = {centreX, centreY, radius, thickness, true};
+
     centreX = other.centreX;
     centreY = other.centreY;
     radius = other.radius;
@@ -43,6 +54,7 @@ Circle &Circle::operator=(const Circle &other)
 void Circle::setVisibility(bool visibility)
 {
     this->visibility = visibility;
+    changeState = true;
 }
 
 bool Circle::getVisibility()
@@ -60,6 +72,14 @@ Rectangle::Rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_
 
 void Rectangle::draw(OLED &oled)
 {
+    if (entity.init)
+    {
+        oled.invertPixelState(false);
+        oled.rectangle(entity.x, entity.y, entity.width, entity.height, entity.cornerRadius, entity.thickness, entity.fill);
+        oled.invertPixelState(true);
+    }
+    oled.invertPixelState(visibility);
+    entity.init = true;
     oled.rectangle(x, y, width, height, cornerRadius, thickness, fill);
 }
 
@@ -77,25 +97,29 @@ bool Rectangle::getChangeState()
 {
     bool temp = changeState;
     changeState = false;
-    return changeState;
+    return temp;
 }
 
 Rectangle &Rectangle::operator=(const Rectangle &other)
 {
+    if (entity.init)
+        entity = {x, y, width, height, cornerRadius, thickness, fill, true};
+
     x = other.x;
     y = other.y;
     width = other.width;
     height = other.height;
     cornerRadius = other.cornerRadius;
     thickness = other.thickness;
-    changeState = true;
     fill = other.fill;
+    changeState = true;
     return *this;
 }
 
 void Rectangle::setVisibility(bool visibility)
 {
     this->visibility = visibility;
+    changeState = true;
 }
 
 bool Rectangle::getVisibility()
@@ -113,6 +137,14 @@ Line::Line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t t
 
 void Line::draw(OLED &oled)
 {
+    if (entity.init)
+    {
+        oled.invertPixelState(false);
+        oled.line(entity.startX, entity.startY, entity.endX, entity.endY, entity.thickness);
+        oled.invertPixelState(true);
+    }
+    oled.invertPixelState(visibility);
+    entity.init = true;
     oled.line(startX, startY, endX, endY, thickness);
 }
 
@@ -130,11 +162,14 @@ bool Line::getChangeState()
 {
     bool temp = changeState;
     changeState = false;
-    return changeState;
+    return temp;
 }
 
 Line &Line::operator=(const Line &other)
 {
+    if (entity.init)
+        entity = {startX, startY, endX, endY, thickness, true};
+
     startX = other.startX;
     startY = other.startY;
     endX = other.endX;
@@ -147,6 +182,7 @@ Line &Line::operator=(const Line &other)
 void Line::setVisibility(bool visibility)
 {
     this->visibility = visibility;
+    changeState = true;
 }
 
 bool Line::getVisibility()
@@ -164,6 +200,14 @@ Bitmap::Bitmap(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint
 
 void Bitmap::draw(OLED &oled)
 {
+    if (entity.init)
+    {
+        oled.invertPixelState(false);
+        oled.draw(entity.dataSet, entity.x, entity.y, entity.width, entity.height);
+        oled.invertPixelState(true);
+    }
+    oled.invertPixelState(visibility);
+    entity.init = true;
     oled.draw(dataSet, x, y, width, height);
 }
 
@@ -181,11 +225,14 @@ bool Bitmap::getChangeState()
 {
     bool temp = changeState;
     changeState = false;
-    return changeState;
+    return temp;
 }
 
 Bitmap &Bitmap::operator=(const Bitmap &other)
 {
+    if (entity.init)
+        entity = {dataSet, x, y, width, height, true};
+
     dataSet = other.dataSet;
     x = other.x;
     y = other.y;
@@ -198,6 +245,7 @@ Bitmap &Bitmap::operator=(const Bitmap &other)
 void Bitmap::setVisibility(bool visibility)
 {
     this->visibility = visibility;
+    changeState = true;
 }
 
 bool Bitmap::getVisibility()
@@ -215,6 +263,14 @@ Text::Text(String text, uint8_t x, uint8_t y)
 
 void Text::draw(OLED &oled)
 {
+    if (entity.init)
+    {
+        oled.invertPixelState(false);
+        oled.print(entity.text, entity.x, entity.y);
+        oled.invertPixelState(true);
+    }
+    oled.invertPixelState(visibility);
+    entity.init = true;
     oled.print(text, x, y);
 }
 
@@ -237,10 +293,12 @@ bool Text::getChangeState()
 
 Text &Text::operator=(const Text &other)
 {
+    if (entity.init)
+        entity = {text, x, y, true};
+
     text = other.text;
     x = other.x;
     y = other.y;
-    changeState = true;
     changeState = true;
     return *this;
 }
@@ -248,6 +306,7 @@ Text &Text::operator=(const Text &other)
 void Text::setVisibility(bool visibility)
 {
     this->visibility = visibility;
+    changeState = true;
 }
 
 bool Text::getVisibility()
@@ -265,6 +324,14 @@ HighlightedText::HighlightedText(String text, uint8_t x, uint8_t y)
 
 void HighlightedText::draw(OLED &oled)
 {
+    if (entity.init)
+    {
+        oled.invertPixelState(false);
+        oled.print(entity.text, entity.x, entity.y);
+        oled.invertPixelState(true);
+    }
+    oled.invertPixelState(visibility);
+    entity.init = true;
     oled.printHighlighted(text, x, y);
 }
 
@@ -282,11 +349,14 @@ bool HighlightedText::getChangeState()
 {
     bool temp = changeState;
     changeState = false;
-    return changeState;
+    return temp;
 }
 
 HighlightedText &HighlightedText::operator=(const HighlightedText &other)
 {
+    if (entity.init)
+        entity = {text, x, y, true};
+
     text = other.text;
     x = other.x;
     y = other.y;
@@ -297,6 +367,7 @@ HighlightedText &HighlightedText::operator=(const HighlightedText &other)
 void HighlightedText::setVisibility(bool visibility)
 {
     this->visibility = visibility;
+    changeState = true;
 }
 
 bool HighlightedText::getVisibility()
@@ -331,7 +402,7 @@ bool AnimatedText::getChangeState()
 {
     bool temp = changeState;
     changeState = false;
-    return changeState;
+    return temp;
 }
 
 AnimatedText &AnimatedText::operator=(const AnimatedText &other)
@@ -348,6 +419,7 @@ AnimatedText &AnimatedText::operator=(const AnimatedText &other)
 void AnimatedText::setVisibility(bool visibility)
 {
     this->visibility = visibility;
+    changeState = true;
 }
 
 bool AnimatedText::getVisibility()
@@ -468,7 +540,7 @@ bool GridView::getChangeState()
 {
     bool temp = changeState;
     changeState = false;
-    return changeState;
+    return temp;
 }
 
 GridView &GridView::operator=(const GridView &other)

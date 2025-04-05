@@ -88,6 +88,12 @@ public:
 class Circle : public Drawable
 {
 private:
+    struct
+    {
+        uint8_t centreX = 0, centreY = 0, radius = 0, thickness = 0;
+        bool init = false;
+    } entity;
+
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t centreX, centreY, radius, thickness;
@@ -114,6 +120,12 @@ public:
 class Rectangle : public Drawable
 {
 private:
+    struct
+    {
+        uint8_t x = 0, y = 0, width = 0, height = 0, cornerRadius = 0, thickness = 0;
+        bool fill, init = false;
+    } entity;
+
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t x, y, width, height, cornerRadius, thickness;
@@ -142,6 +154,12 @@ public:
 class Line : public Drawable
 {
 private:
+    struct
+    {
+        uint8_t startX = 0, startY = 0, endX = 0, endY = 0, thickness = 0;
+        bool init = false;
+    } entity;
+
     void draw(OLED &oled) override;
     const char *type() const override;
     uint8_t startX, startY, endX, endY, thickness;
@@ -169,6 +187,13 @@ public:
 class Text : public Drawable
 {
 private:
+    struct
+    {
+        String text = "";
+        uint8_t x = 0, y = 0;
+        bool init = false;
+    } entity;
+
     String text;
     uint8_t x, y;
     void draw(OLED &oled) override;
@@ -194,6 +219,13 @@ public:
 class HighlightedText : public Drawable
 {
 private:
+    struct
+    {
+        String text = "";
+        uint8_t x = 0, y = 0;
+        bool init = false;
+    } entity;
+
     String text;
     uint8_t x, y;
     void draw(OLED &oled) override;
@@ -248,6 +280,13 @@ public:
 class Bitmap : public Drawable
 {
 private:
+    struct
+    {
+        const uint8_t *dataSet = nullptr;
+        uint8_t x = 0, y = 0, width = 0, height = 0;
+        bool init = false;
+    } entity;
+
     const uint8_t *dataSet;
     uint8_t x, y, width, height;
     void draw(OLED &oled) override;

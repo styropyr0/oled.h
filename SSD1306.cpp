@@ -556,8 +556,16 @@ void OLED::drawFontPixel(uint8_t data, uint8_t x, uint8_t y)
         prevData &= ~(0xFF << bitPos);
         nextData &= ~(0xFF >> (8 - bitPos));
 
-        buffer[x + page * WIDTH] = prevData | (data << bitPos);
-        buffer[x + (page + 1) * WIDTH] = nextData | (data >> (8 - bitPos));
+        if (pixelState)
+        {
+            buffer[x + page * WIDTH] = prevData | (data << bitPos);
+            buffer[x + (page + 1) * WIDTH] = nextData | (data >> (8 - bitPos));
+        }
+        else
+        {
+            buffer[x + page * WIDTH] = prevData & ~(data << bitPos);
+            buffer[x + (page + 1) * WIDTH] = nextData & ~(data >> (8 - bitPos));
+        }
     }
 }
 
@@ -929,7 +937,10 @@ void OLED::drawPixel(uint8_t x, uint8_t y)
     uint8_t page = y / 8;
     uint8_t bit = y % 8;
 
-    buffer[x + page * 128] |= (1 << bit);
+    if (pixelState)
+        buffer[x + page * 128] |= (1 << bit);
+    else
+        buffer[x + page * 128] &= ~(1 << bit);
 }
 
 void OLED::line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness)
@@ -1111,4 +1122,9 @@ void OLED::inflateAndClear()
 {
     clearScr();
     displayBuffer();
+}
+
+void OLED::invertPixelState(bool state)
+{
+    pixelState = state;
 }

@@ -279,6 +279,8 @@ public:
      */
     void pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal);
 
+    void invertPixelState(bool state);
+
 private:
     uint8_t HEIGHT = 0, WIDTH = 0, address = 0, charWidth = 0, step = 0, fontWidth = 5, currentPowerMode = BALANCED_MODE, invert = 0, pulsePlotPos = 0;
     String stringToPrint;
@@ -288,7 +290,7 @@ private:
     char *tempString;
     uint8_t count = 0, outMode = 0;
     const uint8_t (*fontSet)[5];
-    bool IS_SETUP = false, clear = false;
+    bool IS_SETUP = false, clear = false, pixelState = true;
     void autoSetup();
     void execute(uint8_t instruction);
     void getFont(char c, bool highlight, uint8_t y);
