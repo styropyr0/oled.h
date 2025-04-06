@@ -97,7 +97,7 @@ void Fragment::recycleNew()
     oled.clearScr();
     for (int i = lastCount - 1; i < drawableCount; ++i)
     {
-        if (drawables[i]->getVisibility())
+        if (drawables[i]->getVisibility() && drawables[i]->getChangeState())
         {
             drawables[i]->draw(oled);
             drawables[i]->setChangeState();
