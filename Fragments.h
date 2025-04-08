@@ -333,7 +333,7 @@ public:
 };
 
 /**
- * @brief Fragment is a collection of static drawable objects.
+ * @brief Fragment is a dynamic collection of drawable objects.
  * Use the add function to add the drawables into the fragment.
  * Use the inflate function to inflate the fragment.
  * Once inflated, if the fragment is modified, you may use the recycle method to apply changes.

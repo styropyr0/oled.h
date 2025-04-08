@@ -676,6 +676,7 @@ void OLED::setBrightness(uint8_t brightness)
 
 void OLED::draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height)
 {
+    y = y / 8;
     uint8_t vPos = y > 7 ? 7 : y;
     setPosition(x, vPos);
     for (uint8_t multiplier = 0; multiplier < height / 8; multiplier++)
