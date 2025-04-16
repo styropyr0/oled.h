@@ -270,7 +270,7 @@ void OLED::autoSetup()
         {
             OLED_OFF, DISP_CLOCK_DIV_RATIO,
             CLK_RATIO_RST, MULTIPLEX,
-            HEIGHT - 1, DISP_OFFSET,
+            (uint8_t)(HEIGHT - 1), DISP_OFFSET,
             OFFSET_NO, START_LINE, CHRG_PUMP,
             CHRG_PUMP_75, MEM_ADDRESS_MODE,
             HORIZONTAL, SEG_REMAP_127,
