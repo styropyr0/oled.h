@@ -263,9 +263,10 @@ public:
      */
     void inflate();
     /**
-     * @brief Inflates the drawing canvas and clears it. Similar to clearing screen before inflating next time.
+     * @brief Clears the display buffer.
+     * @param refresh If true, it will clear the display immediately, otherwise, waits for an inflate call.
      */
-    void inflateAndClear();
+    void clearScr(bool refresh);
     /**
      * @brief Draws a pulse plot on the display.
      * @param x The X coordinate.

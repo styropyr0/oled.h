@@ -285,7 +285,7 @@ void OLED::autoSetup()
         execute(cmdList[i]);
     IS_SETUP = true;
     setFont(fonts);
-    clearScr();
+    clearScr(true);
 }
 
 void OLED::setFont(const uint8_t (*fontArray)[5])
@@ -469,7 +469,6 @@ void OLED::print_c(String string, uint8_t x, uint8_t y)
                 y += 8;
             }
         }
-        displayBuffer();
 
         delete[] tempString;
         tempString = nullptr;
@@ -482,8 +481,6 @@ void OLED::clearScr()
         execute(OLED_OFF);
 
     clearBuffer();
-    displayBuffer();
-
     execute(OLED_ON);
 }
 
@@ -1119,10 +1116,17 @@ void OLED::inflate()
     displayBuffer();
 }
 
-void OLED::inflateAndClear()
+void OLED::clearScr(bool refresh)
 {
-    clearScr();
-    displayBuffer();
+    if (clear)
+        execute(OLED_OFF);
+
+    clearBuffer();
+    if (refresh)
+        displayBuffer();
+
+    if (clear)
+        execute(OLED_ON);
 }
 
 void OLED::invertPixelState(bool state)

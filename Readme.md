@@ -347,10 +347,11 @@ oled[myBitmap] << 0 << 0 << 16 << 16;  // Draws a 16x16 bitmap at (0, 0)
 
 ### 9. Clearing the Screen
 
-Use the `clearScr()` method to clear the screen.
+Use the `clearScr()` method to clear the screen. Note that this will not refresh the screen unless you pass true.
 
 ```cpp
-oled.clearScr();  // Clears the display
+oled.clearScr();      // Clears the display
+oled.clearScr(true);  // Clears and refreshes the display
 ```
 
 ### 10. Adjusting Brightness
