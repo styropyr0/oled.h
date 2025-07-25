@@ -14,7 +14,7 @@ def image_to_bitmap(image_path, threshold=50):
     global w, h
     w = (width + 7) & ~7
     h = (height + 7) & ~7
-    bitmap_array.append(f"const uint8_t PROGMEM splash[{w}*{h/8}] = " + "{")
+    bitmap_array.append(f"const uint8_t PROGMEM splash[{w//8}*{h}] = " + "{")
     c = 0
     for y in range(h):
         row = []
