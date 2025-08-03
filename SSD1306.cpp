@@ -950,33 +950,41 @@ void OLED::line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint
 
     int dx = abs(endX - startX);
     int dy = -abs(endY - startY);
-    int sx = startX < endX ? 1 : -1;
-    int sy = startY < endY ? 1 : -1;
+    int sx = startX == endX ? 0 : (startX < endX ? 1 : -1);
+    int sy = startY == endY ? 0 : (startY < endY ? 1 : -1);
     int err = dx + dy;
 
-    for (int i = -thickness / 2; i <= thickness / 2; i++)
+    int half = thickness / 2;
+
+    for (int i = -half; i < half + (thickness % 2); i++)
     {
-        int startX_offset = startX + i * sy;
-        int startY_offset = startY - i * sx;
-        int endX_offset = endX + i * sy;
-        int endY_offset = endY - i * sx;
+        int offsetX = i * sy;
+        int offsetY = -i * sx;
+
+        int x0 = startX + offsetX;
+        int y0 = startY + offsetY;
+        int x1 = endX + offsetX;
+        int y1 = endY + offsetY;
+
         int err_offset = err;
+        int tx = x0, ty = y0;
 
         while (true)
         {
-            drawPixel(startX_offset, startY_offset);
-            if (startX_offset == endX_offset && startY_offset == endY_offset)
+            drawPixel(tx, ty);
+            if (tx == x1 && ty == y1)
                 break;
+
             int e2 = 2 * err_offset;
             if (e2 >= dy)
             {
                 err_offset += dy;
-                startX_offset += sx;
+                tx += sx;
             }
             if (e2 <= dx)
             {
                 err_offset += dx;
-                startY_offset += sy;
+                ty += sy;
             }
         }
     }
