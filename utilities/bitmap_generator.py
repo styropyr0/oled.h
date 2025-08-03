@@ -5,8 +5,10 @@ w = 0
 h = 0
 
 
-def image_to_bitmap(image_path, threshold=50):
+def image_to_bitmap(image_path, width, height, threshold=50):
     image = Image.open(image_path)
+    if width > 0 and height > 0:
+        image = image.resize(size=(width, height))
     grayscale_image = image.convert("L")
     bw_image = grayscale_image.point(lambda x: 0 if x < threshold else 1, "1")
     width, height = bw_image.size
@@ -44,19 +46,28 @@ def image_to_bitmap(image_path, threshold=50):
 
 if __name__ == "__main__":
     print("SSD1306 BITMAP GENERATOR\nDeveloped by: Saurav Sajeev\n")
-    if len(sys.argv) == 3:
+    resolution = ""
+    if len(sys.argv) == 4:
         image_path = sys.argv[1]
         output_file = sys.argv[2]
+        try:
+            resolution = sys.argv[3]
+        except:
+            pass
     else:
         image_path = input("Enter the path to the image: ")
         output_file = input("Enter the output file name: ")
+        resolution = input("Enter the output resolution(eg: 64x64): ")
 
-    bitmap = image_to_bitmap(image_path)
+    if resolution:
+        w, h = resolution.split("x")
+
+    bitmap = image_to_bitmap(image_path, int(w), int(h))
     with open(output_file, "w") as file:
         file.write("\n".join(bitmap))
 
     print(
-        f"Bitmap written to {output_file}.\nBitmap Size: {w}x{h} pixels\nDo you want to print it here?\nPress [Y] to print."
+        f"Bitmap written to {output_file}.\nBitmap Size: {w}x{h} pixels (Adjusted to fit into a multiple of 8)\nDo you want to print it here?\nPress [Y] to print."
     )
     if len(sys.argv) == 2:
         if sys.argv[1] == "Y".lower():
