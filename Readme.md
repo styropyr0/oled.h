@@ -60,7 +60,7 @@ Default I2C address: `ADDR` (0x3C). If your display differs, use the address con
 ### 1. Initializing the OLED
 
 ```cpp
-#include 
+#include <SSD1306.h>
 
 OLED oled(128, 64);         // Default: 128x64 at address 0x3C
 
@@ -71,25 +71,32 @@ void setup() {
   oled.begin();       // Hardware init
   oled.clearScr();    // Clear display RAM (see note on 'inflate' below!)
   oled.print("Hello!", 0, 0);
-  oled  **Fragments** are advanced high-level constructs for complex dynamic UIs, dashboards, menus, and batching animations, inspired by Android fragments.
+}
+```
+
+**Fragments** are advanced high-level constructs for complex dynamic UIs, dashboards, menus, and batching animations, inspired by Android fragments.
+
+---
 
 ### What Are Fragments?
 
-A **Fragment** is a collection of **Drawable objects** (Text, Rectangle, Circle, Line, Bitmap, HighlightedText, AnimatedText, GridView, etc.) whose display logic and update cycles are managed together.  
+A **Fragment** is a collection of **Drawable objects** (`Text`, `Rectangle`, `Circle`, `Line`, `Bitmap`, `HighlightedText`, `AnimatedText`, `GridView`, etc.) whose display logic and update cycles are managed together.  
 - Unlike direct draw calls, drawables can be created, modified, shown/hidden, and efficiently batched.
 
-#### Benefits:
+#### Benefits
 
-- **Batch updates**: Redraw many items with a single command.
-- **Efficient scene graph**: Only changed parts (and optionally only changed objects) are updated/redrawn.
+- **Batch updates**: Redraw many items with a single command.  
+- **Efficient scene graph**: Only changed parts (and optionally only changed objects) are updated/redrawn.  
 - **Reusable UIs**: Fragments can act as entire screens, panels, or widgets, and can be pushed/popped from a stack.
+
+---
 
 ### Getting Started with Fragments
 
-**Header:**  
+**Header:**
 ```cpp
-#include 
-#include 
+#include <SSD1306.h>
+#include <FragmentSystem.h>
 ```
 
 **Basic Example:**
@@ -340,46 +347,59 @@ void histogramPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* dat
 ```
 All these display visualizations for sensor or dynamic data.
 
-### Operator Overloading
+Sure! Here’s your section reformatted for clarity and readability, with consistent indentation and structure:
 
-- `oled 
-#include 
+---
+
+### Operator Overloading and Drawable Management
+
+#### Setup Example
+```cpp
+#include <SSD1306.h>
 
 OLED oled(128, 64);
 FragmentManager mgr(oled);
 Fragment fragment(mgr);
 
+// Create drawables
 Text* t = new Text("Hi!", 0, 0);
 Rectangle* r = new Rectangle(10, 10, 20, 8, 1, 1, false);
+
+// Add to fragment
 fragment.add(t);
 fragment.add(r);
-fragment.inflate();     // Draw all at once
+fragment.inflate();  // Draw all at once
 
-// Update only changed Drawables
+// Update only changed drawables
 *t = Text("Bye!", 0, 10);
 fragment.recycle();
 ```
 
-#### Drawable Creation & Management
+---
 
-- **Text**
-- **HighlightedText**
-- **AnimatedText**
-- **Rectangle**
-- **Circle**
-- **Line**
-- **Bitmap**
-- **GridView**: For structured icon/menu layouts.
+#### Drawable Types
+- `Text`
+- `HighlightedText`
+- `AnimatedText`
+- `Rectangle`
+- `Circle`
+- `Line`
+- `Bitmap`
+- `GridView` — Structured layouts for icons and menus
 
-Each supports:
+---
+
+#### Drawable Methods
+Each drawable supports:
 - `setVisibility(bool visible)`
 - `getVisibility()`
 - `setChangeState()`
 - `getChangeState()`
-- Assignment/re-initialization for dynamic changes.
+- Assignment and re-initialization for dynamic updates
+
+---
 
 #### GridView Example
-
 ```cpp
 Circle* circ = new Circle(0, 0, 8, 2);
 GridView* grid = new GridView(circ, 12, 4, 10, 10, 10, 10);
