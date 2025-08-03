@@ -347,8 +347,6 @@ void histogramPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* dat
 ```
 All these display visualizations for sensor or dynamic data.
 
-Sure! Here’s your section reformatted for clarity and readability, with consistent indentation and structure:
-
 ---
 
 ### Operator Overloading and Drawable Management
