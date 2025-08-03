@@ -70,8 +70,8 @@ if __name__ == "__main__":
         f"Bitmap written to {output_file}.\nBitmap Size: {w}x{h} pixels (Adjusted to fit into a multiple of 8)\nDo you want to print it here?\nPress [Y] to print."
     )
     if len(sys.argv) == 2:
-        if sys.argv[1] == "Y".lower():
+        if sys.argv[1].lower() == "y":
             print("\n".join(bitmap))
     else:
-        if input() == "Y".lower():
+        if input().lower() == "y":
             print("\n".join(bitmap))
