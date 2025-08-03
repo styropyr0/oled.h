@@ -1096,26 +1096,96 @@ void OLED::clearBuffer()
     memset(buffer, 0, sizeof(buffer));
 }
 
-void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal)
+void OLED::pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median)
 {
-    clearScr();
-    x = x >= WIDTH_128 ? WIDTH_128 - 1 : x;
-    y = y >= HEIGHT_64 ? HEIGHT_64 - 1 : y;
-    width = x + width >= WIDTH_128 ? WIDTH_128 - x : width;
-    height = y + height >= HEIGHT_64 ? HEIGHT_64 - y : height;
-    line(x, y, x + width, y, 1);
-    uint8_t step = width / size, tempY = y;
-    if (step < 1)
-        step = 1;
-    else if (step > width)
-        step = width;
+    if (!data || size == 0 || maxVal == 0)
+        return;
+
+    float scaleFactor = height / (2.0 * maxVal);
+    size = size > width ? width : size;
+    uint8_t axis = y + height / 2;
+    line(x, axis - (scaleFactor * median), x + width, axis - (scaleFactor * median), 2);
+    step = width / size;
+    y = axis - (scaleFactor * median);
     for (uint8_t i = 0; i < size; i++)
     {
-        uint8_t yVal = y - (data[i] * (height / 2)) / maxVal;
-        line(x, tempY, x + step, yVal, 1);
+        line(x, y, x + step, axis - (scaleFactor * (data[i] + (median * data[i] < median ? 1 : -1))), 1);
+        y = axis - (scaleFactor * (data[i] + (median * data[i] < median ? 1 : -1)));
         x += step;
-        tempY = yVal;
-        yield();
+    }
+}
+
+void OLED::bitBarPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median)
+{
+    if (!data || size == 0 || maxVal == 0)
+        return;
+
+    float scaleFactor = height / (2.0 * maxVal);
+    size = size > width ? width : size;
+    uint8_t axis = y + height / 2;
+    uint8_t barWidth = 1;
+    line(x, axis - (scaleFactor * median), x + width, axis - (scaleFactor * median), 2);
+
+    uint8_t step = barWidth + (width / size);
+    uint8_t currentX = x;
+
+    for (uint8_t i = 0; i < size && (currentX + barWidth) <= (x + width); i++)
+    {
+        int barHeight = scaleFactor * abs(data[i]);
+        int barY = data[i] >= median
+                       ? axis - barHeight
+                       : axis;
+
+        for (uint8_t bw = 0; bw < barWidth; bw++)
+        {
+            if (data[i] >= median)
+                line(currentX + bw, axis, currentX + bw, barY, 1);
+            else
+                line(currentX + bw, axis, currentX + bw, axis + barHeight, 1);
+        }
+        currentX += step;
+    }
+}
+
+void OLED::scatterPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median)
+{
+    if (!data || size == 0 || maxVal == 0)
+        return;
+
+    float scaleFactor = height / (2.0 * maxVal);
+    size = size > width ? width : size;
+
+    int axis = y + height / 2;
+    int medianLineY = axis - round(scaleFactor * median);
+    line(x, medianLineY, x + width, medianLineY, 2);
+
+    uint8_t step = max(1, width / size);
+
+    for (uint8_t i = 0; i < size && x + i * step < x + width; i++)
+    {
+        uint8_t px = x + i * step;
+        int py = axis - round(scaleFactor * (data[i] + (median != 0 && (median * data[i]) < median) ? 1 : -1));
+        if (py >= y && py < y + height)
+            drawPixel(px, py);
+    }
+}
+
+void OLED::histogramPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal)
+{
+    if (maxVal == 0)
+        return;
+
+    float scaleFactor = (float)height / maxVal;
+    size = size > width ? width : size;
+
+    uint8_t step = width / size;
+    uint8_t barWidth = 3;
+
+    for (uint8_t i = 0; i < size && x <= width; i++)
+    {
+        if ((data[i] * scaleFactor) > 0)
+            line(x, y + height, x, y + height - (data[i] * scaleFactor), barWidth);
+        x += step + barWidth;
     }
 }
 

@@ -97,6 +97,7 @@ public:
      * @param height The height of the OLED display.
      */
     OLED(uint8_t width, uint8_t height);
+
     /**
      * @brief Constructor which initialize OLED display object, with a custom I2C address.
      * @param width The width of the OLED display.
@@ -104,19 +105,23 @@ public:
      * @param address The SSD1306 display's I2C address.
      */
     OLED(uint8_t width, uint8_t height, uint8_t address);
+
     /**
      * @brief Set a custom font set for the characters. You could also set a custom language character.
      * @param fontArray The array of fonts.
      */
     void setFont(const uint8_t (*fontArray)[5]);
+
     /**
      * @brief Setup the display. You may call this in the setup function.
      */
     void begin();
+
     /**
      * @brief Set the font as the default font.
      */
     void clearCustomFont();
+
     /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates.
      * @param string The string to be printed.
@@ -124,6 +129,7 @@ public:
      * @param y The y coordinate.
      */
     void print(String string, uint8_t x, uint8_t y);
+
     /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates as highlighted.
      * @param string The string to be printed.
@@ -131,6 +137,7 @@ public:
      * @param y The y coordinate.
      */
     void printHighlighted(String string, uint8_t x, uint8_t y);
+
     /**
      * @brief Prints the string passed on the display at the specified X, Y coordinates with a typewriter animation.
      * @param string The string to be printed.
@@ -139,6 +146,7 @@ public:
      * @param delay The delay between each character.
      */
     void printAnimated(String string, uint8_t x, uint8_t y, int delay, bool highlight);
+    
     /**
      * @brief Clears the screen and prints the string passed on the display at the specified X, Y coordinates.
      * @param string The string to be printed.
@@ -146,21 +154,25 @@ public:
      * @param y The y coordinate.
      */
     void print_c(String string, uint8_t x, uint8_t y);
+
     /**
      * @brief Accepts a dataSet and setup the display with custom preferences.
      * @param dataSet Array of custom preferences.
      */
     void manualSetup(uint8_t *dataSet);
+
     /**
      * @brief Clears the OLED display.
      */
     void clearScr();
+
     /**
      * @brief Converts a string to dynamic char* array.
      * @param string Input string.
      * @returns Dynamic char* array of input string.
      */
     char *convertString(String string);
+
     /**
      * @brief Displays a progress bar.
      * @param progress Progress to be set.
@@ -170,16 +182,19 @@ public:
      * @note Styles 1-10 are progress bars and 11-15 are loaders.
      */
     void progressBar(uint8_t progress, uint8_t x, uint8_t y, int style);
+
     /**
      * @brief Sets the display mode to off when clear screen is called.
      * @param mode Set true to turn off the display.
      */
     void turnOffOnClr(bool mode);
+
     /**
      * @brief Sets the brightness of the pixels in percentage.
      * @param brightness Percentage of brightness.
      */
     void setBrightness(uint8_t brightness);
+
     /**
      * @brief Draws a bitmap image on the display, respecting the specified coordinates.
      * @param dataSet Bitmap array.
@@ -189,28 +204,34 @@ public:
      * @param height Height of the bitmap.
      */
     void draw(const uint8_t *dataSet, uint8_t x, uint8_t y, uint8_t width, uint8_t height);
+
     /**
      * @brief Sets the power mode. There are four available power modes.
      * @param mode The power mode. Use enum values for power mode - (LOW_POWER_MODE or BALANCED_MODE or PERFORMANCE_MODE or TURBO_MODE).
      */
     void setPowerMode(uint8_t mode);
+
     /**
      * @brief Turns super brightness ON or OFF. Super brightness may be unstable.
      * @param mode True or false to turn it ON or OFF.
      */
     void superBrightness(bool mode);
+
     /**
      * @brief Inverts the display pixels.
      */
     void invertDisplay();
+
     /**
      * @brief Turns all the pixels ON.
      */
     void entireDisplayON();
+
     /**
      * @brief Reverts back to the content.
      */
     void entireDisplayOFF();
+
     /**
      * @brief Draws a rectangle with the specified dimensions at the specified coordinates.
      * @param startX Top-left X coordinate.
@@ -222,6 +243,7 @@ public:
      * @param fill Fill the rectangle with pixels.
      */
     void rectangle(uint8_t startX, uint8_t startY, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness, bool fill);
+
     /**
      * @brief Draws a circle at the specified coordinates.
      * @param centerX X coordinate of center.
@@ -230,6 +252,7 @@ public:
      * @param thickness Thickness of the circle.
      */
     void circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thickness);
+
     /**
      * @brief Draws a line between the specified coordinates.
      * @param startX Starting X coordinate.
@@ -239,18 +262,22 @@ public:
      * @param thickness Thickness of the line.
      */
     void line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness);
+
     /**
      * @name Text chaining operator.
      */
     OLED &operator<<(String string);
+
     /**
      * @name Bitmap chaining operator.
      */
     OLED &operator[](const uint8_t *bitmap);
+
     /**
      * @name Coordinates chaining operator.
      */
     OLED &operator<<(int coordinate);
+
     /**
      * @brief Clears the area between the two specified coordinates.
      * @param startX Starting point for clearing the screen.
@@ -258,28 +285,90 @@ public:
      * @param page Page number.
      */
     void clearArea(uint8_t startX, uint8_t endX, uint8_t page);
+
     /**
      * @brief Inflates the drawing canvas. Draws all the items on the display.
      */
     void inflate();
+
     /**
      * @brief Clears the display buffer.
      * @param refresh If true, it will clear the display immediately, otherwise, waits for an inflate call.
      */
     void clearScr(bool refresh);
-    /**
-     * @brief Draws a pulse plot on the display.
-     * @param x The X coordinate.
-     * @param y The Y coordinate.
-     * @param width Width of the plot.
-     * @param height Height of the plot.
-     * @param data Data array.
-     * @param size Size of the data array.
-     * @param maxVal Maximum value of the data array.
-     * @note EXPERIMENTAL FEATURE
-     */
-    void pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal);
 
+    /**
+     * @brief Draws a pulse-style waveform plot on the display.
+     *
+     * This function renders a continuous line representing the variation in values over time,
+     * resembling an ECG or heart rate monitor. Each value is scaled vertically according to
+     * the provided maximum value and optionally centered around a median.
+     *
+     * @param x The X coordinate of the plot's top-left corner.
+     * @param y The Y coordinate of the plot's top-left corner.
+     * @param width The width of the plot area in pixels.
+     * @param height The height of the plot area in pixels.
+     * @param data Pointer to an array of integer data values.
+     * @param size Number of data points in the array.
+     * @param maxVal The maximum absolute value in the dataset (used for vertical scaling).
+     * @param median The vertical baseline or axis center (default is 0).
+     */
+    void pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median = 0);
+
+    /**
+     * @brief Draws a binary bar plot (bit-style) on the display.
+     *
+     * Each data point is shown as a vertical bar, with height determined by the data value.
+     * Ideal for visualizing binary or thresholded signals (e.g., 0s and 1s, or above/below logic).
+     *
+     * @param x The X coordinate of the plot's top-left corner.
+     * @param y The Y coordinate of the plot's top-left corner.
+     * @param width The width of the plot area in pixels.
+     * @param height The height of the plot area in pixels.
+     * @param data Pointer to an array of integer data values.
+     * @param size Number of data points in the array.
+     * @param maxVal The maximum value for vertical scaling.
+     * @param median The baseline threshold value (default is 0).
+     */
+    void bitBarPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median = 0);
+
+    /**
+     * @brief Draws a scatter plot on the display.
+     *
+     * Renders a series of discrete pixels representing the data points. Each point's height
+     * is scaled and optionally offset by a median, with a horizontal axis drawn at the median.
+     *
+     * @param x The X coordinate of the plot's top-left corner.
+     * @param y The Y coordinate of the plot's top-left corner.
+     * @param width The width of the plot area in pixels.
+     * @param height The height of the plot area in pixels.
+     * @param data Pointer to an array of integer data values.
+     * @param size Number of data points in the array.
+     * @param maxVal The maximum absolute value used for vertical scaling.
+     * @param median The vertical axis baseline (default is 0).
+     */
+    void scatterPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median = 0);
+
+    /**
+     * @brief Draws a histogram plot on the display.
+     *
+     * Each data point is represented as a vertical bar, creating a visual distribution
+     * of the dataset. Useful for viewing frequencies or intensity levels.
+     *
+     * @param x The X coordinate of the plot's top-left corner.
+     * @param y The Y coordinate of the plot's top-left corner.
+     * @param width The width of the plot area in pixels.
+     * @param height The height of the plot area in pixels.
+     * @param data Pointer to an array of integer data values.
+     * @param size Number of data points in the array.
+     * @param maxVal The maximum value used for scaling bar heights.
+     */
+    void histogramPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal);
+
+    /**
+     * Invert the pixel state of the display
+     * @param state Boolean value representing state - ON / OFF
+     */
     void invertPixelState(bool state);
 
 private:
