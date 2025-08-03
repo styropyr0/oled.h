@@ -1,340 +1,473 @@
 # SSD1306 OLED Display Library
 
-A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. This library offers a wide range of features including custom fonts, progress bars, animated text, bitmap rendering, geometric shapes, and much more. It works seamlessly with microcontrollers like **Arduino**, **ESP32**, and **ESP8266** over **I2C** communication.
+A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. This library offers a wide range of features, including custom fonts, progress bars, animated text, bitmap rendering, geometric shapes, advanced scene management with Fragments, and much more. It works seamlessly with microcontrollers like **Arduino**, **ESP32**, and **ESP8266** over **I2C** communication.
 
 Additionally, the library includes a **Bitmap Generator** tool in Python, which helps convert images to bitmap arrays for easy display on the OLED screen.
 
-Please note that SSD1306 has 128 independently controllable **Columns** along the width, and 8 independently controllable **Pages** along the height. The total pixel count along the height is divided into **Pages** of 8 pixels high. In scenarios such as printing texts, bitmaps, or progress bars, you should keep this in mind.
+**Hardware Note**: SSD1306 has 128 individually controllable **columns** (width). Vertically, the height is split into **pages** of 8 pixels each. Plan graphics accordingly.
 
 ## Features
 
-- **Text Display**: Print static text and animated text (typewriter effect).
-- **Custom Fonts**: Supports custom fonts and character sets.
-- **Progress Bar**: Display progress bars with various styles.
-- **Bitmap Rendering**: Draw bitmap images on the OLED display.
-- **Brightness Control**: Adjust display brightness (0-100%).
-- **I2C Communication**: Built on I2C communication for simple wiring.
-- **Custom Preferences**: Customize OLED display setup with a set of options.
-- **Operator Overloading**: Use simple operators to display text and bitmaps.
-- **Power Modes**: Control the display power for optimized performance.
-- **Super Brightness**: Turn super brightness on or off (may be unstable).
-- **Display Inversion**: Invert or restore the display colors, or invert the pixel state explicitly.
-- **Geometric Shapes**: Draw rectangles, circles, and lines on the display with customizable thickness.
-- **Fragments and GridView**: Dynamically manage and render multiple drawable objects on the screen efficiently.
-- **Data Visualization Plots**: Ready-to-use pulse, bit bar, scatter, and histogram plots for real-time analytics and sensor data.
+- **Text Display**: Print static and animated text (typewriter effect).
+- **Custom Fonts**: Supports custom fonts, Unicode, other language glyphs.
+- **Progress Bars**: Multiple styles and animated loaders.
+- **Bitmap Rendering**: Draw images, icons, and bitmaps from arrays.
+- **Brightness Control**: Software PWM, 0–100%.
+- **I2C Communication** with address selection.
+- **Custom Preferences**: Override display configuration easily.
+- **Operator Overloading**: Easy stream-style text/bitmap/coordinate input.
+- **Power Modes**: Optimize speed/power with 4 distinct I2C speeds.
+- **Super Brightness** (overdrive mode).
+- **Display Inversion**: Both display and pixel state inversion.
+- **Geometric Shapes**: Draw rectangles, rounded rectangles, circles, lines.
+- **Advanced Drawing/Scene Management**:  
+  - **Fragments:** Batch and manage collections of drawables for fast, complex UI.
+  - **GridView**: Organize drawables in grids or menus.
+  - **Drawable Objects**: All primitives (Text, Rectangle, Circle, Line, etc.) can be used both directly and as reusable objects within Fragments.
+- **Data Visualization Plots**: Plot raw or processed sensor/analytics data: pulse, bar, scatter, histogram.
 
 ## Installation
 
 ### 1. Installing the Library
 
-To use the library, you need to download or clone this repository into your **Arduino libraries** folder.
+Clone into your Arduino libraries folder:
 
 ```bash
 git clone https://github.com/styropyr0/oled.h.git
 ```
+Or download the ZIP and use the Arduino IDE’s “Add .ZIP Library”.
 
-Alternatively, you can manually download the ZIP file and add it to the **Arduino IDE** by navigating to **Sketch → Include Library → Add .ZIP Library**.
+### 2. Dependencies
 
-### 2. Installing Dependencies
-
-The library uses the **Wire** library for I2C communication, which is pre-installed with the Arduino IDE. No additional libraries are required.
+The library uses the built-in **Wire** library for I2C.
 
 ## Hardware Requirements
 
-- **SSD1306-based OLED display** (typically 128x64 or 128x32 pixels).
-- **Arduino Board** (e.g., Arduino UNO, ESP32, or ESP8266).
+- **SSD1306-based OLED display** (commonly 128x64 or 128x32 px).
+- **Arduino** (Uno, ESP32, ESP8266, etc.).
 
 ## Pin Configuration
 
-By default, the library uses I2C communication. The I2C pins are:
-- **SDA (Data)**: Typically pin `A4` on most Arduino boards (varies by board).
-- **SCL (Clock)**: Typically pin `A5` on most Arduino boards (varies by board).
+I2C pins:
+- **SDA (Data)**: Arduino—A4 (varies by board)
+- **SCL (Clock)**: Arduino—A5 (varies)
+- ESP32/ESP8266—set with `Wire.begin(SDA, SCL);`
 
-For ESP32 and other microcontrollers, you can configure these pins in the `Wire.begin(SDA_PIN, SCL_PIN);` function.
+Default I2C address: `ADDR` (0x3C). If your display differs, use the address constructor (see below).
 
-## Library Usage
+## Basic Library Usage
 
-### 1. Initializing the OLED Display
-
-To use the library, instantiate the OLED class with the display’s width and height (e.g., 128x64 or 128x32).
+### 1. Initializing the OLED
 
 ```cpp
 #include 
 
-// Create OLED object with width and height (128x64)
-OLED oled(128, 64);
+OLED oled(128, 64);         // Default: 128x64 at address 0x3C
+
+// For displays with a different I2C address:
+OLED oled(128, 64, 0x3D);   // Example for address 0x3D
 
 void setup() {
-  oled.begin();  // Initialize the OLED display
-  oled.clearScr();  // Clear the screen
-  oled.print("Hello, World!", 0, 0);  // Print text at (0, 0)
-  oled  **Note**: To use fragments, you need to include Fragments.h. It is separated from the main library to avoid taking up unnecessary memory when fragments are not used.
+  oled.begin();       // Hardware init
+  oled.clearScr();    // Clear display RAM (see note on 'inflate' below!)
+  oled.print("Hello!", 0, 0);
+  oled  **Fragments** are advanced high-level constructs for complex dynamic UIs, dashboards, menus, and batching animations, inspired by Android fragments.
 
-#### Using Fragments
+### What Are Fragments?
 
-You can create a Fragment to hold multiple Drawable objects. Drawables can be added, updated, or removed dynamically.
+A **Fragment** is a collection of **Drawable objects** (Text, Rectangle, Circle, Line, Bitmap, HighlightedText, AnimatedText, GridView, etc.) whose display logic and update cycles are managed together.  
+- Unlike direct draw calls, drawables can be created, modified, shown/hidden, and efficiently batched.
 
+#### Benefits:
+
+- **Batch updates**: Redraw many items with a single command.
+- **Efficient scene graph**: Only changed parts (and optionally only changed objects) are updated/redrawn.
+- **Reusable UIs**: Fragments can act as entire screens, panels, or widgets, and can be pushed/popped from a stack.
+
+### Getting Started with Fragments
+
+**Header:**  
 ```cpp
 #include 
 #include 
+```
 
-// Create OLED and Fragment objects
+**Basic Example:**
+```cpp
 OLED oled(128, 64);
-FragmentManager manager(oled); // Create a manager for the Fragments. The manager is attached to the corresponding oled object.
+FragmentManager manager(oled);      // Scene controller
+Fragment fragment(manager);         // Create a batch (fragment)
 
-void setup() {
-  oled.begin();
-  Fragment fragment(manager);
-  // Add drawables to the fragment
-  fragment.add(new Text("Hello", 0, 0));
-  fragment.add(new Circle(64, 32, 10, 2));
+Text* txt = new Text("Dynamic", 10, 0);
+Rectangle* rec = new Rectangle(15, 16, 30, 8, 2, 1, false);
 
-  // Draw all the fragment’s drawables
-  fragment.inflate();
-}
+fragment.add(txt);
+fragment.add(rec);
+fragment.inflate();                 // Render all to display
+
+// Later: update and redraw only changed things
+*txt = Text("Changed!", 10, 10);
+rec->setVisibility(false);
+fragment.recycle();                 // Only changed ones are re-inflated
 ```
 
-#### Recycling Fragments
+### Drawable Object Model
 
-Fragments can be updated dynamically without re-adding all drawables, saving memory and processing time. There are three ways to recycle fragments:
+- **Text / HighlightedText / AnimatedText**
+- **Rectangle / Circle / Line**
+- **Bitmap**
+- **GridView** (see below)
 
-1. **Recycle Modified Drawables**: Applies changes to modified drawables without re-inflating them.
-   ```cpp
-   fragment.recycle();  // Redraw the fragment’s contents on the OLED
-   ```
+All are subclasses of `Drawable`. Each has:
+- `draw(OLED&)` — internal; managed by fragment
+- `setVisibility(bool)`
+- `getVisibility()`
+- `setChangeState()`, `getChangeState()` — for efficient redraws when mutated
 
-2. **Recycle All Drawables**: Applies changes to all drawables by re-inflating them.
-   ```cpp
-   fragment.recycleAll();  // Re-inflate all drawables in the fragment
-   ```
+### GridView
 
-3. **Recycle New Drawables**: Applies changes to newly added drawables without re-inflating the existing ones.
-   ```cpp
-   fragment.recycleNew();  // Apply changes to newly added drawables
-   ```
-
-#### GridView: Structured Layouts
-
-The `GridView` class allows you to organize and render multiple drawables in a grid-like layout. This is ideal for creating tables or menu systems.
+Create a structured layout of any Drawable type for applications like menus or icon panels.
 
 ```cpp
-#include 
+Circle* circle = new Circle(0, 0, 8, 2);
+GridView* grid = new GridView(circle, 12, 4, 10, 10, 10, 10);
+fragment.add(grid);
+```
+- `count`: Number of items
+- `countPerLine`: How many per row
+- `startX`, `startY`: grid’s origin
+- `separationX`, `separationY`: pixel spacing
+
+### Fragment Back Stack
+
+Push/pop entire UI “screens” in stack order:
+
+```cpp
+// Show new
+manager.addToBackStack(&fragment);
+// Go back
+manager.popBackStack();
+```
+- Use for simple UI routing/scene switching
+
+### Fragment API Summary
+
+- `add(Drawable*)`
+- `inflate()`         // Draw all on-screen
+- `recycle()`         // Only changed drawables
+- `recycleAll()`      // Force all to redraw
+- `recycleNew()`      // Only new (not previously displayed) drawables
+- `detach()`          // Cleanup (doesn't clear display)
+- See class docs for all details
+
+## Method Reference — OLED Class
+
+Each method is ready for copy-paste or quick lookup.
+
+### Constructor
+```cpp
+OLED(uint8_t width, uint8_t height);
+OLED(uint8_t width, uint8_t height, uint8_t address);
+```
+Create a new OLED display object with given dimensions and optional I2C address.
+
+### begin
+```cpp
+void begin();
+```
+Initialize hardware. Call first.
+
+### clearScr
+```cpp
+void clearScr();
+void clearScr(bool refresh);
+```
+Clear the buffer; with `refresh==true`, update display immediately.
+
+### inflate
+```cpp
+void inflate();
+```
+Push buffer to the display.
+
+### print
+```cpp
+void print(String text, uint8_t x, uint8_t y);
+```
+Print `text` at position `(x, y)`.
+
+### printHighlighted
+```cpp
+void printHighlighted(String text, uint8_t x, uint8_t y);
+```
+Print highlighted (inverted bg) text.
+
+### printAnimated
+```cpp
+void printAnimated(String text, uint8_t x, uint8_t y, int delay, bool highlight);
+```
+Typewriter effect.
+
+### print_c
+```cpp
+void print_c(String text, uint8_t x, uint8_t y);
+```
+Clear then print at `(x, y)`.
+
+### setFont
+```cpp
+void setFont(const uint8_t (*fontArray)[5]);
+```
+Set a custom font array.
+
+### clearCustomFont
+```cpp
+void clearCustomFont();
+```
+Revert to default font.
+
+### convertString
+```cpp
+char* convertString(String str);
+```
+Get a C-string from Arduino `String`.
+
+### progressBar
+```cpp
+void progressBar(uint8_t progress, uint8_t x, uint8_t y, int style);
+```
+Progress bar/loader at `(x, y)` for 0–100% progress.
+
+### draw (bitmap)
+```cpp
+void draw(const uint8_t* data, uint8_t x, uint8_t y, uint8_t width, uint8_t height);
+```
+Draw a bitmap.
+
+### rectangle
+```cpp
+void rectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t cornerRadius, uint8_t thickness, bool fill);
+```
+Draw a rectangle (with optional rounded corners).
+
+### circle
+```cpp
+void circle(uint8_t centerX, uint8_t centerY, uint8_t radius, uint8_t thickness);
+```
+Draw a circle.
+
+### line
+```cpp
+void line(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint8_t thickness);
+```
+Draw a line.
+
+### clearArea
+```cpp
+void clearArea(uint8_t startX, uint8_t endX, uint8_t page);
+```
+Clear rectangular region on a page.
+
+### manualSetup
+```cpp
+void manualSetup(uint8_t* dataSet);
+```
+Low-level OLED configuration.
+
+### setBrightness
+```cpp
+void setBrightness(uint8_t brightness);
+```
+Set brightness (0–100).
+
+### setPowerMode
+```cpp
+void setPowerMode(uint8_t mode);
+```
+Set I2C speed/power (see constants).
+
+### superBrightness
+```cpp
+void superBrightness(bool mode);
+```
+Overdrive all pixels (may flicker/unreliable).
+
+### invertDisplay
+```cpp
+void invertDisplay();
+```
+Invert current display (black→white).
+
+### invertPixelState
+```cpp
+void invertPixelState(bool state);
+```
+Explicitly set inversion on/off.
+
+### entireDisplayON / entireDisplayOFF
+```cpp
+void entireDisplayON();
+void entireDisplayOFF();
+```
+Light up or restore all pixels.
+
+### turnOffOnClr
+```cpp
+void turnOffOnClr(bool mode);
+```
+Display powers down when buffer is cleared.
+
+### Data Plotting Methods
+
+**Pulse/Wave Plot**
+```cpp
+void pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* data, uint8_t size, int maxVal, int median = 0);
+```
+
+**Bit Bar Plot**
+```cpp
+void bitBarPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* data, uint8_t size, int maxVal, int median = 0);
+```
+
+**Scatter Plot**
+```cpp
+void scatterPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* data, uint8_t size, int maxVal, int median = 0);
+```
+
+**Histogram Plot**
+```cpp
+void histogramPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* data, uint8_t size, int maxVal);
+```
+All these display visualizations for sensor or dynamic data.
+
+### Operator Overloading
+
+- `oled 
 #include 
 
-// Create OLED, Fragment, and GridView objects
 OLED oled(128, 64);
-FragmentManager manager(oled);
-
-void setup() {
-  oled.begin();
-
-  // Add a grid of circles to the fragment
-  Fragment fragment(manager); // Attach the manager to the required Fragment.
-  Circle* circle = new Circle(0, 0, 8, 2);
-  GridView* grid = new GridView(circle, 12, 4, 10, 10, 10, 10);
-  fragment.add(grid);
-  fragment.inflate(); // Draw the fragment containing the grid
-}
-```
-
-#### Visibility Modifiers
-
-You can now control the visibility of individual drawables within a fragment. This allows for more dynamic and flexible display management.
-
-```cpp
-// Set visibility of a drawable
-drawable->setVisibility(false); // Hide the drawable
-drawable->setVisibility(true);  // Show the drawable
-```
-
-#### Change State Management
-
-Drawables now support change state management, allowing you to track and update only modified drawables.
-
-#### Reassignment or Change of Drawables After Inflating
-
-After inflating a fragment, you can reassign or change the drawables dynamically. This allows for efficient updates without the need to re-inflate the entire fragment.
-
-```cpp
-Text* textDrawable = new Text("New Text", 0, 0);
-fragment.add(textDrawable);
-fragment.inflate();
-
-//Change the text content after some time
-*textDrawable = Text("Updated Text", 0, 0);
-fragment.recycleAll();  // Apply changes to the newly added drawable
-```
-
-#### New Drawable Types
-
-The library now includes additional drawable types such as `Rectangle`, `Line`, `HighlightedText`, `AnimatedText`, and `Bitmap`.
-
-```cpp
-// Example of adding new drawable types
-fragment.add(new Rectangle(10, 10, 50, 30, 5, 2));
-fragment.add(new Line(0, 0, 127, 63, 2));
-fragment.add(new HighlightedText("Highlighted", 0, 10));
-fragment.add(new AnimatedText("Animated", 0, 20, 100, true));
-fragment.add(new Bitmap(bitmapData, 0, 0, 16, 16));
-```
-
-#### Fragment Back Stack Management
-
-Inspired by Android fragments, you can manage a back stack of fragments using `addToBackStack()` and `popBackStack()` methods.
-
-##### Example: Adding a Fragment to Back Stack
-
-```cpp
-Fragment fragment(manager);
-manager.addToBackStack(&fragment);  // Add fragment to back stack
-```
-
-##### Example: Popping a Fragment from Back Stack
-
-```cpp
-manager.popBackStack();  // Pop the last fragment from the back stack
-```
-
-##### Example Code
-
-Here's an example code demonstrating the usage of the new features:
-
-```cpp
-#include 
-#include 
-
-// Create OLED object with width and height (128x64)
-OLED oled(128, 64);
-
-// Create a FragmentManager object and attach it to the OLED object
 FragmentManager mgr(oled);
+Fragment fragment(mgr);
 
-void setup() {
-  // Initialize the OLED display
-  oled.begin();
-  
-  // Initialize serial communication for debugging
-  Serial.begin(9600);
-  
-  // Create a Fragment object and attach it to the FragmentManager
-  Fragment fragment(mgr);
-  
-  // Create drawable objects
-  Rectangle* rectangle = new Rectangle(30, 0, 15, 15, 3, 1);
-  Text* text = new Text("Hello World!", 0, 0);
-  
-  // Add drawables to the fragment
-  fragment.add(rectangle);
-  fragment.add(text);
-  
-  // Draw all the fragment’s drawables
-  fragment.inflate();
+Text* t = new Text("Hi!", 0, 0);
+Rectangle* r = new Rectangle(10, 10, 20, 8, 1, 1, false);
+fragment.add(t);
+fragment.add(r);
+fragment.inflate();     // Draw all at once
 
-  // Wait for 2 seconds
-  delay(2000);
-
-  // Reassign the text drawable with new content and position
-  *text = Text("This is new text!", 10, 3);
-  
-  // Hide the rectangle drawable
-  rectangle->setVisibility(false);
-  
-  // Recycle all drawables to apply changes
-  fragment.recycle();
-}
-
-void loop() {
-  // Main loop logic (empty in this example)
-}
+// Update only changed Drawables
+*t = Text("Bye!", 0, 10);
+fragment.recycle();
 ```
 
-### 3. Custom Fonts
+#### Drawable Creation & Management
 
-You can use custom fonts by defining an array of font data. This library uses 5x7 bitmaps for characters by default, but you can change the font with the `setFont()` method.
+- **Text**
+- **HighlightedText**
+- **AnimatedText**
+- **Rectangle**
+- **Circle**
+- **Line**
+- **Bitmap**
+- **GridView**: For structured icon/menu layouts.
 
-#### Example: Setting a Custom Font
+Each supports:
+- `setVisibility(bool visible)`
+- `getVisibility()`
+- `setChangeState()`
+- `getChangeState()`
+- Assignment/re-initialization for dynamic changes.
+
+#### GridView Example
 
 ```cpp
-// Define a simple custom font (5x7 pixels)
-const uint8_t myFont[5][5] = {
-  {0x1F, 0x1F, 0x00, 0x00, 0x00},  // Example character data
-  // More characters...
-};
-
-OLED oled(128, 64);
-
-void setup() {
-  oled.begin();
-  oled.setFont(myFont);  // Set the custom font
-  oled.print("Custom Font", 0, 0);  // Display with custom font
-  oled.inflate();  // Render items on the display
-}
+Circle* circ = new Circle(0, 0, 8, 2);
+GridView* grid = new GridView(circ, 12, 4, 10, 10, 10, 10);
+fragment.add(grid);
 ```
 
-#### Revert to Default Font
+#### Fragment Back Stack
 
-To go back to the default font:
+Manage a stack of scenes/configurations:
+```cpp
+mgr.addToBackStack(&fragment);    // Push
+mgr.popBackStack();               // Pop
+```
+
+## Fragment/Drawable API Reference
+
+**Fragment**
+- `add(Drawable*)` — Add a new element.
+- `inflate()` — Draw all on display.
+- `recycle()` — Only update changed elements.
+- `recycleAll()` — Redraw everything.
+- `recycleNew()` — Only draw new (not previously displayed) drawables.
+- `detach()` — Remove all drawables.
+
+**Drawable** (for each type):
+- `setVisibility(bool)`
+- `getVisibility()`
+- `setChangeState()`
+- `getChangeState()`
+- Assignment operator (`=`) for re-use.
+
+## Constants Quick Reference
+
+### Display Setup
+| Constant          | Value  | Description                    |
+|-------------------|--------|--------------------------------|
+| `ADDR`            | 0x3C   | Default I2C address            |
+| `WIDTH_128`       | 0x80   | 128 px width                   |
+| `WIDTH_64`        | 0x40   | 64 px width                    |
+| `HEIGHT_64`       | 0x40   | 64 px height                   |
+| `HEIGHT_32`       | 0x20   | 32 px height                   |
+
+### Power Modes
+| Constant             | Value  | Description                 |
+|----------------------|--------|-----------------------------|
+| `LOW_POWER_MODE`     | 0x01   | 100kHz I2C                  |
+| `BALANCED_MODE`      | 0x02   | 200kHz I2C                  |
+| `PERFORMANCE_MODE`   | 0x03   | 400kHz I2C                  |
+| `TURBO_MODE`         | 0x04   | 1MHz I2C (auto fallback)    |
+
+### Addressing Modes
+| Constant     | Value  | Description           |
+|--------------|--------|-----------------------|
+| `HORIZONTAL` | 0x00   | Horizontal addressing |
+| `VERTICAL`   | 0x01   | Vertical addressing   |
+| `PAGE`       | 0x02   | Page addressing       |
+
+### Special Commands
+`OLED_OFF`, `OLED_ON`, `INVERT`, `REVERT`, `ENTIRE_DISP_ON`, `RESUME_FROM_VRAM`, `CHRG_PUMP`, `CONTRAST`, `PRE_CHRG`, `VCOMH_DESEL`, etc. (see header for full list).
+
+## Data Visualization Example (Plots)
 
 ```cpp
-oled.clearCustomFont();
+int values[] = {1, 2, -1, 0, 3, -2, 2, 1, 0};
+oled.pulsePlot(0, 0, 128, 32, values, 9, 3, 0);
+
+int binaryValues[] = {0, 1, 0, 1, 1, 0};
+oled.bitBarPlot(0, 34, 128, 16, binaryValues, 6, 1, 0);
+
+int samples[] = {3, 0, 2, 1, 3};
+oled.scatterPlot(0, 52, 128, 12, samples, 5, 3, 0);
+
+int histogramData[] = {2, 4, 1, 3, 5};
+oled.histogramPlot(0, 60, 128, 16, histogramData, 5, 5);
 ```
+---
 
-### 4. Printing Static Text
+## Bitmap Generator Tool
 
-You can print static text at a given `(x, y)` coordinate using the `print()` method.
-
-#### Example: Printing Text
-
-```cpp
-oled.print("Hello, OLED!", 0, 0);  // Prints "Hello, OLED!" at (0, 0)
-```
-
-### 5. Animated Text (Typewriter Effect)
-
-Use the `printAnimated()` method for a typewriter effect, where text is displayed one character at a time.
-
-#### Example: Animated Text
-
-```cpp
-oled.printAnimated("Welcome!", 0, 0, 100, false);  // Print text with a 100 ms delay between characters, set true for highlight effect
-```
-
-### 6. Progress Bars
-
-You can display progress bars in multiple styles (1-10 for progress bars, 11-15 for loaders). The `progressBar()` method accepts the progress value (0-100) and a style number.
-
-#### Example: Progress Bar
-
-```cpp
-oled.progressBar(50, 0, 10, 1);  // Displays a 50% progress bar at (0, 10), style 1
-```
-
-### 7. Bitmap Rendering
-
-The library includes the `draw()` method to display bitmaps on the OLED. You can convert images into bitmap arrays using the **Bitmap Generator** Python tool (explained below).
-
-#### Example: Displaying a Bitmap
-
-```cpp
-const uint8_t myBitmap[] = {
-  // Your bitmap data here, generated by the Bitmap Generator
-};
-
-oled.draw(myBitmap, 0, 0, 16, 16);  // Draw a 16x16 bitmap at coordinates (0, 0)
-```
-
-### 8. Chaining Operators for Display
-
-The library also includes operator overloading to simplify the process of displaying text and bitmaps. You can use the ` 
-```
-
-For example, to convert an image located at `images/logo.png` to a bitmap:
+Python script for converting images to OLED-ready bitmaps.
 
 ```bash
-python bitmap_generator.py images/logo.png output_logo.h
+python bitmap_generator.py  
+# Example:
+python bitmap_generator.py images/logo.png logo.h
 ```
-One of the best ways to do this is by adding the path to this script as an alias in your Environment Variables. Otherwise, you need to type the entire path of the script every time.
+Add the script’s folder to your `PATH` for even faster use.
 
-## **License**
+## License
 
-This library is licensed under the **MIT License**.
+**MIT License**
