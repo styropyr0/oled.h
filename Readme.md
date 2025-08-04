@@ -483,7 +483,7 @@ Python script for converting images to OLED-ready bitmaps.
 ```bash
 python bitmap_generator.py  
 # Example:
-python bitmap_generator.py images/logo.png logo.h
+python bitmap_generator.py "images/logo.png" logo.h 24x24 # Size is optional
 ```
 Add the script’s folder to your `PATH` for even faster use.
 
