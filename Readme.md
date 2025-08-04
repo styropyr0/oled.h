@@ -71,14 +71,15 @@ void setup() {
   oled.begin();       // Hardware init
   oled.clearScr();    // Clear display RAM (see note on 'inflate' below!)
   oled.print("Hello!", 0, 0);
+  oled<<"This also prints"<<20<<30;
+  oled[bitmap]<<100<<0;
 }
 ```
-
-**Fragments** are advanced high-level constructs for complex dynamic UIs, dashboards, menus, and batching animations, inspired by Android fragments.
-
 ---
 
 ### What Are Fragments?
+
+**Fragments** are advanced high-level constructs for complex dynamic UIs, dashboards, menus, and batching animations, inspired by Android fragments.
 
 A **Fragment** is a collection of **Drawable objects** (`Text`, `Rectangle`, `Circle`, `Line`, `Bitmap`, `HighlightedText`, `AnimatedText`, `GridView`, etc.) whose display logic and update cycles are managed together.  
 - Unlike direct draw calls, drawables can be created, modified, shown/hidden, and efficiently batched.
