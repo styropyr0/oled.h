@@ -337,6 +337,11 @@ void pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* data, u
 void bitBarPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* data, uint8_t size, int maxVal, int median = 0);
 ```
 
+**Bar Plot**
+```cpp
+void barPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* data, uint8_t size, int maxVal);
+```
+
 **Scatter Plot**
 ```cpp
 void scatterPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int* data, uint8_t size, int maxVal, int median = 0);
