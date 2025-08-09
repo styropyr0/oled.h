@@ -312,8 +312,9 @@ public:
      * @param size Number of data points in the array.
      * @param maxVal The maximum absolute value in the dataset (used for vertical scaling).
      * @param median The vertical baseline or axis center (default is 0).
+     * @param axisThickness Thickness of the horizontal axis line (default is 1).
      */
-    void pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median = 0);
+    void pulsePlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median = 0, uint8_t axisThickness = 1);
 
     /**
      * @brief Draws a binary bar plot (bit-style) on the display.
@@ -329,8 +330,9 @@ public:
      * @param size Number of data points in the array.
      * @param maxVal The maximum value for vertical scaling.
      * @param median The baseline threshold value (default is 0).
+     * @param axisThickness Thickness of the horizontal axis line (default is 1).
      */
-    void bitBarPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median = 0);
+    void bitBarPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median = 0, uint8_t axisThickness = 1);
 
     /**
      * @brief Draws a scatter plot on the display.
@@ -346,8 +348,9 @@ public:
      * @param size Number of data points in the array.
      * @param maxVal The maximum absolute value used for vertical scaling.
      * @param median The vertical axis baseline (default is 0).
+     * @param axisThickness Thickness of the horizontal axis line (default is 1).
      */
-    void scatterPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median = 0);
+    void scatterPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal, int median = 0, uint8_t axisThickness = 1);
 
     /**
      * @brief Draws a histogram plot on the display.
@@ -364,6 +367,24 @@ public:
      * @param maxVal The maximum value used for scaling bar heights.
      */
     void histogramPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal);
+
+    /**
+     * @brief Draws a bar plot on the display.
+     * This function visualizes data as vertical bars, where each bar's height corresponds to the data value.
+     * It is useful for comparing different data points or visualizing distributions.
+     * @param x The X coordinate of the plot's top-left corner.
+     * @param y The Y coordinate of the plot's top-left corner.
+     * @param width The width of the plot area in pixels.
+     * @param height The height of the plot area in pixels.
+     * @param data Pointer to an array of integer data values.
+     * @param size Number of data points in the array.
+     * @param maxVal The maximum value used for scaling bar heights.
+     * @note The width of each bar is calculated based on the available width and the number of data points.
+     * @note If the size exceeds the width, it will be adjusted to fit within the display area.
+     * @note The function automatically handles the case where data values exceed the maximum value by capping them to maxVal.
+     * @note The bar plot is drawn from the bottom of the plot area upwards, with the base of the bars aligned with the bottom edge of the plot area.
+     */
+    void barPlot(uint8_t x, uint8_t y, uint8_t width, uint8_t height, int *data, uint8_t size, int maxVal);
 
     /**
      * Invert the pixel state of the display
