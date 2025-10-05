@@ -41,7 +41,12 @@ bool Circle::getChangeState()
 Circle &Circle::operator=(const Circle &other)
 {
     if (entity.init)
-        entity = {centreX, centreY, radius, thickness, true};
+    {
+        entity.centreX = centreX;
+        entity.centreY = centreY;
+        entity.radius = radius;
+        entity.thickness = thickness;
+    }
 
     centreX = other.centreX;
     centreY = other.centreY;
@@ -103,7 +108,16 @@ bool Rectangle::getChangeState()
 Rectangle &Rectangle::operator=(const Rectangle &other)
 {
     if (entity.init)
-        entity = {x, y, width, height, cornerRadius, thickness, fill, true};
+    {
+        entity.x = x;
+        entity.y = y;
+        entity.width = width;
+        entity.height = height;
+        entity.cornerRadius = cornerRadius;
+        entity.thickness = thickness;
+        entity.fill = fill;
+        entity.init = true;
+    }
 
     x = other.x;
     y = other.y;
@@ -168,7 +182,14 @@ bool Line::getChangeState()
 Line &Line::operator=(const Line &other)
 {
     if (entity.init)
-        entity = {startX, startY, endX, endY, thickness, true};
+    {
+        entity.startX = startX;
+        entity.startY = startY;
+        entity.endX = endX;
+        entity.endY = endY;
+        entity.thickness = thickness;
+        entity.init = true;
+    }
 
     startX = other.startX;
     startY = other.startY;
@@ -231,7 +252,14 @@ bool Bitmap::getChangeState()
 Bitmap &Bitmap::operator=(const Bitmap &other)
 {
     if (entity.init)
-        entity = {dataSet, x, y, width, height, true};
+    {
+        entity.dataSet = dataSet;
+        entity.x = x;
+        entity.y = y;
+        entity.width = width;
+        entity.height = height;
+        entity.init = true;
+    }
 
     dataSet = other.dataSet;
     x = other.x;
@@ -294,7 +322,12 @@ bool Text::getChangeState()
 Text &Text::operator=(const Text &other)
 {
     if (entity.init)
-        entity = {text, x, y, true};
+    {
+        entity.text = text;
+        entity.x = x;
+        entity.y = y;
+        entity.init = true;
+    }
 
     text = other.text;
     x = other.x;
@@ -355,7 +388,12 @@ bool HighlightedText::getChangeState()
 HighlightedText &HighlightedText::operator=(const HighlightedText &other)
 {
     if (entity.init)
-        entity = {text, x, y, true};
+    {
+        entity.text = text;
+        entity.x = x;
+        entity.y = y;
+        entity.init = true;
+    }
 
     text = other.text;
     x = other.x;
