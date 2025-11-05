@@ -4,7 +4,7 @@ A lightweight and versatile library to control SSD1306-based OLED displays with 
 
 [![GitHub release](https://img.shields.io/github/v/release/styropyr0/oled.h?label=release)](https://github.com/styropyr0/oled.h/releases)
 [![License](https://img.shields.io/github/license/styropyr0/oled.h)](https://github.com/styropyr0/oled.h/blob/main/LICENSE)
-[![Arduino Library Manager](https://www.ardu-badge.com/badge/oled.svg?)](https://www.ardu-badge.com/oled.h)
+[![Arduino Library Manager](https://www.ardu-badge.com/badge/SSD1306_OLED_Display.svg?)](https://www.ardu-badge.com/SSD1306_OLED_Display)
 [![GitHub stars](https://img.shields.io/github/stars/styropyr0/oled.h?style=social)](https://github.com/styropyr0/oled.h/stargazers)
 ![Arduino Ready](https://img.shields.io/badge/Arduino-Ready-brightgreen)
 
