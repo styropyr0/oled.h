@@ -2,9 +2,9 @@
 
 A lightweight and versatile library to control SSD1306-based OLED displays with Arduino. This library offers a wide range of features, including custom fonts, progress bars, animated text, bitmap rendering, geometric shapes, advanced scene management with Fragments, and much more. It works seamlessly with microcontrollers like **Arduino**, **ESP32**, and **ESP8266** over **I2C** communication.
 
-[![GitHub release](https://img.shields.io/github/v/release/styropyr0/oled?label=release)](https://github.com/styropyr0/oled/releases)
-[![License](https://img.shields.io/github/license/styropyr0/oled)](https://github.com/styropyr0/oled/blob/main/LICENSE)
-[![Arduino Library Manager](https://www.ardu-badge.com/badge/oled.svg?)](https://www.ardu-badge.com/oled)
+[![GitHub release](https://img.shields.io/github/v/release/styropyr0/oled?label=release)](https://github.com/styropyr0/oled.h/releases)
+[![License](https://img.shields.io/github/license/styropyr0/oled)](https://github.com/styropyr0/oled.h/blob/main/LICENSE)
+[![Arduino Library Manager](https://www.ardu-badge.com/badge/oled.svg?)](https://www.ardu-badge.com/oled.h)
 [![GitHub stars](https://img.shields.io/github/stars/styropyr0/oled?style=social)](https://github.com/styropyr0/oled.h/stargazers)
 [![Build Status](https://github.com/styropyr0/oled/actions/workflows/ci.yml/badge.svg)](https://github.com/styropyr0/oled.h/actions)
 ![Arduino Ready](https://img.shields.io/badge/Arduino-Ready-brightgreen)
